@@ -393,6 +393,9 @@ type ElementOf<T> = T extends Array<infer E> ? E :never;
 type tuple = [string,number];
 type ToUnion = ElementOf<tuple>
 
+// 再或者 我们可以去递归
+type TupleToUnion<T> = T extends [infer E,...infer Rest] ? E | TupleToUnion<Rest> : never;
+
 // 简单的写法
 type TTuple1 = [string, number];
 type Res1 = TTuple1[number]; // string | number
