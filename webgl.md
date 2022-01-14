@@ -1,10 +1,10 @@
-# webGL
+# WebGL
 
 WebGL经常被当成3D API，人们总想“我可以使用WebGL和一些神奇的东西做出炫酷的3D作品”。 事实上WebGL仅仅是一个光栅化引擎，它可以根据你的代码绘制出点，线和三角形。 想要利用WebGL完成更复杂任务，取决于你能否提供合适的代码，组合使用点，线和三角形代替实现。
 
 WebGL在电脑的GPU中运行。因此你需要使用能够在GPU上运行的代码。 这样的代码需要提供成对的方法。每对方法中一个叫顶点着色器， 另一个叫片断着色器，并且使用一种和C或C++类似的强类型的语言 GLSL。 (GL着色语言)。 每一对组合起来称作一个 program（着色程序）
 
-顶点着色器的作用是计算顶点的位置。根据计算出的一系列顶点位置，WebGL可以对点,线和三角形在内的一些图元进行光栅化处理。当对这些图元进行光栅化处理时需要使用片断着色器方法。 片断着色器的作用是计算出当前绘制图元中每个像素的颜色值。
+顶点着色器的作用是计算顶点的位置。根据计算出的一系列顶点位置，WebGL可以对点, 线和三角形在内的一些图元进行光栅化处理。当对这些图元进行光栅化处理时需要使用片断着色器方法。 片断着色器的作用是计算出当前绘制图元中每个像素的颜色值。
 
 几乎整个WebGL API都是关于如何设置这些成对方法的状态值以及运行它们。 对于想要绘制的每一个对象，都需要先设置一系列状态值，然后通过调用 gl.drawArrays 或 gl.drawElements 运行一个着色方法对，使得你的着色器对能够在GPU上运行。
 
@@ -32,13 +32,12 @@ WebGL在电脑的GPU中运行。因此你需要使用能够在GPU上运行的代
 
 ## Hello World
 
-
 `void main` 是所有着色的主函数 
 `precision` 是用来设置精读的 `mediump` 是默认的中等精度代表 `medium precision`
 
 ```html
 <script type="shader-source" id="vertexShader">
-  void main(){
+    void main(){
     gl_Position = vec4(0.0,0.0,0.0,1.0);
     gl_PointSize = 10.0;
   }
@@ -60,7 +59,7 @@ WebGL在电脑的GPU中运行。因此你需要使用能够在GPU上运行的代
 // 使用这样方式创建 在使用过程中可以获得代码提示
 const canvas = document.createElement('canvas');
 document.querySelector('body').appendChild(canvas);
-const gl = canvas.getContext('webgl') || canvas.getContext("experimental-webgl");
+const gl = canvas.getContext('WebGL') || canvas.getContext("experimental-WebGL");
 // 获取顶点着色器源码
 const vertexShaderSource = document.querySelector('#vertexShader').innerHTML;
 // 创建顶点着色器
@@ -101,28 +100,28 @@ gl.drawArrays(gl.POINTS, 0, 1);
 ```
 
 最终效果如下:
-<iframe height="300" style="width: 100%;" scrolling="no" title="learn-webgl1" src="https://codepen.io/WFFMLOVE/embed/OJxoqPM?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="300" style="width: 100%; " scrolling="no" title="learn-WebGL1" src="https://codepen.io/WFFMLOVE/embed/OJxoqPM?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/WFFMLOVE/pen/OJxoqPM">
-  learn-webgl1</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
+  learn-WebGL1</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
-
 
 ## 三角
 
 我们在上面的基础上，绘制一个三角形
 
 上面顶点的数据是写死的，我们将其改为外部传入
+
 ```html
 <script type="shader-source" id="vertexShader">
-  attribute vec4 a_Position;
+    attribute vec4 a_Position;
   void main(){
     gl_Position = (a_Position,0.0,1.0);
   }
 </script>
 
 <script type="shader-source" id="fragmentShader">
-  precision mediump float;
+    precision mediump float;
   uniform vec4 u_Color;
 
   void main(){
@@ -132,10 +131,10 @@ gl.drawArrays(gl.POINTS, 0, 1);
 </script>
 ```
 
-``` javascript
+```javascript
 // 我们紧跟着清空画布后面开始
 // 坐标数据
-const points = [1,0,0,1,0,0]
+const points = [1, 0, 0, 1, 0, 0]
 // 创建一个缓冲区
 const buffer = gl.createBuffer();
 // 绑定缓存区
@@ -179,22 +178,83 @@ const u_Color = gl.getUniformLocation(program, 'u_Color');
 gl.uniform4f(u_Color, 222, 111, 22, 1.0)
 gl.drawArrays(primitiveType, _offset, _count)
 ```
+
 结果如下:
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="learn-webgl2" src="https://codepen.io/WFFMLOVE/embed/bGoxJxO?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="300" style="width: 100%; " scrolling="no" title="learn-WebGL2" src="https://codepen.io/WFFMLOVE/embed/bGoxJxO?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/WFFMLOVE/pen/bGoxJxO">
-  learn-webgl2</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
+  learn-WebGL2</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
 
 ### 裁剪坐标系
-在裁剪坐标系中，中心点是坐标原点，正值在右上方。
+
+在裁剪坐标系中，中心点是坐标原点，正值在右方，上方。
 
 对于描述二维空间的物体，比起裁剪坐标系，我们可能更希望使用屏幕像素坐标。
 
-我们可以将其改造一下
+思路如下:
+1. 获取 `canvas` 的宽高，
+2. 传入坐标点的位置，除以`canvas`的宽高，获取到(0~1)的坐标点
+3. 我们需要的是(-1.0,1.0)的坐标，所以(0,1)*2-1就可以获取到
+4. 最后与基坐标
 
+```html
+<script type="shader-source" id="vertexShader">
+    precision mediump float;
+  attribute vec2 a_Position;
+  uniform vec2 u_Resolution;
+  void main(){
+    vec2 position = (a_Position / u_Resolution) * 2.0 - 1.0;
+    position = position * vec2(1.0,-1.0);
+    gl_Position = vec4(position,0,1);
+  }
+</script>
+```
 
+## 线
+
+## 工作原理
+
+当调用
+
+```javascript
+var primitiveType = gl.TRIANGLES;
+var offset = 0;
+var count = 9;
+gl.drawArrays(primitiveType, offset, count);
+```
+
+![vertex-shader-anim.gif](https://s2.loli.net/2022/01/12/gdnfqj53uzByEOS.gif)
+
+左侧是提供的数据，每个顶点经过 `vertexShader` 进行数学运算后设置了一个 `gl_Position` 变量，这个变量就是裁剪空间中的坐标值, GPU接收该值并将其保存起来
+
+当设置 `type` 是三角形(gl. TRIANGLES)的时候，顶点着色器完成三次顶点处理，WebGL就会用这三个顶点画一个三角形，他计算出三个顶点对应的像素后，就会光栅化这个三角形
+
+颜色空间是 0 ~ 1
+
+### buffer 和 attribute 代码是做什么的
+
+缓冲操作是在GPU上获取顶点和其他顶点数据的一种方式。 
+* gl.createBuffer创建一个缓冲；
+* gl.bindBuffer是设置缓冲为当前使用缓冲；
+* gl.bufferData将数据拷贝到缓冲，这个操作一般在初始化完成。
+
+一旦数据存到缓冲中，还需要告诉WebGL怎么从缓冲中提取数据传给顶点着色器的属性
+
+```javascript
+// 获取属性地址
+const positionLocation = gl.getAttribLocation(program, 'a_Position')
+// 告诉WebGL我们从缓冲中获取数据
+gl.enableVertexAttribArray(positionLocation)
+// 将缓冲绑定到ARRAY_BUFFER绑定点，它是WebGL内部的一个全局变量
+gl.BindBuffer(gl.ARRAY_BUFFER, someBuffer);
+// 告诉WebGL从 ARRAY_BUFFER 绑定点当前绑定的缓冲获取数据。 每个顶点有几个单位的数据(1 - 4)，单位数据类型是什么(BYTE, FLOAT, INT, UNSIGNED_SHORT, 等等...)， stride 是从一个数据到下一个数据要跳过多少位，最后是数据在缓冲的什么位置。
+// normalizeFlag 标准化标记（normalizeFlag）适用于所有非浮点型数据。如果传递false就解读原数据类型。
+// 如果标准化标记设为true，BYTE 数据的值(-128 to 127)将会转换到 -1.0 到 +1.0 之间， UNSIGNED_BYTE (0 to 255) 变为 0.0 到 +1.0 之间，SHORT 也是转换到 -1.0 到 +1.0 之间， 但比 BYTE 精确度高。
+// normalize：是否需要将非浮点类型数据单位化到[-1,1]区间。
+gl.vertexAttribPointer(positionLocation, numComponents, typeOfData, normalizeFlag, strideToNextPieceOfData, offsetIntoBuffer);
+```
 
 ## 变量
 
