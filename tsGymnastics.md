@@ -123,6 +123,31 @@ type P<T> = [T] extends ['x'] ? : 1: 2;
 type A3 = P<'x'|'y'>
 ```
 
+*** 2022-01-17 新增 ***
+
+一开始对于分发这个概念理解不够透彻，以为没多大用，后碰到一题
+``` typescript
+// 我们想通过在联合Cat | Dog中搜索公共type字段来获取相应的类型。换句话说，在以下示例中，我们期望LookUp<Dog | Cat, 'dog'>获得Dog，LookUp<Dog | Cat, 'cat'>获得Cat。
+
+interface Cat {
+  type: 'cat'
+  breeds: 'Abyssinian' | 'Shorthair' | 'Curl' | 'Bengal'
+}
+
+interface Dog {
+  type: 'dog'
+  breeds: 'Hound' | 'Brittany' | 'Bulldog' | 'Boxer'
+  color: 'brown' | 'white' | 'black'
+}
+
+type MyDog = LookUp<Cat | Dog, 'dog'> // expected to be `Dog`
+
+// 分发特性 最后结果应该是 Dog | never ; never 被省略 最后可以成功获取
+type LookUp<U,T> = U extends Record<'type',T> ? {[K in keyof U]:U[K]} : never;
+```
+
+
+
 ### 可赋值 (协变, 逆变, 双向协变)
 
 集合论中，如果一个集合的所有元素在集合B中都存在，则A是B的子集；
