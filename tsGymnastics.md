@@ -2,7 +2,7 @@
 
 前端圈流行一个名词“TS 体操”，简称为“TC”，体操这个词是从 Haskell 社区来的，本意就是高难度动作，关于“体操”能够实现到底多高难度的动作
 
-## 几个Tips
+## 概念
 
 ### 结构化类型
 
@@ -82,6 +82,54 @@ const a = new String('ss')
 // 不能将类型“String”分配给类型“string”。“string”是基元，但“String”是包装器对象。
 // const b:string = a; // 报错
 const c: string = '123'
+```
+
+###  类型扩张 和 收缩
+我们使用`let`关键字声明变量 会触发 widening 
+例如 `let x = 3` 此时 这个x的类型 是number；
+
+使用`const`关键字则不会触发
+例如`const y = 3` 此时 这个y的类型 是 3
+
+对于基础类型我们可以使用const 来控制其不触发widening，但是对于object 和 array 这些复合对象，const 并不能控制属性的 widening;
+``` typescript
+const a = [1,2] // a:number[];
+// 如果我们想要控制属性的widening 有两种方式
+// 标注类型
+const a1: [1, 'x'] = [1, 'x'] // a1:[1,'x']
+// as const 有个问题 是 a2会变成只读
+const a2 = [1, 'x'] as const;
+```
+type narrowing与type widening相反，其负责收窄类型 * 对于大部分类型使用内置的类型收窄即可，支持的类型收窄操作包括 
+* `Array.isArray`
+* `instanceof` 
+* `key in object` 
+* `typeof` 
+* `falsy` 判断 
+
+``` typescript
+function isInputElement(el: HTMLElement): el is HTMLInputElement {
+  return 'value' in el;
+}
+function getElementContent(el: HTMLElement) {
+  if (isInputElement(el)) {
+    return el.value // el 为HTMLInputElement类型
+  } else {
+    return el.textContent // el为HTMLElement类型
+  }
+}
+```
+
+### 越界
+当元组越界的时候，越界的元素会被限定为元组中每个类型的联合类型
+
+``` typescript
+let tom: [string, number];
+tom = ['Tom', 25];
+// true
+tom.push('male');
+// Argument of type 'true' is not assignable to parameter of type 'string | number'.
+tom.push(true);
 ```
 
 ### 使用alias时保持一致
