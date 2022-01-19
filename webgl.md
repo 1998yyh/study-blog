@@ -187,7 +187,48 @@ gl.drawArrays(primitiveType, _offset, _count)
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
 
-### 裁剪坐标系
+## 线
+
+线与三角唯一不同的是，调用 `gl.drawArrays` 的时候第一个参数不同。
+
+```javascript
+gl.drawArrays(gl.LINE_STRIP, 0, 3)
+```
+
+或者我们不使用数组buffer去缓存数据, 采用直接传递的方式。
+
+做一个带交互的demo，点击连线。
+
+```javascript
+// 创建过程省略
+// 创建Buffer 作为存储点击 坐标
+const buffer = gl.createBuffer();
+const points = [0, 0];
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+// 让a_Position 从缓冲区里读数据
+gl.enableVertexAttribArray(a_Position)
+gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0)
+
+canvas.addEventListener('mouseup', e => {
+    //设置清空画布颜色为黑色。
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    //用上一步设置的清空画布颜色清空画布。
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    points.push(e.x)
+    points.push(e.y);
+    gl.drawArray(gl.LINE_STRIP, 0, points / 2)
+})
+```
+
+效果如下：
+
+<iframe height="300" style="width: 100%; " scrolling="no" title="Untitled" src="https://codepen.io/WFFMLOVE/embed/NWamJbB?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/WFFMLOVE/pen/NWamJbB">
+  Untitled</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
+
+## 裁剪坐标系
 
 在裁剪坐标系中，中心点是坐标原点，正值在右方，上方。
 
@@ -211,8 +252,6 @@ gl.drawArrays(primitiveType, _offset, _count)
   }
 </script>
 ```
-
-## 线
 
 ## 工作原理
 
@@ -256,6 +295,98 @@ gl.BindBuffer(gl.ARRAY_BUFFER, someBuffer);
 gl.vertexAttribPointer(positionLocation, numComponents, typeOfData, normalizeFlag, strideToNextPieceOfData, offsetIntoBuffer);
 ```
 
+## 图像处理
+
+在WebGL中绘制图片需要使用纹理。和WebGL渲染时需要裁剪空间坐标相似， 渲染纹理时需要纹理坐标，而不是像素坐标。无论纹理是什么尺寸，纹理坐标范围始终是 0.0 到 1.0 。
+
+我们只用画一个矩形（其实是两个三角形），所以需要告诉WebGL矩形中每个顶点对应的纹理坐标。 
+
+我们将使用一种特殊的叫做'varying'的变量将纹理坐标从顶点着色器传到片断着色器，它叫做“可变量” 是因为它的值有很多个，WebGL会用顶点着色器中值的进行插值(例如我们设置渐变，只需要设置几个点的颜色就能自动生成一整条渐变带，这几个点之间的颜色都是通过内置插值得到的)，然后传给对应像素执行的片断着色器。
+
+``` html
+<script type="shader-source" id="vertexShader">
+  precision mediump float;
+  attribute vec2 a_texCoord;
+  varying vec2 v_texCoord;
+  void main(){
+    // 将纹理坐标传给片断着色器
+    // GPU会在点之间进行插值
+    v_texCoord = a_texCoord;
+  }
+
+</script>
+<script type="shader-source" id="fragmentShader">
+  precision mediump float;
+  // 纹理
+  varying vec2 v_texCoord;
+  // 从顶点着色器传入的纹理坐标
+  uniform sampler2D u_image;
+  void main(){
+    // 在纹理上寻找对应颜色值
+    gl_FragColor = texture2D(u_image,v_texCoord);
+  }
+</script>
+```
+
+``` javascript
+/** ... 前面省略  */
+const positions = [
+  30, 30, 0, 0, //V0
+  30, 300, 0, 1, //V1
+  300, 300, 1, 1, //V2
+  30, 30, 0, 0, //V0
+  300, 300, 1, 1, //V2
+  300, 30, 1, 0 //V3
+]
+//创建buffer
+const buffer = gl.createBuffer()
+// 
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+
+const a_Position = gl.getAttribLocation(program, 'a_Position')
+const a_Canvas_Size = gl.getAttribLocation(program, 'a_Canvas_Size')
+const a_texCoord = gl.getAttribLocation(program, 'a_texCoord')
+const u_image = gl.getUniformLocation(program, 'u_image')
+gl.vertexAttrib2f(a_Canvas_Size, canvas.width, canvas.height)
+
+gl.enableVertexAttribArray(a_Position)
+gl.enableVertexAttribArray(a_texCoord)
+gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 16, 0);
+gl.vertexAttribPointer(a_texCoord, 2, gl.FLOAT, false, 16, 8);
+
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+
+const img = new Image;
+// 如果不做处理 纹理 所 需要的图片是 2的倍数的
+img.src = '../images/wl.png'
+img.onload = function () {
+  const texture = gl.createTexture();
+  // gl.TEXTURE_2D 当前纹理绑定点
+  gl.bindTexture(gl.TEXTURE_2D, texture)
+  // target	纹理类型，TEXTURE_2D代表2维纹理
+  // level	表示多级分辨率的纹理图像的级数，若只有一种分辨率，则 level 设为 0，通常我们使用一种分辨率
+  // components	纹理通道数，通常我们使用 RGBA 和 RGB 两种通道
+  // width	纹理宽度，可省略
+  // height	纹理高度，可省略
+  // border	边框，通常设置为0，可省略
+  // format	纹理映射的格式
+  // type	纹理映射的数据类型
+  // pixels	纹理图像的数据
+  // 为片元着色器传递图片数据
+  // 我们将 img 变量指向的图片数据传递给片元着色器，取对应纹理坐标的 RGBA 四个通道值，赋给片元，每个通道的数据格式是无符号单字节整数。
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img)
+  // gl.LINEAR 代表采用最靠近象素中心的四个象素的加权平均值，这种效果表现的更加平滑自然。 gl.NEAREST 采用最靠近象素中心的纹素，该算法可能使图像走样，但是执行效率高，不需要额外的计算。
+  gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.uniform1i(u_image, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  if (positions.length <= 0) {
+      return;
+  }
+  gl.drawArrays(gl.TRIANGLES, 0, positions.length / 4);
+}
+```
+
 ## 变量
 
 * attribute 变量 : 只能在`顶点着色器`(vertexShader)中定义。
@@ -292,7 +423,7 @@ gl.vertexAttribPointer(positionLocation, numComponents, typeOfData, normalizeFla
 * vertexAttrib2f：给 attribute 变量传递两个浮点数。
 * uniform4f：给uniform变量传递四个浮点数。
 
-### 三角形图元分类
+  ### 三角形图元分类
 
 * gl. TRIANGLES：基本三角形。
 * gl. TRIANGLE_STRIP：三角带。
