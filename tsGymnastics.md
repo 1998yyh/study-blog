@@ -388,6 +388,44 @@ type createArray<Len, Ele, Arr extends Ele[] = []> = Arr['length'] extends Len ?
 type createArrayRes = createArray<3, 'a'>
 ```
 
+### 映射 与 重映射
+js中的数组，对象等聚合多个元素的类型在ts中对应的是索引类型。
+
+映射类型就是用于构造新的索引类型的。
+
+比如`Record`
+
+``` typescript
+type Record<P extends number | string | symbol, T> = { [K in P]: T }
+```
+
+在构造新的索引类型的过程中，还可以做加上一些修饰符。
+
+``` typescript
+type ReadOnly<T> = { readonly [K in keyof T]: T[K] };
+```
+
+内置的 Record、ReadOnly、Required、Partial 等类型都是映射类型。
+
+
+*** 重映射就是在索引后加一个 as 语句，表明索引转换成什么，它可以用来对索引类型做过滤和转换。 ***
+
+比如过滤出类型为 string 的索引：
+``` typescript
+type FilterString<T> = {
+  [Key in keyof T as T[Key] extends string ? Key: never]: T[Key];
+}
+```
+还可以对索引做转换，比如修改索引名，加上 get：
+
+``` typescript
+type Getters<T extends Record<any, any>> = {
+  // Capitalize 是将首字母转化成大写
+  [Key in keyof T as `get${Capitalize<Key & string>}`]: T[Key];
+}
+```
+
+
 ### infer
 
 表示 在 extends 条件语句中待推断的类型变量。

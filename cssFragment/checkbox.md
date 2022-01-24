@@ -2,14 +2,17 @@
 
 ## 要点
 
-* 使用<svg>元素创建检查<symbol>并通过<use>元素插入以创建可重用的 SVG 图标。
-* 创建一个.checkbox-container并使用 flexbox 为复选框创建适当的布局。
-* 隐藏<input>元素并使用label与之关联的元素来显示复选框和提供的文本。
-* 用于stroke-dashoffset在状态更改时为复选符号设置动画。
+* 使用`<svg>`元素创建检查`<symbol>`并通过`<use>`元素插入以创建可重用的 SVG 图标。
+* 创建一个`.checkbox-container`并使用 `flexbox` 为复选框创建适当的布局。
+* 隐藏`<input>`元素并使用label与之关联的元素来显示复选框和提供的文本。
+* 用于`stroke-dashoffset`在状态更改时为复选符号设置动画。
 * 通过 CSS 动画使用transform: scale(0.9)来创建缩放动画效果。
 
 
 ## 代码
+有几个属性介绍一下
+* `stroke-linecap`:在开放子路径被设置描边的情况下，用于开放自路径两端的形状
+* `stroke-linejoin`:指明路径的转角处使用的形状或者绘制的基础形状。
 
 ``` html
 <svg class="checkbox-symbol">
@@ -17,7 +20,6 @@
     <polyline
       points="1.5 6 4.5 9 10.5 1"
       stroke-linecap="round"
-      
       stroke-linejoin="round"
       stroke-width="2"
     ></polyline>
@@ -148,3 +150,12 @@
   }
 }
 ```
+
+
+## 最终效果
+
+<iframe height="300" style="width: 100%;" scrolling="no" title="checkbox" src="https://codepen.io/WFFMLOVE/embed/NWaVWWY?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/WFFMLOVE/pen/NWaVWWY">
+  checkbox</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
