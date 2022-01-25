@@ -1,23 +1,26 @@
 <!-- docs/_sidebar.md -->
 
-+ [Home](/)
-+ [svg](svg.md)
-+ [svgAni](svgAni.md)
-+ [svgFilter](svgFilter.md)
-+ [粘连效果](gooey-effect.md)
-+ [使文本更粗](makeFontBolder.md)
-+ [渐变文字](渐变文字.md)
-+ [CSS变量相关](variable&property.md)
-+ [Nodejs-path模块](nodejs-path.md)
-+ [Nodejs-stream模块](nodejs-stream.md)
 + [WebGl](webgl.md)
 + [内存相关](内存相关.md)
 + [GLSL](GLSL.md)
 + [TS"体操"](tsGymnastics.md)
 + [大文件转MD5造成阻塞](largeFile2md5BlockDom.md)
-+ [阴影](boxShadow.md)
-+ [CSS Fragment](cssFragment/index.md)
++ **Css skills**
+  - [粘连效果](cssSkills/gooey-effect.md)
+  - [使文本更粗](cssSkills/makeFontBolder.md)
+  - [渐变文字](cssSkills/渐变文字.md)
+  - [CSS变量相关](cssSkills/variable&property.md)
+  - [阴影](cssSkills/boxShadow.md)
++ **Nodejs**
+  - [stream](nodejs/nodejs-stream.md)
+  - [buffer](nodejs/nodejs-buffer.md)
+  - [path](nodejs/nodejs-path.md)
++ **Svg**
+  - [基础属性](svg/svg.md)
+  - [svgAni](svg/svgAni.md)
+  - [svgFilter](svg/svgFilter.md)
++ **CSS Fragment**
   - [带动画复选框](cssFragment/checkbox.md)
   - [粘性标题](cssFragment/stickyTitle.md)
-+ [NestJS 相关]()
++ **NestJS 相关**
   - [JWT](JWT.md)
