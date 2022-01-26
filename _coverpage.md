@@ -10,4 +10,4 @@
 
 
 [GitHub](https://github.com/1998yyh/study-blog)
-[Get Started](#)
+[Get Started](README.md)
