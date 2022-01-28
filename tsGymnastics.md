@@ -194,6 +194,20 @@ type MyDog = LookUp<Cat | Dog, 'dog'> // expected to be `Dog`
 type LookUp<U,T> = U extends Record<'type',T> ? {[K in keyof U]:U[K]} : never;
 ```
 
+*** 2022-01-27 新增 *** 
+
+还是分发这个特性,看一个例子,要求是实现将联合类型转换为包含联合排列的数组的排列类型。
+
+``` javascript
+// 例子
+type perm = Permutation<'A' | 'B' | 'C'>; // ['A', 'B', 'C'] | ['A', 'C', 'B'] | ['B', 'A', 'C'] | ['B', 'C', 'A'] | ['C', 'A', 'B'] | ['C', 'B', 'A']
+
+//  首先我们很容易写出来的是 T extends U ? [T , ...Permutation<>] : [];这段 利用extends的分发特性，可以将 A|B|C => [A,...Permutation<B|C>],[B,...Permutation[A|C]],...[C,...Permutation[A|B]] 这样
+//  很明显这是一个递归，所以我们要查看一下递归的退出条件是否正确，当Exclude<C,C>的时候 结果是 never; never extends never 又是 true 又开始循环。
+//  所以我们需要一个正确的递归退出条件 就在前面加了 [T] extends [never] , 之所以加[]是为了限制它的分发特性。
+type Permutation<T, U = T> = [T] extends [never] ? [] : T extends U ? [T, ...Permutation<Exclude<U, T>>] : [] 
+```
+
 
 
 ### 可赋值 (协变, 逆变, 双向协变)

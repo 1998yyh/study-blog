@@ -1,6 +1,7 @@
 <!-- docs/_sidebar.md -->
 
 + [WebGl](webgl.md)
++ [Texture](Texture.md)
 + [内存相关](内存相关.md)
 + [GLSL](GLSL.md)
 
