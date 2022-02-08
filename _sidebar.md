@@ -1,7 +1,7 @@
 <!-- docs/_sidebar.md -->
 
 + [WebGl](webgl.md)
-+ [Texture](Texture.md)
++ [Texture](texture.md)
 + [内存相关](内存相关.md)
 + [GLSL](GLSL.md)
 
@@ -27,4 +27,5 @@
 + **杂项**
   - [Jest踩坑](jest.md)
   - [TS"体操"](tsGymnastics.md)
+  - [TS驼峰下划线类型转化](tsHump2Underline.md)
   - [大文件转MD5造成阻塞](largeFile2md5BlockDom.md)
