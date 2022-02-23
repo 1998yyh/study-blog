@@ -1,4 +1,10 @@
-# 测试框架
+# UI自动化测试
+
+一种方式是 在`Selenium` 这样的系统中运行您的测试，它可以自动化浏览器,
+
+另一种是 `JSDOM` 一个像浏览器一样解析和交互组合 HTML 的库。好处是它实际上不是浏览器。相反，它像浏览器一样实现 Web 标准。
+你可以给它一些 HTML，它会解析那个 HTML。然后，您可以使用普通的 JavaScript DOM API检查或修改内存中的 HTML 。
+
 
 testing-library官方首页地址:<https://testing-library.com/>
 <!-- mock-service-worker:<https://www.vuemastery.com/blog/mock-service-worker-api-mocking-for-vuejs-development-testing/> -->
@@ -133,6 +139,8 @@ expect(await findByText(container, 'Invalid Password')).toBeVisible()
 
 我们可以直接通过 `innerHTML = <style>...</style>` 这样的操作添加样式; 
 
+**注**:在某个版本测试的时(具体哪个忘了),碰到会忽略style和script标签，如果遇到这种情况，可手动创建标签然后appendChild
+
 ```javascript
 const html = `
 <style>
@@ -192,6 +200,11 @@ expect(getComputedStyle(dom).width).toEqual('500px')
 #### 最外层的宽高
 
 只有 `window` 可以获取到宽高 `768 1024` , `body` , `documentElement` 等均是0
+
+
+#### 其他
+
+另外 我尝试使用了`@testing-library/user-event`的hover去模拟css的`:hover` 去校验属性值变化或者DOM显示隐藏，很遗憾他是不生效的。
 
 ### VUE测试
 
@@ -314,6 +327,8 @@ expect(Number(final.innerHTML)).toEqual(product.price * 2)
 ```
 
 #### 触发事件
+
+`render`会返回一个`emitted`,可以通过它去获取到事件触发的情况,调用它返回的是一个`Record<string,number>`的结构，可以获取到它的事件名和调用次数
 
 ```javascript
 const {
