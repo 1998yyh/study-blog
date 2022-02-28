@@ -53,4 +53,18 @@ type AdditionMap = [
 ];
 ```
 
-这样我们
+这样我们获取十以内的加法就可以算出来了，用类型可以表示为:
+``` typescript
+type DigitRangeMap = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+type Dight = DigitRangeMap[number]
+
+type AddOneDigit<First extends Dight,Second extends Dight> = Add
+
+type ToDigit<T extends string> = T extends keyof DigitRangeMap ? DigitRangeMap[T] : never;
+type Carry<T extends number, R extends number[] = []> =
+  T extends keyof RoundMap
+  ? [1, [RoundMap[T], ...R]]
+  : [0, [T, ...R]];
+  
+```

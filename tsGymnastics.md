@@ -526,6 +526,49 @@ type TTuple1 = [string, number];
 type Res1 = TTuple1[number]; // string | number
 ```
 
+### union 转 tuple
+<!-- 
+  ! 2.28新增 很难
+ -->
+
+思路：使用递归算法，每次从联合类型中 取出一个类型 ，将该类型插入到已有的元组类型中，直至联合类型所有类型被取完。
+1. 如何取出联合类型中的一个元素，虽然联合类型从行为上来可以视为集合，但是TS本身没有给联合类型提供从集合中取值的操作。
+
+``` typescript
+type Union = 'a' | 'b' | 'c'
+type E = Union[1] // Property '1' does not exist on type 'Union'
+```
+
+所以要从联合类型中取出某个位置的元素,只能另辟蹊径:
+
++ 重载的函数再使用infer 进行推断时，重载的部分会取最后一个声明。
+  ``` typescript
+  type FF = {
+    ():"a";
+    ():"b";
+  }
+
+  type G = returnType<FF> // 'b'
+  ```
+
++ 将相同形状的函数类型进行交叉，等价于函数重载
+
+  ``` typescript
+  type FF = {
+    ():"a";
+    ():"b";
+  }
+  type B = (() => 'b') & (() => 'a') // 函数的交叉
+  type G = FF extends B ? true : false // true
+
+  ```
+
+  基于这两个特性，可以从联合类型中取出一个元素，只不过这个元素只能是最后一个:
+
+
+
+
+
 ### 增强型Pick
 
 我们知道pick是通过key提取的，如果我们想提指定值的类型呢
