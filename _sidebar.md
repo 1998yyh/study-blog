@@ -1,5 +1,6 @@
 <!-- docs/_sidebar.md -->
-+ [内存相关](内存相关.md)
++ [web api crypto](web-crypto-api.md)
++ [web api Notifications](web-notifications-api.md)
 + **webgl**
   - [WebGl](webgl/webgl.md)
   - [GLSL](webgl/GLSL.md)
@@ -31,3 +32,4 @@
   - [TS驼峰下划线类型转化](tsHump2Underline.md)
   - [大文件转MD5造成阻塞](largeFile2md5BlockDom.md)
   - [测试](unit-test.md)
+  - [内存相关](内存相关.md)
