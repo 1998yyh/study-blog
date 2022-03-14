@@ -1,6 +1,5 @@
 <!-- docs/_sidebar.md -->
 + [web api crypto](web-crypto-api.md)
-+ [web api Notifications](web-notifications-api.md)
 + **webgl**
   - [WebGl](webgl/webgl.md)
   - [GLSL](webgl/GLSL.md)
@@ -12,6 +11,7 @@
   - [渐变文字](cssSkills/渐变文字.md)
   - [CSS变量相关](cssSkills/variable&property.md)
   - [阴影](cssSkills/boxShadow.md)
+  - [遮罩](cssSkills/mask.md)
 + **Nodejs**
   - [stream](nodejs/nodejs-stream.md)
   - [buffer](nodejs/nodejs-buffer.md)
