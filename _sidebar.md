@@ -4,7 +4,6 @@
   - [WebGl](webgl/webgl.md)
   - [GLSL](webgl/GLSL.md)
   - [Texture](webgl/texture.md)
-
 + **Css skills**
   - [粘连效果](cssSkills/gooey-effect.md)
   - [使文本更粗](cssSkills/makeFontBolder.md)
@@ -12,6 +11,7 @@
   - [CSS变量相关](cssSkills/variable&property.md)
   - [阴影](cssSkills/boxShadow.md)
   - [遮罩](cssSkills/mask.md)
+  - [滚动相关](cssSkills/滚动相关css属性.md)
 + **Nodejs**
   - [stream](nodejs/nodejs-stream.md)
   - [buffer](nodejs/nodejs-buffer.md)
@@ -25,11 +25,13 @@
   - [粘性标题](cssFragment/stickyTitle.md)
 + **NestJS 相关**
   - [JWT](JWT.md)
++ **Typescript**
+  - [TS类型编程基础](typescript/tsBaseGym.md)
+  - [TS"体操"](typescript/tsGymnastics.md)
+  - [TS驼峰下划线类型转化](typescript/tsHump2Underline.md)
+  - [IOC in typescript](typescript/typescriptIOC.md)
 + **杂项**
   - [Jest踩坑](jest.md)
-  - [TS类型编程基础](tsBaseGym.md)
-  - [TS"体操"](tsGymnastics.md)
-  - [TS驼峰下划线类型转化](tsHump2Underline.md)
-  - [大文件转MD5造成阻塞](largeFile2md5BlockDom.md)
   - [测试](unit-test.md)
   - [内存相关](内存相关.md)
+  - [大文件转MD5造成阻塞](typescript/largeFile2md5BlockDom.md)

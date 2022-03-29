@@ -1,12 +1,10 @@
 <!-- _coverpage.md -->
 
-# docsify <small>3.5</small>
+# FREE
 
 > 一个神奇的文档网站生成器。
 
-- 简单、轻便 (压缩后 ~21kB)
-- 无需生成 html 文件
-- 众多主题
+- 路漫漫其修远兮,吾将上下而求索
 
 
 [GitHub](https://github.com/1998yyh/study-blog)
