@@ -12,6 +12,7 @@
   - [渐变文字](cssSkills/渐变文字.md)
   - [CSS变量相关](cssSkills/variable&property.md)
   - [阴影](cssSkills/boxShadow.md)
+  - [光](cssSkills/light.md)
   - [遮罩](cssSkills/mask.md)
   - [滚动相关](cssSkills/滚动相关css属性.md)
 + **Nodejs**
