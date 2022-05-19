@@ -39,6 +39,27 @@ document.all === null // -> false
 document.all == null // -> true
 ```
 
+### 变来变去的arguments 
+
+``` js
+function foo(a,b,c){
+  arguments[0] = 42;
+  console.log(a)
+}
+
+function bar(a,b,c = 3){
+  arguments[0] = 42;
+  console.log(a)
+}
+
+foo(1,2);
+bar(1,2);
+```
+
+第一个结果是42 
+第二个结果是1
+
+在参数有默认值的情况下,方法体检测到ES6语法,会自动进入严格模式,而严格模式的arguments数组是参数数组的拷贝,而非引用,所以修改arguments[0]并不会修改原参数,所以bar打印 1;
 
 ### 访问全局const?
 
@@ -170,6 +191,7 @@ Math.max() 返回给定的一组数字中的最大值。
 如果有任一参数不能被转换为数值，则结果为 NaN。
 
 Math.max() 则反之。
+
 
 
 

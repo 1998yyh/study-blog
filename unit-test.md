@@ -567,3 +567,15 @@ Object.defineProperty(window, "matchMedia", {
 });
 ```
 
+
+
+
+
+## Docker-android
+
+
+https://shanxiaoi.top/post/2021/04/16/_3be9e3ad-b118-4559-b73d-dd12493f5759/
+
+https://github.com/appium/appium-docker-android
+
+

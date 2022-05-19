@@ -68,7 +68,9 @@ div {
 
 从网上找了一张耀斑的图片
 
-![https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fe682e9e990e40292bf0cc041e721cb6ed580b3f850a8-jdT51p_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999, 10000&q=a80&n=0&g=0n&fmt=auto?sec=1653129874&t=ac80a6e1cb68e9efee842160430e06f9](https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fe682e9e990e40292bf0cc041e721cb6ed580b3f850a8-jdT51p_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999, 10000&q=a80&n=0&g=0n&fmt=auto?sec=1653129874&t=ac80a6e1cb68e9efee842160430e06f9)
+![https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fe682e9e990e40292bf0cc041e721cb6ed580b3f850a8-jdT51p_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999](https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fe682e9e990e40292bf0cc041e721cb6ed580b3f850a8-jdT51p_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999)
+
+
 
 我们可以采取一些选择，一个非常细长的椭圆渐变将是最简单的方法。使用渐变的一个问题就是，过于对称，在真实的耀斑不应该是这样完全对称的，所以我们也做一个非对称的耀斑。
 
@@ -131,10 +133,9 @@ div {
 }
 ```
 
-
 下面是全部合成后的效果
 
-<iframe height="500" style="width: 100%;" scrolling="no" title="light-demo01" src="https://codepen.io/WFFMLOVE/embed/vYpPpPv?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="500" style="width: 100%; " scrolling="no" title="light-demo01" src="https://codepen.io/WFFMLOVE/embed/vYpPpPv?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/WFFMLOVE/pen/vYpPpPv">
   light-demo01</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
   on <a href="https://codepen.io">CodePen</a>.
@@ -142,15 +143,72 @@ div {
 
 > https://css-tricks.com/add-a-css-lens-flare-to-photos-for-a-bright-touch/
 
-
 ## 树影光斑
 
 我们先看效果
 
-<iframe height="500" style="width: 100%;" scrolling="no" title="light-demo02" src="https://codepen.io/WFFMLOVE/embed/WNdmdVr?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="500" style="width: 100%; " scrolling="no" title="light-demo02" src="https://codepen.io/WFFMLOVE/embed/WNdmdVr?default-tab=&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/WFFMLOVE/pen/WNdmdVr">
   light-demo02</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
 
 是不是很像光透过树叶的缝隙，照射到墙上的样子，那么这个是如何实现的呢？
+
+首先我们需要通过 `filter: brightness(1.7)` 滤镜来实现背景的强光照射。
+
+```css
+.wrap {
+    background: center / cover no-repeat url("https://images.unsplash.com/photo-1556993683-f5dcad606dd0?w=500&q=60");
+    width: 400px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 20px;
+    filter: brightness(1.7);
+    cursor: default;
+}
+```
+
+![](https://pic.imgdb.cn/item/62625af2239250f7c5745e29.png)
+![](https://pic.imgdb.cn/item/62625af2239250f7c5745e18.png)
+
+然后我们寻找几个图标字体 🍃 🍂 对其做处理  我们将其背景颜色设置为半透明黑色，调整大小使其覆盖到整个父容器，文本设置为透明色，只保留了图形，并且可以透光。
+
+但是由于给背景增加了增亮滤镜，如果文本设置了透明色的话，光线会过于强。那么有没有什么办法可以使颜色变暗呢？
+
+这里介绍一个混合模式: 正片叠底。
+
+正片就是常见的幻灯片，正片叠底的效果是把基色和混合色的图像都制作成幻灯片，把它们叠放在一起，拿起来凑到亮处看的效果，由于两张幻灯片都有内容，所以重叠起来的图像比单张图片要暗。
+
+```css
+div {
+    color: transparent;
+    background-color: rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0 20px beige;
+    mix-blend-mode: multiply;
+    font: bolder 320pt/320pt monospace;
+    margin-top: -100px;
+    user-select: none;
+}
+```
+
+![](https://pic.imgdb.cn/item/626261e4239250f7c586de70.png)
+
+最后我们加点细节，增加个动画，就完成上面的效果了。
+
+
+## 线条光影
+
+![](https://pic.imgdb.cn/item/626263ca239250f7c58c5864.gif)
+
+类似这样的光影或者霓虹灯效果很常见，原理很简单
+
+``` css
+.rect{
+  filter: drop-shadow(0 0 2px #f24983) drop-shadow(0 0 4px #f24983) drop-shadow(0 0 8px #f24983) drop-shadow(0 0 12px #f24983);
+}
+```
+
+通过设置多重阴影滤镜,实现这种效果。
+
+同时我们可以改变路径
