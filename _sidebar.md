@@ -38,3 +38,5 @@
   - [测试](unit-test.md)
   - [内存相关](内存相关.md)
   - [大文件转MD5造成阻塞](typescript/largeFile2md5BlockDom.md)
+  - [http缓存](./base/http缓存.md)
+  - [http2.0](./base/http2.0.md)
