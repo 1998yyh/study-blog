@@ -26,6 +26,7 @@ IOC 是一种设计模式, 主要是用来解决软件工程里的耦合问题�
 }
 ```
 
+
 为了获取书籍， `BookService` 持有一个 `DataSource` (数据库)，为了实例化一个 `dataSource` 不得不实例化一个 `config` 。
 
 然后还有一个 `UserService` 获取用户
