@@ -1,13 +1,10 @@
 <!-- docs/_sidebar.md -->
-+ [ES2021](./ecmascript/es2021.md)
-+ [web api crypto](web-crypto-api.md)
-+ [docker](docker.md)
-+ ['阴间'JS](阴间js.md)
-+ ['性能优化'](性能优化.md)
-+ **webgl**
-  - [WebGl](webgl/webgl.md)
-  - [GLSL](webgl/GLSL.md)
-  - [Texture](webgl/texture.md)
++ **js base**
+  - [ES2021](./ecmascript/es2021.md)
+  - [toLocalString](./base/toLocalString.md)
+  - [阴间JS](./base/阴间js.md)
+  - [decorator](./base/decorator.md)
+  - [web api crypto](./base/web-crypto-api.md)
 + **Css skills**
   - [粘连效果](cssSkills/gooey-effect.md)
   - [使文本更粗](cssSkills/makeFontBolder.md)
@@ -28,17 +25,21 @@
 + **CSS Fragment**
   - [带动画复选框](cssFragment/checkbox.md)
   - [粘性标题](cssFragment/stickyTitle.md)
-+ **NestJS 相关**
-  - [JWT](JWT.md)
 + **Typescript**
   - [TS类型编程基础](typescript/tsBaseGym.md)
   - [TS"体操"](typescript/tsGymnastics.md)
   - [TS驼峰下划线类型转化](typescript/tsHump2Underline.md)
   - [IOC in typescript](typescript/typescriptIOC.md)
++ **webgl**
+  - [WebGl](webgl/webgl.md)
+  - [GLSL](webgl/GLSL.md)
+  - [Texture](webgl/texture.md)
 + **杂项**
-  - [Jest踩坑](jest.md)
-  - [测试](unit-test.md)
-  - [内存相关](内存相关.md)
-  - [大文件转MD5造成阻塞](typescript/largeFile2md5BlockDom.md)
+  - [Jest踩坑](./test/jest.md)
+  - [测试](./test/unit-test.md)
+  - [内存相关](./base/内存相关.md)
+  - [大文件转MD5造成阻塞](others/largeFile2md5BlockDom.md)
   - [http缓存](./base/http缓存.md)
   - [http2.0](./base/http2.0.md)
+  - [docker](./others/docker.md)
+  - [性能优化](./base/性能优化.md)
