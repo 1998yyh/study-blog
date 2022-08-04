@@ -150,6 +150,15 @@ if (obj.name) {
 }
 ```
 
+### 重载 Object.keys
+
+```TS
+interface ObjectConstructor{
+  keys<T = object>(o:T):(keyof T)
+}
+```
+
+
 ### extends 
 
 如果用于简单的条件判断，则是直接判断前面的类型是否可分配给后面的类型
