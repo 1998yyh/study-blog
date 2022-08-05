@@ -25,6 +25,7 @@
 + **CSS Fragment**
   - [带动画复选框](cssFragment/checkbox.md)
   - [粘性标题](cssFragment/stickyTitle.md)
+  - [双层渐变进度条](cssFragment/gradientProgress.md)
 + **Typescript**
   - [TS类型编程基础](typescript/tsBaseGym.md)
   - [TS"体操"](typescript/tsGymnastics.md)
