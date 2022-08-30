@@ -5,6 +5,8 @@
   - [阴间JS](./base/阴间js.md)
   - [decorator](./base/decorator.md)
   - [web api crypto](./base/web-crypto-api.md)
+  - [正则(一)](./base/regex-base.md)
+  - [正则(二)](./base/regex-position.md)
 + **Css skills**
   - [粘连效果](cssSkills/gooey-effect.md)
   - [使文本更粗](cssSkills/makeFontBolder.md)
