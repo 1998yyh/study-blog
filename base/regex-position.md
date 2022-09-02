@@ -20,13 +20,13 @@
 比如我们把字符串的开头和结尾用 "#" 替换(位置可以替换成字符的!); 
 
 ```JS
-var result = "hello".replace(/^|$/g, '#');
+const  result = "hello".replace(/^|$/g, '#');
 ```
 
 当有多行匹配模式的时候, 二者会匹配该行的
 
 ```JS
-var result = "I\nlove\njavascript".replace(/^|$/gm, '#');
+const  result = "I\nlove\njavascript".replace(/^|$/gm, '#');
 console.log(result);
 
 /*
@@ -43,7 +43,7 @@ console.log(result);
 比如: 
 
 ```JS
-var result = "[JS] Lesson_01.mp4".replace(/\b/g, '#');
+const  result = "[JS] Lesson_01.mp4".replace(/\b/g, '#');
 console.log(result);
 // => "[#JS#] #Lesson_01#.#mp4#"
 ```
@@ -58,7 +58,7 @@ console.log(result);
 `\B` 就是 `\b` 的反面的意思，非单词边界。例如在字符串中所有位置中，扣掉 `\b` ，剩下的都是 `\B` 的。
 
 ```JS
-var result = "[JS] Lesson_01.mp4".replace(/\B/g, '#');
+const  result = "[JS] Lesson_01.mp4".replace(/\B/g, '#');
 console.log(result);
 // => "#[J#S]# L#e#s#s#o#n#_#0#1.m#p#4"
 ```
@@ -68,7 +68,7 @@ console.log(result);
 (?=p)，其中 p 是一个子模式，即 p 前面的位置，或者说，该位置后面的字符要匹配 p。
 
 ```JS
-var result = "hello".replace(/(?=l)/g, '#');
+const  result = "hello".replace(/(?=l)/g, '#');
 console.log(result);
 // => "he#l#lo"
 ```
@@ -76,11 +76,10 @@ console.log(result);
 而 (?!p) 就是 (?=p) 的反面意思，比如:
 
 ```JS
-var result = "hello".replace(/(?!l)/g, '#');
+const  result = "hello".replace(/(?!l)/g, '#');
 console.log(result);
 // => "#h#ell#o#"
 ```
-
 
 ### *补充* (?<=pattern) (?<!pattern)
 
@@ -88,18 +87,16 @@ console.log(result);
 
 代表字符串中的一个位置，紧接该位置之前的字符序列能够匹配pattern。
 
-比如`regex represents regular expression`这个字符串,有四个单词,我们只想匹配单词内部的re,不想匹配单词开头的re
+比如 `regex represents regular expression` 这个字符串, 有四个单词, 我们只想匹配单词内部的re, 不想匹配单词开头的re
 
-我们就可以使用`/(?<=\w)re/` 表示在re之前应该是个单词字符
+我们就可以使用 `/(?<=\w)re/` 表示在re之前应该是个单词字符
 
 ```JS
-const result = 'regex represents regular expression'.replace(/(?<=\w)re/g,'name')
+const result = 'regex represents regular expression'.replace(/(?<=\w)re/g, 'name')
 // 'regex repnamesents regular expnamession'
 ```
 
 之所以叫后行断言，是因为正则表达式引擎在匹配字符串和表达式时，是从前向后逐个扫描字符串中的字符，并判断是否与表达式符合，当在表达式中遇到该断言时，正则表达式引擎需要往字符串前端检测已扫描过的字符，相对于扫描方向是向后的。
-
-
 
 (?<!pattern) 负向后行断言
 
@@ -108,54 +105,52 @@ const result = 'regex represents regular expression'.replace(/(?<=\w)re/g,'name'
 例如对”regex represents regular expression”这个字符串，要想匹配单词开头的re，可以用”(?<!\w)re”。
 
 ```JS
-const result = 'regex represents regular expression'.replace(/(?<=\w)re/g,'name')
+const result = 'regex represents regular expression'.replace(/(?<=\w)re/g, 'name')
 // 'namegex namepresents namegular expression'
 ```
 
-当然也可以通过单词边界来判断`\bre`, 结果一样
-
+当然也可以通过单词边界来判断 `\bre` , 结果一样
 
 ## 位置的特性
 
-对于位置的理解,我们可以理解成空字符“”. 
+对于位置的理解, 我们可以理解成空字符“”. 
 
 ### cssFragment
 
 #### 1. 写一个正则不匹配任何东西
 
-`/.^/` 这个正则只要求一个字符, 但是该字符的后面是开头,所以这样的字符串是不存在的
+`/.^/` 这个正则只要求一个字符, 但是该字符的后面是开头, 所以这样的字符串是不存在的
 
 #### 2. 数字的千分位分割符表示法
 
-``` js
-const result = '12345678'.replace(/(?=\d{3}$)/g,',')
+```js
+const result = '12345678'.replace(/(?=\d{3}$)/g, ',')
 ```
+
 `(?=p)` 表示该位置后面的字符要匹配 p。
 
 `(?=\d{3})` 表示我们要匹配的位置 后面是三个数字
 
-所以我们通过设置 $ 结尾,这样我们就匹配到了倒数三个数字前面的位置
+所以我们通过设置 $ 结尾, 这样我们就匹配到了倒数三个数字前面的位置
 
-然后我们需要弄出所有的逗号,逗号出现的位置要求三个数字至少出现一次,所以可以使用量词`+`
-
+然后我们需要弄出所有的逗号, 逗号出现的位置要求三个数字至少出现一次, 所以可以使用量词 `+`
 
 ```js
-var result = "12345678".replace(/(?=(\d{3})+$)/g, ',')
+const  result = "12345678".replace(/(?=(\d{3})+$)/g, ',')
 console.log(result);
 // => "12,345,678"
 
 // 写完正则后，要多验证几个案例，此时我们会发现问题:
-var result = "123456789".replace(/(?=(\d{3})+$)/g, ',')
+const  result = "123456789".replace(/(?=(\d{3})+$)/g, ',')
 console.log(result);
 // => ",123,456,789"
-
 ```
 
 因为上面的正则，仅仅表示把从结尾向前数，一但是 3 的倍数，就把其前面的位置替换成逗号。因此才会出 现这个问题。
 
 所以我们要匹配出位置后面不是开头的所有满足上面条件的位置
 
-``` js
+```js
 const regex = /(?!^)(?=(\d{3})+$)/g;
 
 const result = "123456789".replace(regex, ',');
@@ -165,7 +160,7 @@ console.log(result);
 
 我们也可以通过修改句末符 来改变形式 比如
 
-``` js
+```js
 // 如果要把 "12345678 123456789" 替换成 "12,345,678 123,456,789"。
 
 const regex = /(?!\b)(?=(\d{3})+\b)/g
@@ -177,33 +172,107 @@ console.log(result);
 
 最后的正则就可以表示为 `/\B(?=(\d{3})+\b)/g`
 
-
 #### 3. 格式化
 
 千分符表示法一个常见的应用就是货币格式化。
 
-比如将`1880`转化为`$1,880.00`
+比如将 `1880` 转化为 `$1,880.00`
 
-
-``` js
+```js
 const num = 1800;
-const result = num.toFixed(2).replace(/\B(?=(\d{3})+\b)/g,',').replace(/^/,'$')
+const result = num.toFixed(2).replace(/\B(?=(\d{3})+\b)/g, ',').replace(/^/, '$')
 ```
-
 
 #### 4. 验证码问题
 
 密码长度 6-12 位，由数字、小写字符和大写字母组成，但必须至少包括 2 种字符。
 此题，如果写成多个正则来判断，比较容易。但要写成一个正则就比较困难。
 
-如果我们不考虑包括两种字符,很容易可以写出
-``` js
-var regex = /^[0-9A-Za-z]{6,12}$/;
+如果我们不考虑包括两种字符, 很容易可以写出
+
+```js
+const  regex = /^[0-9A-Za-z]{6,12}$/;
 ```
 
-如果我们要判断包含数字,需要通过`(?=.*[0-9])`来做
-如果同时包含字母和数字,则需要通过 `(?=.*[0-9])(?=.*[a-z])` 来做。
+如果我们要判断包含数字, 需要通过 `(?=.*[0-9])` 来做
+如果同时包含字母和数字, 则需要通过 `(?=.*[0-9])(?=.*[a-z])` 来做。
 
 ```JS
 const regex = /(?=.*[0-9])(?=.*[a-z])^[0-9A-Za-z]{6,12}$/;
+```
+
+对于这个正则，我们只需要弄明白 (?=.*[0-9])^ 即可。
+
+表示开头前面还有个位置(当然也是开头，即同一个位置，想想之前的空字符类比)。
+
+(?=.*[0-9]) 表示该位置后面的字符匹配 .*[0-9]，即，有任何多个任意字符，后面再跟个数字。
+翻译成大白话，就是接下来的字符，必须包含个数字。
+
+#### 5. 另一种解法
+
+“至少包含两种字符”的意思就是说，不能全部都是数字，也不能全部都是小写字母，也不能全部都是大写
+字母。
+
+不能全是数字对应的正则就是
+
+```js
+const  reg = /(?!^[0-9]{6,12}$)^[0-9a-zA-Z]{6,12}$/
+```
+
+三种都不能的话
+
+```js
+const  reg = /(?!^[0-9]{6,12}$)(?!^[a-z]{6,12}$)(?!^[A-Z]{6,12}$)^[0-9a-zA-Z]{6,12}$/
+```
+
+## 正则表达式括号的作用
+
+### 分组与分支
+
+分组: 比如匹配重复出现的ab `/(ab)+/`
+
+分支: 比如匹配如下字符串
+
+```js
+I love JavaScript
+I love Regular Expression
+
+const  reg = /I love (JavaScript|Regular Expression)/
+```
+
+#### 分组引用
+
+以日期为例. 假设格式是 yyyy-mm-dd 
+
+我们就可以利用分组提取出年月日
+
+```js
+const  regex = /(\d{4})-(\d{2})-(\d{2})/;
+const  string = "2017-06-12";
+console.log(string.match(regex));
+// 我们也可以使用正则实例对象的exec方法:
+console.log(regex.exec(string));
+```
+
+同时, 也可以使用构造函数的全局属性 `$1` 至 `$9` 来获取
+
+```js
+const  regex = /(\d{4})-(\d{2})-(\d{2})/;
+const  string = "2017-06-12";
+regex.test(string); // 正则操作即可，例如 //regex.exec(string); //string.match(regex);
+console.log(RegExp.$1); // "2017"
+console.log(RegExp.$2); // "06"
+console.log(RegExp.$3); // "12"
+```
+
+
+#### 替换 
+
+比如我们想把 `yyyy-mm-dd` 替换成 `mm/dd/yyyy` 
+
+我们可以利用replace中的 第二个参数
+
+``` js
+
+
 ```
