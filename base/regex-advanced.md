@@ -26,7 +26,6 @@ console.log(string.match(regex));
 ```
 
 当我们加了惰性量词的时候. 表示尽可能少的匹配. 比如匹配如下字符串
-
 ```js
 var string = "12345";
 var regex = /(\d{1,3}?)(\d{1,3})/;
@@ -302,3 +301,148 @@ var string = "2017-06-26";
 var today = new Date( string.replace(/-/g, "/") ); console.log( today );
 ```
 
+
+### API注意点
+
+用于正则操作的方法共有6个,字符串实例 `4` 个 ,正则实例子 `2` 个
+
+
+#### search match 参数问题
+
+search 和 match，会把字符串转换为正则的
+
+``` js
+const string = '2017.06.27';
+console.log(string.search("."))
+// 0
+// 应该使用
+console.log(string.search("\\."));
+console.log(string.search(/\./));
+// 4 
+
+// match
+console.log(string.match('.'));
+// => ["2", index: 0, input: "2017.06.27"]
+console.log(string.match("\\."));
+console.log(string.match(/\./));
+```
+
+
+#### match 返回结果的格式问题 
+
+与正则对象是否有修饰符 g 有关
+
+``` js
+const string = '2017.06.27'
+const regex1 = /\b(\d+)\b/;
+const regex2 = /\b(\d+)\b/g;
+console.log( string.match(regex1) );
+console.log( string.match(regex2) );
+// => ["2017", "2017", index: 0, input: "2017.06.27"]
+// => ["2017", "06", "27"]
+```
+
+#### exec 比 match 更强大
+
+``` js
+const string = "2017.06.27";
+const regex2 = /\b(\d+)\b/g;
+console.log( regex2.exec(string) );
+console.log( regex2.lastIndex);
+console.log( regex2.exec(string) );
+console.log( regex2.lastIndex);
+console.log( regex2.exec(string) );
+console.log( regex2.lastIndex);
+console.log( regex2.exec(string) );
+console.log( regex2.lastIndex);
+// => ["2017", "2017", index: 0, input: "2017.06.27"]
+// => 4
+// => ["06", "06", index: 5, input: "2017.06.27"]
+// => 7
+// => ["27", "27", index: 8, input: "2017.06.27"]
+// => 10
+// => null
+// => 0
+
+```
+
+与 while 配合
+
+```js
+const string = "2017.06.27";
+const regex2 = /\b(\d+)\b/g;
+const result;
+while ( result = regex2.exec(string) ) {
+    console.log( result, regex2.lastIndex );
+}
+// => ["2017", "2017", index: 0, input: "2017.06.27"] 4
+// => ["06", "06", index: 5, input: "2017.06.27"] 7
+// => ["27", "27", index: 8, input: "2017.06.27"] 10
+```
+
+
+#### 修饰符 g，对 exex 和 test 的影响
+
+正则实例的 lastIndex 属性，表示尝试匹配时，从字符串的 lastIndex 位开始去匹配。
+
+字符串的四个方法,每次匹配的时候都是从 0 开始的,即 lastIndex 属性始终不变.
+
+而正则实例的两个方法 exec、test 当正则是全局匹配时 , 每次完成匹配都会修改 lastIndex 
+
+``` js
+var regex = /a/g;
+console.log( regex.test("a"), regex.lastIndex );
+console.log( regex.test("aba"), regex.lastIndex );
+console.log( regex.test("ababc"), regex.lastIndex );
+// => true 1
+// => true 3
+// => false 0
+```
+
+如果没有 g 都是从第 0 个字符处开始匹配
+
+
+#### replace
+
+|  属性  | 描述  |
+|  :----:  | ----  |
+| $1,$2,...,$99   | 匹配第 1-99 个 分组里捕获的文本 |
+| $&  | 匹配到的子串文本 |
+| $`  | 匹配到的子串的左边文本 |
+| $'  | 匹配到的子串的右边文本 |
+| $&  | 美元符号 |
+
+
+例如，把 "2,3,5"，变成 "5=2+3":
+
+```js
+var result = "2,3,5".replace(/(\d+),(\d+),(\d+)/, "$3=$1+$2");
+console.log(result);
+// => "5=2+3"
+```
+
+又例如，把 "2,3,5"，变成 "222,333,555":
+
+``` js
+var result = "2,3,5".replace(/(\d+)/g, "$&$&$&");
+console.log(result);
+// => "222,333,555"
+```
+
+再例如，把 "2+3=5"，变成 "2+3=2+3=5=5":
+
+```js
+var result = "2+3=5".replace(/=/, "$&$`$&$'$&");
+console.log(result);
+// => "2+3=2+3=5=5"
+```
+
+第二个参数是函数时,我们需要注意 
+``` js
+"1234 2345 3456".replace(/(\d)\d{2}(\d)/g, function (match, $1, $2, index, input) {
+    console.log([match, $1, $2, index, input]);
+});
+// => ["1234", "1", "4", 0, "1234 2345 3456"]
+// => ["2345", "2", "5", 5, "1234 2345 3456"]
+// => ["3456", "3", "6", 10, "1234 2345 3456"]
+```
