@@ -34,3 +34,13 @@ Example: the regex /./g will return 3 when run against the string abc.
 
 `^(?:(?:0{0,2}\d|0?\d{2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(?:0{0,2}\d|0?\d{2}|1\d{2}|2[0-4]\d|25[0-5])$`
 
+
+## 8. Strip all HTML tags from a string. HTML tags are enclosed in < and >. The regex will be applied on a line-by-line basis, meaning partial tags will need to be handled by the regex. Don''t worry about opening or closing tags; we just want to get rid of them all.Note: This task is meant to be a learning exercise, and not necessarily the best way to parse HTML.
+
+`(<\/?.*?>|<\/?.*>?|[^<]*?>)`
+
+## 9.Verify that a given e-mail address is valid.We all know how complex emails are, but despite this, let''s give it a try and see what we can come up with.You could start by trying to match contact@regex101.com (denoted as <local-part>@<domain>.<top-level-domain>).
+
+`` 
+
+## 
