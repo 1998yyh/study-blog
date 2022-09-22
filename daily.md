@@ -339,3 +339,33 @@ const withDoubles = arr.map((num) => [num, num * 2]).flat();
 console.log(withDoubles); // [1, 2, 2, 4, 3, 6, 4, 8]
 
 ```
+
+
+## 9.19 
+
+监听全局input的value改变 我们可以去做一些埋点上报之类的操作
+
+通过object.defineProperty 去重写value的set方法
+
+```js
+var desc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')
+Object.defineProperty(HTMLInputElement.prototype, 'value', {
+    ...desc,
+    set(v) {
+        console.log('set',v);
+        desc.set.call(this, v)
+    }
+})
+```
+
+
+## 9.21 
+
+重绘 <https://juejin.cn/post/6844903779700047885>
+
+
+编辑页面 可以使用 
+
+document.body.contentEditable = true
+
+document.designMode = 'on' 来直接编辑
