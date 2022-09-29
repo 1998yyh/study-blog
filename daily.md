@@ -369,3 +369,12 @@ Object.defineProperty(HTMLInputElement.prototype, 'value', {
 document.body.contentEditable = true
 
 document.designMode = 'on' 来直接编辑
+
+
+## 9.23
+
+自定义谷歌浏览器:
+
+允许跨域模式:`open -n /Applications/Google\ Chrome.app/ --args --disable-web-security --disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure  --user-data-dir=/Users/hao.yang/Desktop/ChromeUserData  --disable-site-isolation-trials`
+
+调试模式:`/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir=debugChrome`
