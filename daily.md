@@ -468,3 +468,55 @@ part CSS伪元素表示阴影树中具有匹配part属性的任何元素。
 
 11. Native CSS nesting, excluding pre- or post-processors.
 
+
+## 10.10 为什么访问defineStore创建的state不需要.value
+
+state的数据都会被处理为ref，那访问ref自然是需要.value，但是我们日常使用pinia似乎从来没有.value。
+
+``` js
+let name = ref("张三");
+let age = ref("24");
+
+const info = reactive({ name, age });
+
+console.log(info.name); // 张三
+console.log(info.age); // 24
+
+```
+
+简单来说就是reactive中嵌套ref的时候，修改reactive内的值不需要.value
+
+
+## 10.11 
+
+flex grid 两个游戏
+https://cssgridgarden.com/
+http://flexboxfroggy.com/
+
+
+1. indexOf 不可以检查NaN 
+    includes 可以·检查nan
+
+    https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Equality_comparisons_and_sameness
+
+
+## 10.12
+
+1. symbol 的 取值
+``` js
+const a = Symbol(1)
+const b = {};
+b[a] = 1;
+
+// 如何获取 Symbol
+
+Object.getOwnPropertySymbols
+
+Reflect.ownKeys()
+```
+
+
+## 10.13
+webpack适⽤于⼤型复杂的前端站点构建: webpack有强⼤的loader和插件⽣态,打包后的⽂件实际上就是⼀个⽴即执⾏函数，这个⽴即执⾏函数接收⼀个参数，这个参数是模块对象，键为各个模块的路径，值为模块内容。⽴即执行函数内部则处理模块之间的引⽤，执⾏模块等,这种情况更适合⽂件依赖复杂的应⽤开发.
+rollup适⽤于基础库的打包，如vue、d3等: Rollup 就是将各个模块打包进⼀个⽂件中，并且通过 Tree-shaking 来删除⽆⽤的代码,可以最⼤程度上降低代码体积,但是rollup没有webpack如此多的的如代码分割、按需加载等⾼级功能，其更聚焦于库的打包，因此更适合库的开发.
+parcel适⽤于简单的实验性项⽬: 他可以满⾜低⻔槛的快速看到效果,但是⽣态差、报错信息不够全⾯都是他的硬 伤，除了⼀些玩具项⽬或者实验项⽬不建议使⽤
