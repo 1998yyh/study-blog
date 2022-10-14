@@ -56,13 +56,13 @@ cssBrowserSupport([
 
 ### 渐变字体解决方案
 
-1. -webkit-background-clip:text
+01. -webkit-background-clip:text
 
-2. https://www.zhangxinxu.com/wordpress/2022/07/css-font-palette/
+02. https://www.zhangxinxu.com/wordpress/2022/07/css-font-palette/
 
 ## 8.18
 
-1. 数组转化
+01. 数组转化
 
 ```js
 const arr = [{
@@ -99,7 +99,7 @@ const result6 = JSON.stringify(arr).match(/\d+/g);
 console.log(result1, result2, result3, result4, result5, result6)
 ```
 
-2. catastrophic backtracking
+02. catastrophic backtracking
 
 这个会导致内存溢出 卡死
 
@@ -107,7 +107,7 @@ console.log(result1, result2, result3, result4, result5, result6)
 /(a*a*|a*)+b/.test('aaaaaaaaaaaaaa')
 ```
 
-3. Evil.js
+03. Evil.js
 
 什么？黑心996公司要让你提桶跑路了？
 
@@ -131,7 +131,7 @@ Math.random() 的取值范围改为0到1.1
 
 github地址:https://github.com/wheatup/evil.js
 
-3. TODO
+03. TODO
 
 https://developer.chrome.com/blog/has-with-cq-m105/?utm_source=CSS-Weekly&utm_campaign=Issue-516&utm_medium=email
 
@@ -281,18 +281,18 @@ transform 作用于 元素 可以接受多个转换函数
 
 ## 9.9 
 
-1. excel 转化成 json 
+01. excel 转化成 json 
 
 https://stackoverflow.com/questions/28782074/excel-to-json-javascript-code
 
-2. Geolocation api
+02. Geolocation api
 
 JavaScript Geolocation API 提供对与用户设备关联的地理位置数据的访问。这可以使用 GPS、WIFI、IP 地理位置等来确定。
 
 getCurrentPosition：返回设备的当前位置。
 watchPosition：当设备位置改变时自动调用的处理函数。
 
-3. 在node环境的eventloop 中 宏任务的执行顺序是 (setTimeout setInterval ) => IO => setImmediate
+03. 在node环境的eventloop 中 宏任务的执行顺序是 (setTimeout setInterval ) => IO => setImmediate
 
 在每个调用的任务之后，都会运行一个“子循环”，它由两个阶段组成：
 
@@ -330,7 +330,7 @@ setImmediate 2
  */
 ```
 
-4. 冷门数组方法
+04. 冷门数组方法
 
 * copyWithin(target, start, end)
 
@@ -396,12 +396,11 @@ document.designMode = 'on' 来直接编辑
 
 调试模式: `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir=debugChrome`
 
-
 ## 10.8 2022 javascript 
 
 https://almanac.httparchive.org/en/2022/javascript
 
-1. async defer module 
+01. async defer module 
 
 HTML < script > 元素上的异步和延迟属性控制脚本加载的行为。
 
@@ -409,56 +408,54 @@ HTML < script > 元素上的异步和延迟属性控制脚本加载的行为。
 
 `Defer` 属性将延迟脚本的执行，直到 DOM 准备就绪，因此应该防止这些脚本阻塞解析和呈现。
 
-
 Type = “ module”和 nommodule 属性特定于发送到浏览器的 ES6模块的存在(或不存在)。
 
 当使用 type = “ module”时，浏览器期望这些脚本的内容包含 ES6模块，并将这些脚本的执行推迟到默认构造 DOM 之后。
 
 相反的 nomomodule 属性向浏览器指示当前脚本不使用 ES6模块。
 
-
-2. preload prefetch modulepreload
+02. preload prefetch modulepreload
 
 预取仍然完全是推测性的，以至于浏览器在某些情况下可能会忽略它。这意味着一些页面可能会因为请求未使用的资源而浪费数据。
 
 不同的浏览器有不同的规则 , 看情况使用
 
-
 ## 10.8 2022 css 问卷调查
 
-1. border-block border-inline 
+01. border-block border-inline 
 
-2. content-visibility https://github.com/chokcoco/iCSS/issues/185
+02. content-visibility https://github.com/chokcoco/iCSS/issues/185
 
-3. @media (400px < width < 1000px)
+03. @media (400px < width < 1000px)
 
-4. color-mix()
+04. color-mix()
 
-5. color()
+05. color()
 
-6. lch() lab() oklch() oklab() 
+06. lch() lab() oklch() oklab() 
 
-``` css
+```css
 .foo {
-  --color: #4488dd;
-  background-color: hsl(from var(--color) h s calc(l * 1.2))
+    --color: #4488dd;
+    background-color: hsl(from var(--color) h s calc(l * 1.2))
 }
 
 .gradient {
-  background: linear-gradient(in oklab, hsl(80 90% 50%), red);
+    background: linear-gradient(in oklab, hsl(80 90% 50%), red);
 }
 ```
 
-7. overscroll-behavior  父子元素都有滚动 如果子元素滚动到头 是否继续继续滚动父元素
+07. overscroll-behavior  父子元素都有滚动 如果子元素滚动到头 是否继续继续滚动父元素
 
-8. touch-action 触屏的缩放 平移等操作
+08. touch-action 触屏的缩放 平移等操作
 
-9. font-display 
-``` css
+09. font-display 
+
+```css
 @font-face {
-  font-family: ExampleFont;
-  src: url(/path/to/fonts/examplefont.woff) format("woff");
-  font-display: fallback;
+    font-family: ExampleFont;
+    src: url(/path/to/fonts/examplefont.woff) format("woff");
+    font-display: fallback;
 }
 ```
 
@@ -468,24 +465,24 @@ part CSS伪元素表示阴影树中具有匹配part属性的任何元素。
 
 11. Native CSS nesting, excluding pre- or post-processors.
 
-
 ## 10.10 为什么访问defineStore创建的state不需要.value
 
 state的数据都会被处理为ref，那访问ref自然是需要.value，但是我们日常使用pinia似乎从来没有.value。
 
-``` js
+```js
 let name = ref("张三");
 let age = ref("24");
 
-const info = reactive({ name, age });
+const info = reactive({
+    name,
+    age
+});
 
 console.log(info.name); // 张三
 console.log(info.age); // 24
-
 ```
 
 简单来说就是reactive中嵌套ref的时候，修改reactive内的值不需要.value
-
 
 ## 10.11 
 
@@ -493,17 +490,16 @@ flex grid 两个游戏
 https://cssgridgarden.com/
 http://flexboxfroggy.com/
 
-
-1. indexOf 不可以检查NaN 
+01. indexOf 不可以检查NaN 
     includes 可以·检查nan
 
     https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Equality_comparisons_and_sameness
 
-
 ## 10.12
 
-1. symbol 的 取值
-``` js
+01. symbol 的 取值
+
+```js
 const a = Symbol(1)
 const b = {};
 b[a] = 1;
@@ -515,8 +511,25 @@ Object.getOwnPropertySymbols
 Reflect.ownKeys()
 ```
 
-
 ## 10.13
-webpack适⽤于⼤型复杂的前端站点构建: webpack有强⼤的loader和插件⽣态,打包后的⽂件实际上就是⼀个⽴即执⾏函数，这个⽴即执⾏函数接收⼀个参数，这个参数是模块对象，键为各个模块的路径，值为模块内容。⽴即执行函数内部则处理模块之间的引⽤，执⾏模块等,这种情况更适合⽂件依赖复杂的应⽤开发.
-rollup适⽤于基础库的打包，如vue、d3等: Rollup 就是将各个模块打包进⼀个⽂件中，并且通过 Tree-shaking 来删除⽆⽤的代码,可以最⼤程度上降低代码体积,但是rollup没有webpack如此多的的如代码分割、按需加载等⾼级功能，其更聚焦于库的打包，因此更适合库的开发.
-parcel适⽤于简单的实验性项⽬: 他可以满⾜低⻔槛的快速看到效果,但是⽣态差、报错信息不够全⾯都是他的硬 伤，除了⼀些玩具项⽬或者实验项⽬不建议使⽤
+
+webpack适⽤于⼤型复杂的前端站点构建: webpack有强⼤的loader和插件⽣态, 打包后的⽂件实际上就是⼀个⽴即执⾏函数，这个⽴即执⾏函数接收⼀个参数，这个参数是模块对象，键为各个模块的路径，值为模块内容。⽴即执行函数内部则处理模块之间的引⽤，执⾏模块等, 这种情况更适合⽂件依赖复杂的应⽤开发.
+rollup适⽤于基础库的打包，如vue、d3等: Rollup 就是将各个模块打包进⼀个⽂件中，并且通过 Tree-shaking 来删除⽆⽤的代码, 可以最⼤程度上降低代码体积, 但是rollup没有webpack如此多的的如代码分割、按需加载等⾼级功能，其更聚焦于库的打包，因此更适合库的开发.
+parcel适⽤于简单的实验性项⽬: 他可以满⾜低⻔槛的快速看到效果, 但是⽣态差、报错信息不够全⾯都是他的硬 伤，除了⼀些玩具项⽬或者实验项⽬不建议使⽤
+
+## 10.14
+
+
+这个是为了解决 indexdb无法存储非序列化的内容 比如vuethis
+```js
+{
+    checkDataCloneException: {
+        test: function test(e) {
+            var t = {}.toString.call(e).slice(8, -1);
+            if (["symbol", "function"].includes(_typeof$1(e)) || ["Arguments", "Module", "Error", "Promise", "WeakMap", "WeakSet", "Event", "MessageChannel"].includes(t) || e && "object" === _typeof$1(e) && "number" == typeof e.nodeType && "function" == typeof e.insertBefore)
+                throw new DOMException("The object cannot be cloned.", "DataCloneError");
+            return !1;
+        }
+    }
+}
+```
