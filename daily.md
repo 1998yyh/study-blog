@@ -533,3 +533,24 @@ parcel适⽤于简单的实验性项⽬: 他可以满⾜低⻔槛的快速看到
     }
 }
 ```
+
+
+## 10.18
+
+深拷贝 
+```js
+function cloneByMessageChannel(params) {
+  return new Promise((resolve) => {
+    const { port1, port2 } = new MessageChannel();
+    port2.onmessage = (ev) => resolve(ev.data);
+    port1.postMessage(params);
+  });
+}
+```
+
+
+
+1. 乱序问题
+
+https://juejin.cn/post/6844903503094087688
+
