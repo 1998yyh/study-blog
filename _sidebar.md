@@ -4,6 +4,7 @@
   - [toLocalString](./base/toLocalString.md)
   - [阴间JS](./base/阴间js.md)
   - [decorator](./base/decorator.md)
+  - [clipboard](./base/copy2Clipboard.md)
   - [web api crypto](./base/web-crypto-api.md)
   - [正则(一)](./base/regex-base.md)
   - [正则(二)](./base/regex-position.md)
