@@ -110,3 +110,51 @@ CSS属性允许作者为滚动条保留空间，防止在内容增长时不必�
 
 
 ## 滚动结合background vola
+
+
+
+## overscroll-behavior
+
+`overscroll-behavior`  的作用有两个
+
+1. 改变滚动边界行为
+
+2. 改变滚动链的行为
+### 触底反弹效果
+
+众所周知, macOS 的滚动容器中 默认有一个"触底反弹" 效果
+
+通常情况下,反弹效果可以反应出是否滚动到了边界, 让滚动体验更加丝滑,算是一种体验的提升, 但是如果页面总有fixed定位元素, 同样也会收到影响,在视觉不是那么美观,有没有办法阻止呢.
+
+
+``` css
+overscroll-behavior: auto; /* 默认 */
+overscroll-behavior: contain;
+overscroll-behavior: none;
+```
+
+其中,`contain`表示保留默认的边界行为,阻止夫容器滚动, none 表示两者都阻止
+
+比如给`body` 加上如下样式
+
+``` css
+body{
+  overscroll-behavior:none;
+}
+```
+
+这样就没有触底反弹效果了
+
+
+### 双指导航手势
+
+默认开启后,浏览器总用双指就可以快速前进或者后退
+
+尽管在触发时,浏览器会有相关的提示,但仍然避免不了被"误触" , 除了网站本身需要及时保存外,在重要的页面最好也阻止一下这样的行为
+
+``` css
+body{
+  overscroll-behavior:none;
+}
+```
+
