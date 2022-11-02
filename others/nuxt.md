@@ -44,7 +44,7 @@ npm init nuxt-app NuxtApp
 
 布拉巴:https://bulma.io/
 
-感觉和 原子化的css蕾丝
+感觉和 原子化的css 
 
 https://tailwindcss.com/
 
