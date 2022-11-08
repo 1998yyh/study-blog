@@ -174,7 +174,6 @@ p {
     --color-blue:yellow;
     --color-yellow:green;
     --color-green:blue;
-
   }
 </style>
 ```
