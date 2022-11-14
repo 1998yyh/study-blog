@@ -554,3 +554,192 @@ function cloneByMessageChannel(params) {
 
 https://juejin.cn/post/6844903503094087688
 
+
+## 11.11 
+
+1. 代码如下
+``` js
+
+
+const count = ref(0)
+
+const increment = () => count.value++
+
+onMounted(() => {
+  console.log(count.value)
+})
+
+watch(count, (val) => {
+  console.log(val)
+})
+
+watchEffect(() => {
+  console.log('watcheffect', count.value)
+})
+
+```
+
+生命周期时
+顺序是 watch(immdiate) > watchEffect> computed > onMounted
+当increment 调用时 
+顺序是 watch > watchEffect
+
+如果我们在watch中修改监听的值
+```js
+
+watch(count, (val) => {
+  console.log('watch', val)
+  count.value < 10 && count.value++
+}, {
+  immediate: true
+})
+```
+此时 watch拿到的是count.value++后的值 所以watch正常输出 watcheffect会隔着输出
+
+
+2. v-bind 绑定多个值
+
+``` js
+<button :disabled="isButtonDisabled">Button</button>
+// disabled 如果是个真值或者'' 元素会包含这个attribute
+
+// 动态绑定多个值
+<div v-bind="objectOfAttrs"></div>
+data(){
+    return {
+        objectOfAttrs:{
+            id: 'container',
+            class: 'wrapper'
+        }
+    }
+}
+```
+
+3. 访问全局对象
+
+ app.config.globalProperties上显式的添加他们,供所有vue表达式使用
+
+4. 完整的指令语法
+
+v-on:submit.prevent = 'onsubmit';
+
+5. 有状态方法处理
+
+有些情况下,我们可能需要动态的创建一个方法函数,比如创建一个防抖函数
+``` js
+import { debounce } from 'lodash-es'
+
+export default {
+  methods: {
+    // 使用 Lodash 的防抖函数
+    click: debounce(function () {
+      // ... 对点击的响应 ...
+    }, 500)
+  }
+}
+```
+
+但是对于被重用的组件来说,是会有问题的,因为这个预置防抖的函数是 有状态的：它在运行时维护着一个内部状态。如果多个组件实例都共享这同一个预置防抖的函数，那么它们之间将会互相影响。
+
+要保持每个组件实例的防抖函数都彼此独立，我们可以改为在 created 生命周期钩子中创建这个预置防抖的函数：
+
+```js
+export default {
+  created() {
+    // 每个实例都有了自己的预置防抖的处理函数
+    this.debouncedClick = _.debounce(this.click, 500)
+  },
+  unmounted() {
+    // 最好是在组件卸载时
+    // 清除掉防抖计时器
+    this.debouncedClick.cancel()
+  },
+  methods: {
+    click() {
+      // ... 对点击的响应 ...
+    }
+  }
+}
+
+```
+
+6. 绑定class 
+可以通过 {} 和 []绑定
+
+``` js
+// 确定有两个类名 只是控制显示不显示
+<div :class="{isActive:true,error:false}"></div>
+// 不确定类名是什么
+<div :class="[activeClass,errorClass]"></div>
+data(){
+    return {
+        activeClass:'active',
+        errorClass:'error'
+    }
+}
+// 也可以根据条件渲染处理 根据类名2选一 或者 控制显示不显示
+<div :class="[isActive?'activeClass':'']"></div>
+// 混用 两者都存在
+<div :class="[activeClass,{isActive:true}]"></div>
+
+```
+
+在组件上使用
+``` vue
+<!-- 子组件模板 -->
+<p class="foo bar">Hi!</p>
+<!-- 在使用组件时 -->
+<MyComponent class="baz boo" />
+<!-- 渲染的结果是 -->
+<p class="foo bar baz boo">Hi</p>
+<!-- 如果你的组件有多个根元素，你将需要指定哪个根元素来接收这个 class。你可以通过组件的 $attrs 属性来实现指定： -->
+<!-- MyComponent 模板使用 $attrs 时 -->
+<p :class="$attrs.class">Hi!</p>
+<span>This is a child component</span>
+```
+
+7. 列表渲染
+
+v-if 的 优先级比 v-for 更高 这就意味着,v-if的条件无法访问到v-for作用域内定义的变量别名
+
+``` vue
+<!-- 此时访问不到todo.isComplete -->
+<li v-for="todo in todos" v-if="!todo.isComplete">
+  {{ todo.name }}
+</li>
+<!-- 如果想要使用 -->
+<template v-for="todo in todos">
+  <li v-if="!todo.isComplete">
+    {{ todo.name }}
+  </li>
+</template>
+```
+
+
+展示过滤或排序后的结果,我们希望显示数组经过过滤或排序后的内容，而不实际变更或重置原始数据。在这种情况下，你可以创建返回已过滤或已排序数组的计算属性。
+
+8. 事件处理
+
+使用修饰符时需要注意调用顺序，因为相关代码是以相同的顺序生成的。
+
+因此使用 @click.prevent.self 会阻止元素及其子元素的所有点击事件的默认行为而 
+
+@click.self.prevent 则只会阻止对元素本身的点击事件的默认行为。
+
+* 系统按键修饰符
+
+.ctrl
+.alt
+.shift
+.meta
+
+
+* 鼠标按键修饰符
+
+.left
+.right
+.middle
+
+* .exact 修饰符
+
+.exact 修饰符允许控制触发一个事件所需的确定组合的系统按键修饰符。
