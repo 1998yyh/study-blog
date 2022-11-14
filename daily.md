@@ -743,3 +743,116 @@ v-if 的 优先级比 v-for 更高 这就意味着,v-if的条件无法访问到v
 * .exact 修饰符
 
 .exact 修饰符允许控制触发一个事件所需的确定组合的系统按键修饰符。
+
+
+
+## 11.14
+
+1. 表单输入绑定修饰符
+
+* .lazy
+
+默认情况下，v-model 会在每次 input 事件后更新数据 (IME 拼字阶段的状态例外)。你可以添加 lazy 修饰符来改为在每次 change 事件后更新数据
+
+change是在失焦事件之后才触发
+
+* .number 
+
+如果你想让用户输入自动转换为数字，你可以在 v-model 后添加 .number 修饰符来管理输入 (这个体验不如 手动去校验并给出提示)
+
+
+2. 侦听器
+
+watch 的第一个参数可以是不同形式的“数据源”：它可以是一个 ref (包括计算属性)、一个响应式对象、一个 getter 函数、或多个数据源组成的数组：
+
+``` ts
+const x = ref(0)
+const y = ref(0)
+
+// 单个 ref
+watch(x, (newX) => {
+  console.log(`x is ${newX}`)
+})
+
+// getter 函数
+watch(
+  () => x.value + y.value,
+  (sum) => {
+    console.log(`sum of x + y is: ${sum}`)
+  }
+)
+
+// 多个来源组成的数组
+watch([x, () => y.value], ([newX, newY]) => {
+  console.log(`x is ${newX} and y is ${newY}`)
+})
+```
+
+注意，你不能直接侦听响应式对象的属性值，例如:
+
+``` ts
+const obj = reactive({ count: 0 })
+
+// 错误，因为 watch() 得到的参数是一个 number
+watch(obj.count, (count) => {
+  console.log(`count is: ${count}`)
+})
+
+// 提供一个 getter 函数
+watch(
+  () => obj.count,
+  (count) => {
+    console.log(`count is: ${count}`)
+  }
+)
+```
+
+
+* watchEffect
+
+watch() 是懒执行的：仅当数据源变化时，才会执行回调。但在某些场景中，我们希望在创建侦听器时，立即执行一遍回调。举例来说，我们想请求一些初始数据，然后在相关状态更改时重新请求数据。
+
+
+watch vs. watchEffect
+
+
+watch 和 watchEffect 都能响应式地执行有副作用的回调。它们之间的主要区别是追踪响应式依赖的方式：
+
+watch 只追踪明确侦听的数据源。它不会追踪任何在回调中访问到的东西。另外，仅在数据源确实改变时才会触发回调。watch 会避免在发生副作用时追踪依赖，因此，我们能更加精确地控制回调函数的触发时机。
+
+watchEffect，则会在副作用发生期间追踪依赖。它会在同步执行过程中，自动追踪所有能访问到的响应式属性。这更方便，而且代码往往更简洁，但有时其响应性依赖关系会不那么明确。
+
+
+* 回调的触发时机
+
+当你更改了响应式状态，它可能会同时触发 Vue 组件更新和侦听器回调。
+
+
+默认情况下，用户创建的侦听器回调，都会在 Vue 组件更新之前被调用。这意味着你在侦听器回调中访问的 DOM 将是被 Vue 更新之前的状态。
+
+如果想在组件更新之后调用 你需要指明flush : post
+
+``` js
+watch(source,callback,{
+    flush:"post"
+})
+
+watchEffect(callback,{
+    flush:"post"
+})
+
+// 或者又个更方便的别名
+watchPostEffect(callback)
+```
+
+
+* 听器必须用同步语句创建：如果用异步回调创建一个侦听器，那么它不会绑定到当前组件上，你必须手动停止它，以防内存泄漏。如果需要等待一些异步数据，你可以使用条件式的侦听逻辑
+
+
+``` js
+const unWatchEffect = watchEffect(()=>{})
+
+// 移除
+unWatchEffect();
+```
+
