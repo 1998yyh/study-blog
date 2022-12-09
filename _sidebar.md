@@ -50,6 +50,7 @@
 + **杂项**
   - [Jest踩坑](./test/jest.md)
   - [测试](./test/unit-test.md)
+  - [调试](./debug.md)
   - [内存相关](./base/内存相关.md)
   - [大文件转MD5造成阻塞](others/largeFile2md5BlockDom.md)
   - [http缓存](./base/http缓存.md)

@@ -856,3 +856,97 @@ const unWatchEffect = watchEffect(()=>{})
 unWatchEffect();
 ```
 
+
+
+## 11.15
+
+1. js new Date 受时区影响
+
+如果客户更改了电脑的系统时区，会有什么情况呢?
+
+电脑系统时区是：(UTC-08:00)太平洋时间(美国和加拿大)
+电脑系统时间是：2018年3月8日 0:21:17
+打开浏览器console，输入 new Date() 输出是Thu Mar 08 2018 00:21:17 GMT-0800 (太平洋标准时间)。
+
+换个时区：(UTC+08:00)北京，重庆，香港特别行政区，乌鲁木齐
+系统时间不变，打开浏览器console,输入new Date()，输出是Thu Mar 08 2018 00:21:17 GMT+0800 (China Standard Time)
+可以看到，修改时区对new Date()方法并没有影响。但是一般电脑系统时区的改变，是跟着时间自动变化的。这时候new Date()出来的数据，就会变成Wed Mar 07 2018 16:21:17 GMT+0800 (China Standard Time)时区差16个小时，所以时间也是差16个小时。
+
+new Date()方法给出的时间是与客户机的系统时间有关的，而我们的目的是网页上显示的时间，是与服务器同步的。如果跟客户机同步的话，假设一个人在美国，一个人在中国，同时登陆一个网页应用，在网页上做操作，向服务器提交操作的一些结果，并且结果是带时间信息的，那么，以哪个为准呢？记录怎么保持一致性呢？如果跟服务器同步的话，就不会有这种问题了，每个人不管在什么地方，看到的时间总是服务器的时间。
+
+Date.prototype.getTimezoneOffset()返回当前时区的时区偏移。
+
+思路就是通过new Date().getTimezoneOffset()获取当前时区相对于0时区的偏移，然后将毫秒数转换为0时区的毫秒数。通过+偏移*1000*60来获取0时区的毫秒数。然后在new Date(0时区的毫秒数),这样展示的就是服务器的毫秒数。
+
+但是，经测试发现出现了一个问题，时区是有夏令时和冬令时的，在某个具体日期，可能就变成夏令时了，这时候会相差一个小时。
+但是使用new Date().getTimezoneOffset()这个方法是能获取到当前电脑时间是否是夏令时的偏移量的，但是new Date(转换后的时间)确没有考虑夏令时的问题。
+原有在于new Date(value)当传入value毫秒数的时候，是会根据value进行判断的，导致还是跟new Date()方法有个夏令时的一个小时的误差。所以当获取系统的时区的时候，使用new Date(服务器传的0时区的偏移量).getTimezoneOffset(),然后调用new Date(计算过的客户单事件毫秒数)，这两个步骤的时区偏移量是一致的。不会有差别。
+
+
+
+2. 单向数据流
+
+所有的 props 都遵循着单向绑定原则，props 因父组件的更新而变化，自然地将新的状态向下流往子组件，而不会逆向传递。这避免了子组件意外修改父组件的状态的情况，不然应用的数据流将很容易变得混乱而难以理解。
+
+另外，每次父组件更新后，所有的子组件中的 props 都会被更新到最新值，这意味着你不应该在子组件中去更改一个 prop。若你这么做了，Vue 会在控制台上向你抛出警告：
+
+``` js
+const props = defineProps(['foo'])
+
+// ❌ 警告！prop 是只读的！
+props.foo = 'bar'
+```
+
+
+3. 传递给props不能是一个导入的类型
+
+``` ts
+import { Props } from './other-file'
+
+// 不支持！
+defineProps<Props>()
+```
+
+这是因为 Vue 组件是单独编译的，编译器目前不会抓取导入的文件以分析源类型。我们计划在未来的版本中解决这个限制。
+
+4. props 默认值 
+
+我们通过类型声明的同时 , 失去了默认值的能力,可以通过withDefault 编译器宏来解决
+
+
+5. 禁用Attributes继承
+
+如果你不想要一个组件自动地继承attribute 你可以在组件选项中设置 inheritAttrs: false。
+
+如果你使用了 `<script setup>`，你需要一个额外的 `<script>` 块来书写这个选项声明
+
+最常见的需要禁用 attribute 继承的场景就是 attribute 需要应用在根节点以外的其他元素上。通过设置 inheritAttrs 选项为 false，你可以完全控制透传进来的 attribute 被如何使用。
+
+比如一个button组件,我们有一些样式需要套一个父容器才能实现,同时有些属性需要继承在button上
+
+```html
+<!-- 我们不希望将attr绑定在btn-wrapper 上  -->
+<div class="btn-wrapper">
+  <button class="btn" v-bind="$attrs">click me</button>
+</div>
+```
+
+多个根结点的 `Attributes` 没有自动透传行为, 如果$attrs没有被显示绑定, 将会抛出一个错误
+
+6. 作用域插槽使用jsx形式写
+
+``` js
+MyComponent({
+    default:(slotProps)=>{
+        return `${slotProps.text} ${slotProps.count}`
+    }
+})
+
+function MyComponent(slots){
+    const greetingMessage = 'hello';
+    // 对应的组件其实也是一个渲染函数 通过参数传递 达成作用域插槽的效果
+    return `<div>${
+        slots.default({text:greetingMessage,count:1})
+    }</div>`
+}
+```
