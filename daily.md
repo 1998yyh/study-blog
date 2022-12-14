@@ -950,3 +950,23 @@ function MyComponent(slots){
     }</div>`
 }
 ```
+
+
+
+## 12.14
+
+1. JSON.stringify() 会忽略 数组除元素的属性
+
+``` js
+const a = [];
+a.name = 1;
+
+// 此时a  [name:1];
+
+JSON.stringify(a) // []
+
+structuredClone(a) // [name:1]
+```
+
+所以 当我们深拷贝的时候 考虑一下 是否需要这么操作
+

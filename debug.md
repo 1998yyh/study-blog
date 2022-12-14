@@ -1,7 +1,5 @@
 # 调试
 
-调试就是把浏览器跑起来，访问目标网页，这时候会有一个 ws 的调试服务，我们用 frontend 的 ws 客户端连接上这个 ws 服务，就可以进行调试了。
-
 
 ## 移动端调试(usb)
 
@@ -34,7 +32,11 @@
 
 ### xweb内核
 
-1. 手机微信内点击http://debugxweb.qq.com/?inspector=true（只要跳转过微信首页就是开启了调试）
+1. 手机微信内点击http://debugxweb.qq.com/?inspector=true
+
+![](https://pic.imgdb.cn/item/63993e73b1fccdcd36b6bdc0.jpg)
+
+只要出现这个页面就算是开启调试了
 
 2. 微信内打开所需调试网址
 
@@ -117,11 +119,21 @@ Chrome DevTools 被设计成了和 Chrome 分离的架构，两者之间通过 W
 ![](https://pic.imgdb.cn/item/6392b293b1fccdcd363e354c.jpg)
 
 
+### ajax调试
+
+有时候我们调试接口的时候, 可能没有配置mock,或者发到了测试环境,但是后台还没完成,此时我们可以使用`Ajax Interceptor` 这个chrome 插件
+
+![](https://pic.imgdb.cn/item/6396f305b1fccdcd364e2346.jpg)
+
+根据url或者正则 来匹配请求 并修改其返回的内容.
+
+
+
 ## 代码调试 
 
-### 
+### console.log
 
-### 断点
+### 断点调试
 
 我们可以在控制台的Sources处进行断点调试
 
@@ -130,7 +142,41 @@ Chrome DevTools 被设计成了和 Chrome 分离的架构，两者之间通过 W
 可以控制代码的执行，可以看到每一步的调用栈和作用域的变量
 
 
+### LogPoint 
 
+console.log 用的多了容易污染代码 而且容易忘记删除 这样肯跟会造成其他人调试的不便
+
+所以推荐使用logPoint 进行输出
+
+![](https://pic.imgdb.cn/item/6397e9e4b1fccdcd36a67e28.jpg)
+
+![](https://pic.imgdb.cn/item/6397ec01b1fccdcd36aa5d84.jpg)
+
+
+### DOM断点
+
+
+
+![](https://pic.imgdb.cn/item/63981739b1fccdcd36f2af95.jpg)
+
+Subtree Modifications  每当修改选定节点的子元素时，断点将中断任何事件的执行。修改可以是子内容的删除、添加或更改。
+
+Node Removal 节点删除断点是在从 DOM 树中删除元素时触发的。
+
+Attribute Modifications  属性修改断点用于调试元素中属性的更改。它们在属性更改、添加或删除时被触发。
+
+这样可以通过调用栈找到对应的哪个方法修改了元素
+
+![](https://pic.imgdb.cn/item/639818c8b1fccdcd36f6884e.jpg)
+
+
+### Event Listener / Ajax
+
+![](https://pic.imgdb.cn/item/6398205bb1fccdcd36014ce3.jpg)
+
+![](https://pic.imgdb.cn/item/63982acdb1fccdcd3614c1ed.jpg)
+
+也可以帮助我们调试一些场景
 
 ###  VSCode Debug 
 
@@ -145,13 +191,6 @@ runtimeExecutable：切换调试用的浏览器，可以是 stable、canary 或�
 runtimeArgs：启动浏览器的时候传递的启动参数
 sourceMapPathOverrides：对 sourcemap 到的文件路径做一次映射，映射到 VSCode workspace 下的文件，这样调试的文件就可以修改了
 file：可以直接指定某个文件，然后启动调试
-
-
-
-
-
-
-
 
 ####  launch / attach
 
@@ -236,3 +275,126 @@ user data dir 是保存用户数据的地方，比如你的浏览记录、cookie
  --auto-open-devtools-for-tabs 默认调起chrome devtools
 
 --incognito 无痕模式
+
+
+
+
+#### vue
+
+以`@vue/cli`创建的项目为例
+
+```
+npm install @vue/cli -g
+vue create vue-demo
+```
+
+创建完之后把项目跑起来
+
+我们随便在某个地方打个断点会发现断点失效
+
+![](https://pic.imgdb.cn/item/63993732b1fccdcd36abdf81.jpg)
+
+
+先通过代码debugger的方式来断住,然后观察一下
+
+![](https://pic.imgdb.cn/item/63993792b1fccdcd36ac59d0.jpg)
+
+![](https://pic.imgdb.cn/item/639937aeb1fccdcd36ac7d80.jpg)
+
+文件的映射路径有问题,并且我们发现文件是带有hash的
+
+
+映射问题我们可以通过`sourceMapPathOverrides` 将`webpack://test-vue2-debug/src` 映射为我们代码的路径
+
+文件带有hash 是因为devtools 使用的是 `eval-cheap-module-source-map` 其文件是 `sourceURL=[module]` module的就会带着hash 所以我们需要修改 `devtools`
+
+![](https://pic.imgdb.cn/item/63993ce0b1fccdcd36b3c6de.jpg)
+
+
+再重启服务 就发现可以打上断点进行调试了
+
+#### node
+
+
+通常情况会使用 `node --inspect-brk ./index.js` 
+
+也可以使用vscode调试.
+
+配置如下
+```json
+{
+  // 使用 IntelliSense 了解相关属性。 
+  // 悬停以查看现有属性的描述。
+  // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/index.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "stopOnEntry": true, // 在第一行停下来
+      "type": "node",
+      "restart": {
+        "delay": 1000,
+        "maxAttempts": 3
+      }
+    }
+  ]
+}
+```
+
+
+
+### 调试vue源码
+
+我们在项目里下载的vue的包是不带sourcemap的,所以我们需要自己打包vue
+
+```js
+git clone https://github.com/vuejs/core vue3
+
+pnpm install // 安装依赖
+```
+
+此时去执行build 依然是没有sourcemap的
+
+![](https://pic.imgdb.cn/item/639848f5b1fccdcd3646bb8d.jpg)
+
+执行 export SOURCE_MAP=true 然后再跑 pnpm run build 这样构建出的就是带有sourceMap的了 将其复制到node_modules下
+
+按照下面配置launch.json
+``` json
+{
+  // 使用 IntelliSense 了解相关属性。 
+  // 悬停以查看现有属性的描述。
+  // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:8080",
+      "runtimeArgs": [
+        "--auto-open-devtools-for-tabs"
+      ],
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "meteor://💻app/*": "${workspaceFolder}/*",
+        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+        "webpack://?:*/*": "${workspaceFolder}/*"
+      }
+    }
+  ]
+}
+```
+
+比如我们想要看ref是怎么实现的 只需要在对应的行打上断点,启动vscode调试
+
+![](https://pic.imgdb.cn/item/63985196b1fccdcd3653fa70.jpg)
+
+![](https://pic.imgdb.cn/item/6398538bb1fccdcd365767f8.jpg)
+
+
