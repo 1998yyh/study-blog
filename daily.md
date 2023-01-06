@@ -1196,6 +1196,4 @@ const output = [...function*(input){
   }
 }(input)].reverse();
 
-
-
 ```
