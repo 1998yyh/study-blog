@@ -970,3 +970,232 @@ structuredClone(a) // [name:1]
 
 所以 当我们深拷贝的时候 考虑一下 是否需要这么操作
 
+
+## 12.16 
+
+1. ::view-transition-new ::view-transition-old 
+
+这个好像是从a.html 切换到b.html的时候增加的过度动画效果 具体demo在 `view-transitions-example` 下 需要使用最新版本的 金丝雀chrome
+
+2. 前端获取本地IP
+
+通过webrtc 获取
+
+```js
+//创建RTCPeerConnection接口
+let conn = new RTCPeerConnection({
+    iceServers: []
+})
+let noop = function () {}
+conn.onicecandidate = function (ice) {
+    console.log(ice.candidate.candidate)
+    if (ice.candidate) {
+    //使用正则获取ip
+    let ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
+    let ip_addr = ip_regex.exec(ice.candidate.candidate)[1];
+    console.log('ip_addr', ip_addr);
+    conn.onicecandidate = noop
+    }
+}
+//随便创建一个叫狗的通道(channel)
+conn.createDataChannel('dog')
+//创建一个SDP协议请求
+conn.createOffer(conn.setLocalDescription.bind(conn), noop)
+```
+
+
+## 12.20 
+
+1. css3 四个自适应关键字 fill-available max-content min-content fit-content;
+
+fill-available
+
+举例来说，页面中一个<div>元素，该<div>元素的width表现就是fill-available自动填满剩余的空间
+
+出现fill-available关键字值的价值在于，可以让元素的100%自动填充特性不仅仅在block水平元素上，也可以应用在其他元素 比如可以撑满垂直的剩余空间
+
+fit-content
+　　width:fit-content表示将元素宽度收缩为内容宽度
+
+
+
+
+
+## 12.26 
+
+1. 自动补 0 的操作 可以使用 padstart
+
+
+2. CSS属性值范围溢出边界渲染特性
+
+
+CSS这门语言有个很有意思的特性，就是CSS属性值超过正常的范围的时候，只要格式正确，也会渲染，而渲染的值就是合法边界值。
+
+``` css
+.example {
+  opacity: -2;    /* 解析为 0, 完全透明 */
+  opacity: -1;    /* 解析为 0, 完全透明 */
+  opacity: 2;     /* 解析为 1, 完全不透明 */
+  opacity: 100;   /* 解析为 1, 完全不透明 */
+}
+```
+
+
+3. 根据背景色自动切换黑白 计算背景色的深浅度(灰度) luma = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255 然后根据某个阀值 建议0.5~0.6
+
+具体地址 `https://www.zhangxinxu.com/wordpress/2018/11/css-background-color-font-auto-match/`
+
+核心代码 
+``` css
+:root {
+  /* 定义RGB变量 */
+  --red: 44;
+  --green: 135;
+  --blue: 255;
+  /* 文字颜色变色的临界值，建议0.5~0.6 */
+  --threshold: 0.5;
+  /* 深色边框出现的临界值，范围0~1，推荐0.8+*/
+  --border-threshold: 0.8;
+}
+
+.btn {
+  /* 按钮背景色就是基本背景色 */
+  background: rgb(var(--red), var(--green), var(--blue));
+
+  /** 
+   * 使用sRGB Luma方法计算灰度（可以看成亮度）
+   * 算法为：
+   * lightness = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255
+  */
+  --r: calc(var(--red) * 0.2126);
+  --g: calc(var(--green) * 0.7152);
+  --b: calc(var(--blue) * 0.0722);
+  --sum: calc(var(--r) + var(--g) + var(--b));
+  --lightness: calc(var(--sum) / 255);
+  
+  /* 设置颜色 */
+  color: hsl(0, 0%, calc((var(--lightness) - var(--threshold)) * -999999%));
+  
+  /* 确定边框透明度 */
+  --border-alpha: calc((var(--lightness) - var(--border-threshold)) * 100);
+  /* 设置边框相关样式 */
+  border: .2em solid;
+  border-color: rgba(calc(var(--red) - 50), calc(var(--green) - 50), calc(var(--blue) - 50), var(--border-alpha));
+}
+
+```
+
+
+
+4. 根据背景色自动切换黑白 使用滤镜实现
+
+``` html
+<div class="box">
+  <span class="txt">前端侦探</span>
+</div>
+
+<style>
+.box{
+  color: #ffeb3b;
+  background-color: currentColor;
+}
+
+.text{
+  filter: grayscale(1) contrast(999) 
+  /* invert(1) 翻转 */
+}
+
+</style>
+```
+
+
+## 12.29
+
+1. ios 微信内 h5页面 测试和预发环境 出现黑块  -webkit-tap-highlight-color 导致的
+
+
+## 1.4 
+
+1. 横屏竖屏切换
+
+```css
+// portrait 为判断为竖屏
+ 
+@media only screen and (orientation: portrait) and (max-width: 768px) {
+ 
+        // 需求代码
+ 
+}
+ 
+// landscape 为判断为横屏
+ 
+@media only screen and (orientation: landscape) and (max-height: 600px) {
+ 
+// 需求代码
+ 
+}
+```
+
+
+2. 0s 后执行某个操作 我们一般使用setTimeout来实现 但是其会受到函数执行等影响 其实执行的是不准确的 
+
+我们如果想严格的执行 0s 后操作的话 可以使用 postmessage
+
+```js
+// Only add setZeroTimeout to the window object, and hide everything
+// else in a closure.
+(function() {
+    var timeouts = [];
+    var messageName = "zero-timeout-message";
+
+    // Like setTimeout, but only takes a function argument.  There's
+    // no time argument (always zero) and no arguments (you have to
+    // use a closure).
+    function setZeroTimeout(fn) {
+        timeouts.push(fn);
+        window.postMessage(messageName, "*");
+    }
+
+    function handleMessage(event) {
+        if (event.source == window && event.data == messageName) {
+            event.stopPropagation();
+            if (timeouts.length > 0) {
+                var fn = timeouts.shift();
+                fn();
+            }
+        }
+    }
+
+    window.addEventListener("message", handleMessage, true);
+
+    // Add the one thing we want added to the window object.
+    window.setZeroTimeout = setZeroTimeout;
+})();
+```
+
+
+
+## 1.5 
+
+1. 腾讯文档 这种在线编辑 权限控制的有啥开源方案推荐嘛
+
+RBAC 权限模型~
+
+ https://juejin.cn/post/6844903905931821063
+
+
+2. 0xffffffff 转 [255,255,255,255]
+
+``` js
+const input = 0xffffffff;
+
+const output = [...function*(input){
+  while(input){
+    yield input & 0xff;
+    input >>> = 8;
+  }
+}(input)].reverse();
+
+
+
+```
