@@ -1197,3 +1197,120 @@ const output = [...function*(input){
 }(input)].reverse();
 
 ```
+
+
+## 1.9 
+背景卡片地址 : https://codepen.io/xboxyan/pen/gOxKyvx
+
+
+## 1.10 
+
+1. git删除分支
+
+删除当前分支以外的所有分支
+
+git branch | xargs git branch -d
+
+删除分支名包含的指定字符的分支
+
+git branch | grep 'dev' | xargs git branch -d
+
+
+grep 搜索过滤命令 使用正则表达式搜索文本 并把匹配到的打印出来
+
+xargs 参数传递命令 用于将标准输入作为命令的参数传给下一个命令
+
+
+## 1.11
+
+1. 图片的真实尺寸 
+
+<!-- 下面的是图片的真实尺寸 -->
+img.naturalHeight
+img.naturalWidth
+<!-- 下面的获取到的是css属性 而不是图片的真实属性 -->
+img.width
+img.height
+
+如果获取真实尺寸 还有可以通过new image()的宽高 来获取
+
+
+2. 移动端单屏解决方案  适配问题
+
+https://segmentfault.com/a/1190000042587022?utm_source=sf-similar-article
+
+
+3. git 下载慢的解决方案
+
+可以通过 --depth 1 来加速： 
+
+```js
+git clone --depth 1 https://xxxxxx
+```
+
+这样下载的代码仍然是完整的代码,只是少了历史commit
+
+4. 提示用户去更新页面
+
+https://juejin.cn/post/7185451392994115645
+
+
+## 1.12 
+
+渐变进度条 https://codepen.io/Chokcoco/pen/PoBmaqe?editors=0100
+
+https://codepen.io/xboxyan/pen/poZPKxj
+
+使用到的mask-compose技巧 https://github.com/chokcoco/iCSS/issues/189
+
+
+## 1.16
+
+1. css布局效果 元素宽度在范围内浮动 间隔固定 根据页面宽度调整每行展示的数量
+
+https://codepen.io/xboxyan/pen/JjByZVE
+
+1. 2022 state of js 看一些比较关注的数据
+
+![](https://pic.imgdb.cn/item/63c509d3be43e0d30eae09e0.jpg)
+
++ 构建工具
+  - webpack 仍然是使用率比较高的框架 但是受欢迎程度在削弱
+  - vite 整体上升趋势
+  - gulp 应该只有某些特殊情况下会使用它
+
++ 框架
+  - vue 在平均水平线左右 但是感觉受到别的新框架影响 
+  - react 使用人数还是比较多 
+  - svelte 用的人比较少 但是整体是上升趋势 感觉鱿鱼会抄一波它
+
++ 测试
+  - jest 整体还是这个吊
+  - mocha 不太行了 
+
+![](https://pic.imgdb.cn/item/63c50b90be43e0d30eb11053.jpg)
+
++ 测试框架感觉可以往vitest迁 应该是个趋势
++ pnpm 
++ testing-library 这个库比较全 各类框架都有适配
++ 现在前端三大框架 svelte / react / vue  (angular是什么辣鸡)
+
+
+服务端渲染 
+
+![](https://pic.imgdb.cn/item/63c50dc7be43e0d30eb4916f.jpg)
+
+svelteKit 受欢迎程度非常高 感觉受 svelte 影响
+nextjs 使用最多 满意度还可以
+nuxtjs 中等水平 
+
+整体和基础框架的情况一样
+
+
+
+测试框架: vitest - testing-library => jest => mocha
+
+客户端框架 tauri 比较火 然后electron
+
+构建工具  热度 vite - swc - esbuild -> turbopack
+        使用 webpack -> tsccli -> gulp -> vite 
