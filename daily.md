@@ -1314,3 +1314,14 @@ nuxtjs 中等水平
 
 构建工具  热度 vite - swc - esbuild -> turbopack
         使用 webpack -> tsccli -> gulp -> vite 
+
+
+
+## 1.17 
+2022 js stars数量 
+https://risingstars.js.org/2022/en
+
+
+vue3的蒸汽模式(Vapor mode) 借鉴于solid
+
+对于相同的Vue SFC，与当前基于Virtual DOM的输出相比，Vapor Mode将其编译为性能更好、使用更少内存、需要更少运行时支持代码的JavaScript输出。
