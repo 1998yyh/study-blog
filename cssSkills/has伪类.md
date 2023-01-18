@@ -79,8 +79,55 @@ div:not(:has(:hover)):hover{
 
 `div:has(:hover)`表示有子元素正处于hover的div，比如当hover到box-3时，`div:has(:hover)`选中的就是除box-3以外的两个父级，然后加上:not就刚好反过来，只选中box-3本身
 
+<style>
+    div {
+        display: inline-block;
+        margin: 30px;
+    }
 
-### star 选中
+    .box-3 {
+        width: 100px;
+        height: 100px;
+        background: pink
+    }
+
+    .box-2 {
+        background: rgb(113, 160, 179)
+    }
+
+    .box-1 {
+        background: thistle
+    }
+
+    .old div:hover{
+        outline: 2px dashed rebeccapurple
+    }
+
+    .new div:not(:has(:hover)):hover{ 
+        outline:4px dashed rebeccapurple
+    }
+</style>
+
+<div style="display:flex">
+  <div class='old'>
+    <div class="box-1">
+        <div class="box-2">
+            <div class="box-3"></div>
+        </div>
+    </div>
+  </div>
+  <div class='new'>
+    <div class="box-1">
+        <div class="box-2">
+            <div class="box-3"></div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+### 3. star 选中
 
 ``` html
 <style>
@@ -125,6 +172,41 @@ div:not(:has(:hover)):hover{
   star-radio</a> by 1998yyh (<a href="https://codepen.io/WFFMLOVE">@WFFMLOVE</a>)
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
+
+
+### 4. 选中某个元素前的指定元素
+
+``` html
+<ul>
+  <li class="hide-node"></li>
+  <li class="show-node"></li>
+  <li class="show-node"></li>
+  <li class="show-node"></li>
+  <li class="hide-node"></li>
+  <li class="show-node"></li>
+  <li class="show-node"></li>
+  <li class="show-node"></li>
+  <li class="hide-node"></li>
+  <li class="show-node"></li>
+</ul>
+```
+
+比如上面这个列表 我们希望选中每一个`.hide-node`最后的`.show-node` 
+
+```css
+.hide-node ~ .show-node:has(+:not(.show-node)), .show-node:last-child{
+  background-color: green;
+}
+```
+我们分析一下:
+`.hide-node ~ .show-node` 选中的是`.hide-node`的兄弟元素`.show-node`
+`:not(.show-node)`很简单 指的是 非`.show-node`的其他元素 任何都可以 
+`:has(+ )` `+` 指的是紧密的兄弟元素 然后配合上 `not` 
+连起来就是 选中`.hide-node`后面的 ( 紧挨着不是 `.show-node`元素 的) `.show-node`元素 
+
+这样我们就选中了 所有的中间部分的元素了 
+
+最后一个也很简单 `:last-child` 如果`.show-node`是最后一个元素 会被选中 如果不是 则会被中间的选中.
 
 ## 参考
 

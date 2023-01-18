@@ -1325,3 +1325,60 @@ https://risingstars.js.org/2022/en
 vue3的蒸汽模式(Vapor mode) 借鉴于solid
 
 对于相同的Vue SFC，与当前基于Virtual DOM的输出相比，Vapor Mode将其编译为性能更好、使用更少内存、需要更少运行时支持代码的JavaScript输出。
+
+看到个低代码 https://github.com/imcuttle/mometa
+
+## 1.18
+
+1. git 删除当前分支以外的所有分支
+
+git branch | xargs git branch -d
+
+git 删除分支名包括指定字符串的分支 
+
+
+git branch | grep 'dev' | xargs git branch -d
+
+grep
+搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来。
+
+xargs
+参数传递命令。用于将标准输入作为命令的参数传给下一个命令。
+
+2. 设置css权重
+
+如果是 string 的话倒是可以用 attr 来做，但 z-index 是个 number，而 attr number 目前还没有浏览器支持
+
+以后应该可以先在 html 里面写 data-zindex="3"，然后 css 里面写 z-index: attr(data-zindex number)
+
+不过既然可以直接操作 dom 了，那为啥不直接加 inline style 呢
+
+我一般用CSS变量style="--index: 1;"
+
+然后css里写z-index: var(--index)
+
+这得看情况，我是比较推荐共同的样式写 CSS，由代码控制的样式就写到 inline
+
+如果一定要行内的话
+
+行内尽量用变量，不要inline style
+
+因为变量可以计算，可以用于多个值
+
+这种情况下，用 class/dataset 然后通过别的方式传到 CSS 里，反而是有点麻烦，因为 inline CSS 会比 class 更好搜索，并且也不需要约束开发之间的命名规范
+
+inline style是bad practice，不适合优先级管理
+
+
+Good:
+<div style="--index: 1;">
+<div style="--index: 2;">
+
+[style*='--index:'] {
+    z-index: var(--index);
+    translate: 0 0 calc(var(--index) * 1px);
+}
+
+Bad:
+<div style="z-index: 1; translate: 0 0 1px;">
+<div style="z-index: 2; translate: 0 0 2px;">
