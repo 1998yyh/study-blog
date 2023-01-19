@@ -1384,3 +1384,66 @@ Good:
 Bad:
 <div style="z-index: 1; translate: 0 0 1px;">
 <div style="z-index: 2; translate: 0 0 2px;">
+
+
+## 1.19
+
+1. 使用AbortController abort 中断原生fetch 或者 axios 请求
+
+AbortController可以用来终止一个或多个Web请求。
+
+AbortController.signal
+返回AbortSignal对象，这个对象需要设置在fetch请求中，这样我们就可以在外部终止这个请求了。相当于在fetch请求内部嵌入一个抓手，或者说预埋一个开关。
+具体如何使用参见下一节的案例和代码示意。
+
+AbortController.abort()
+终止请求的方法。只要请求还没有完成，都是可以终止的。
+
+``` js
+const data = {};
+// 构造器对象
+let conrtoller = null;
+
+// 按钮点击
+button.addEventListener('click', function (event) {
+  // 构造 AbortController 对象
+  if (data.conrtoller) {
+    conrtoller = data.conrtoller;
+  } else {
+    conrtoller = new AbortController();
+    data.conrtoller = conrtoller;
+  }
+  // 如果正在请求，终止
+  if (data.loading) {
+    conrtoller.abort();
+
+    // 构建新的 AbortController
+    conrtoller = new AbortController();
+    data.conrtoller = conrtoller;
+  }
+
+  data.loading = true;
+
+  // 请求逻辑
+  fetch('./getVal.php?val=' + event.target.value, {
+    signal: conrtoller.signal
+  }).then(res =&gt; res.text()).then(text =&gt; {
+    // text 就是返回内容
+  });
+});
+```
+
+在 axios 中 使用如下
+
+``` ts
+const controller = new AbortController();
+
+axios.get('/foo/bar', {
+   signal: controller.signal
+}).then(function(response) {
+   //...
+});
+// 取消当前请求
+controller.abort()
+```
+
