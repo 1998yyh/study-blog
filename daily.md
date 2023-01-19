@@ -1369,6 +1369,8 @@ xargs
 
 inline style是bad practice，不适合优先级管理
 
+nline的优先级太高了，css必须要通过important覆盖，我这里guideline基本都是禁止inline的
+
 
 Good:
 <div style="--index: 1;">

@@ -51,6 +51,104 @@ pnpm 就是通过这种思路来实现的。
 
 但是这样容易造成全局磁盘堆积,需要我们定期清理一下,全局缓存 pnpm store prune 
 
+### workspace
+
+pnpm除了 安装时候减少资源外 还有一个重要的功能就是 monorepo
+
+使用 monorepo 可以把原本一个项目的多个模块拆分成多个 packages，在 packages 之间相互引用，也可以单独发布成包，极大地解决了项目之间代码无法重用的痛点。在项目打包或者编译操作时也可重用一套配置，通吃所有 packages。
+
+``` 
+├── packages
+│   ├── ui
+│   ├── utils
+│   └── web
+```
+
+假设我们有以上这种格式的目录结构
+
+假设每个 package 的 name 依次为 @test/ui @test/utils @test/web。
+
+当我们在ui中想要调用utils中的方法 需要先安装 `pnpm i @test/utils -r --filter @test/ui`
+
+然后 ui 中的 packages.json中
+``` JSON
+{
+  "name": "@test/ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index.tsx",
+  "scripts": {},
+  "author": "Innei",
+  "license": "MIT",
+  "dependencies": {
+    "@test/utils": "workspace:^1.0.0" // <--------
+  }
+}
+```
+我们会发现多了一行 workspace
+
+然后我们就可以在 ui 中 引入 `import {add} from '@test/utils'`
+
+此时我们将
+
+那么接下来的 package/web 就是整个项目的整体了。放置原来项目中的所有 src 下的代码。而一些原本通用的代码就从 src 下提取成包放在了 packages 下了。这样就好理解了。
+
+当我们发布的时候 pnpm动态替换这些 workspace: 依赖： 
+``` json
+{
+    "dependencies": {
+        "foo": "workspace:*",
+        "bar": "workspace:~",
+        "qar": "workspace:^",
+        "zoo": "workspace:^1.5.0"
+    }
+}
+```
+会转化为
+```json
+{
+    "dependencies": {
+        "foo": "1.5.0",
+        "bar": "~1.5.0",
+        "qar": "^1.5.0",
+        "zoo": "^1.5.0"
+    }
+}
+```
+
+
+### 别名 Aliases
+
+别名让您可以使用自定义名称安装软件包。
+
+假设你在项目中大量地使用了 lodash， 但 lodash 中的一个 bug 破坏了你的项目， 为此你修复了这个 bug，但 lodash 并没有合并（merge）它。 通常你会直接从你的 fork 仓库中安装修改过的 lodash (git 托管的依赖) 或者修改一下名称做为新包发布到 npm。 如果你使用第二种解决方式，则必须使用新的包名（require('lodash') => require('awesome-lodash')）来替换项目中的所有引用。 
+
+```
+pnpm add lodash@npm:awesome-lodash
+```
+
+有时你会想要在项目中使用一个包的两个不同版本
+
+```
+pnpm add lodash1@npm:lodash@1
+pnpm add lodash2@npm:lodash@2
+```
+
+与钩子结合使用功能会更加强大， 比如你想将 node_modules 里所有的 lodash 引用也替换为 awesome-lodash ， 你可以用下面的 .pnpmfile.cjs 轻松实现：
+```js
+function readPackage(pkg) {
+  if (pkg.dependencies && pkg.dependencies.lodash) {
+    pkg.dependencies.lodash = 'npm:awesome-lodash@^1.0.0'
+  }
+  return pkg
+}
+
+module.exports = {
+  hooks: {
+    readPackage
+  }
+}
+```
 
 
 ## 扩展
