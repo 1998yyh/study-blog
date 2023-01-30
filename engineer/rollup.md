@@ -2,6 +2,9 @@
 
 ## 配置
 
+rollup配置大全 
+
+https://www.rollupjs.com/guide/big-list-of-options 
 ### 简单的配置
 
 ```JS
