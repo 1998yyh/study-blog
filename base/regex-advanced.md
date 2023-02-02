@@ -446,3 +446,35 @@ console.log(result);
 // => ["2345", "2", "5", 5, "1234 2345 3456"]
 // => ["3456", "3", "6", 10, "1234 2345 3456"]
 ```
+
+#### 把一个字符串编程每三个一组的字符串 用空格分开
+
+
+输入`abcdef`
+输出`abc bcd cde def`
+
+1. 方法一:
+``` js
+'abcdef'.replace(/.(?=(..(?!$)))/g,'$&$1 ')  // 输出 'abc bcd cde def'
+
+// 不加(?!$)会把倒数第三个也替换了，替换到倒数第三个的时候可以直接结束了
+'abcdef'.replace(/.(?=(..(?!$)))/g,'$&$1 ')  // 输出 'abc bcd cde def ef'
+
+```
+
+2. 方法二:
+```js
+'abcdef'.replace(/(?!^)(?=(..)(?!$))/g,'$1 ')  // 输出 'abc bcd cde def'
+
+```
+
+
+#### 替换
+
+输入: `Hello,my name is Alice`
+输出: `H___,m_n____i_A____`
+
+
+```js
+'Hello,my name is Alice'.replace(/\B\w/g,'_'); // 输出 'H____,m_ n___ i_ A____'
+```
