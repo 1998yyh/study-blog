@@ -94,3 +94,76 @@ babel 确确实实已经经历过太多的考验和迭代，即使 swc 已经快
 
 这个可能是实现的问题 
 https://stackoverflow.com/questions/33658302/why-http-2-is-slower-than-plain-https
+
+
+## 2.3
+
+1. 在Esmodule 使用__dirname 
+
+``` js
+import path, { dirname } from "path"
+import { fileURLToPath } from 'url'
+const __dirname = dirname(fileURLToPath(import.meta.url));
+```
+
+
+2. 前端监控方法
+
+https://juejin.cn/post/7172072612430872584
+
+3. 检测白屏方法 : web-see
+
+
+4. css 波浪 wave : https://codepen.io/andyfitz/pen/wvxpBWL
+
+
+## 2.5
+
+1. 讨论关于js使用位运算 
+
+终于追到了。。。。要说到 v8 如何实现位运算，一个按位 or 光是编译器就要做这么多：
+https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/js-type-hint-lowering.cc;l=461?q=JSBitwiseOr&ss=chromium%2Fchromium%2Fsrc
+运行时 turbofan 还会做一些优化，例如如果发现一个数字在 1w 次循环中都是 int 就会优化成 int 的 or，如果发现了不好的写法（如某次循环中发现某个数字不是 int 了）则会推翻之前的优化，重新用慢的方法
+
+
+你以为写的 js，实际上被转换成了一堆 runtime 的调用。。很多语言都这样，go 也是，一个 make 会被转换成 runtime 的各类函数，取决于 make 的参数是啥
+
+现代编程语言已经不再是编译成纯二进制执行了，大多是基础功能转换为二进制、复杂功能转换为 runtime 调用。。语言的功能多少也就取决于 runtime 提供的功能有多少
+
+但 js 这种语言过于灵活，一个变量啥类型都有可能，所以实际上我们以为的底层操作反而会很慢
+
+## 2.6
+
+1. 值得注意的是：块语句（大括号”｛｝＂中间的语句），如if和switch条件语句或for和while循环语句，不像函数，它们不会创建一个新的作用域。
+
+不对，块级是有独立的作用域的，但是比起lexical作用域定义会松一些
+
+``` js
+let a=1;
+
+{let a=2; console.log(a);}
+
+var a=1; 
+
+{ var a=2; console.log(a); }
+
+console.log(a);
+
+// 报错
+// Uncaught SyntaxError: Identifier 'a' has already been declared at <anonymous>:1:1
+
+
+```
+
+
+## 2.7
+
+1. uni-app 生命周期顺序 
+
+App launch -> App Show -> page onLoad -> paeg onShow -> component beforeCreate -> component created -> component mounted -> page onReady
+
+
+
+## 2.8 
+
+专心工作 无心抓鱼
