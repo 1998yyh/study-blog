@@ -288,6 +288,7 @@ g: 不是普通的平衡树 ,得实现名次树才行 treap和splay 都可以 �
 
 
 
+## 2.13
 
-
-
+1. Object.is(NaN,NaN) 和 isNan(NaN) 没有区别
+2. Number.isNaN() 和 isNaN 有一个转化的区别 isNaN(x) = Number.isNaN(Number(xx))
