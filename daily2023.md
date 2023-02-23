@@ -351,3 +351,43 @@ interface 和 type的区别
 
 地址 - https://tresjs.org/
 
+
+## 2.20
+
+请加
+
+## 2.21
+
+1. mutation-observer 
+
+
+2. intersection-observer :
+
+提供了一种异步观察目标元素与其祖先元素或顶级文档视口（viewport）交叉状态的方法
+
+当一个 IntersectionObserver 对象被创建时，其被配置为监听根中一段给定比例的可见区域。一旦 IntersectionObserver 被创建，则无法更改其配置，所以一个给定的观察者对象只能用来监听可见区域的特定变化值；然而，你可以在同一个观察者对象中配置监听多个目标元素。
+
+
+## 2.22 
+
+可以写个批量曝光的方法
+
+https://juejin.cn/post/7018430369321975822
+
+
+## 2.23
+
+微信小程序picker-view 的问题 
+
+picker-view的bindchange事件（选项变更事件）会随着动画结束延迟触发，目前动画时长太久，导致bindchange触发延迟太久
+
+只要滚得快一点，那么通知事件就会迟到，导致用户点击确认按钮后得到的数据和其看到的选择项会不一样
+
+问题描述的地址
+
+https://developers.weixin.qq.com/community/develop/doc/0002c6f63c86b8cccd17af72c56c00?page=1
+
+https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be54c14
+
+暂时的解决方案 
+![](https://pic.imgdb.cn/item/63f748acf144a010078992b5.jpg)
