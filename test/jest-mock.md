@@ -112,3 +112,6 @@ test('should do a partial mock', () => {
 ![](https://pic.imgdb.cn/item/63f8743ff144a010073595f8.jpg) 
 
 如上图琐事 期望调用次数为1 但是监听到的却是0 
+
+
+2. 发现通过mock去改模块里对内容 也无效

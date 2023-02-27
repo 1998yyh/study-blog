@@ -391,3 +391,11 @@ https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be
 
 暂时的解决方案 
 ![](https://pic.imgdb.cn/item/63f748acf144a010078992b5.jpg)
+
+
+## 2.24
+
+1. iOS and iPadOS 16.4 beta 1 这个版本中 支持了很多属性 比如`媒体查询`,`@property`,`font-size-adjust(按比例缩小font-size)`等属性
+
+增加了对Web推送到主屏幕Web应用程序的支持。Web Push使得Web开发人员可以通过使用Push API、notifications API和Service worker一起工作来向用户发送推送通知。
+
