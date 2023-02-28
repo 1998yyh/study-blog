@@ -399,3 +399,8 @@ https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be
 
 增加了对Web推送到主屏幕Web应用程序的支持。Web Push使得Web开发人员可以通过使用Push API、notifications API和Service worker一起工作来向用户发送推送通知。
 
+
+## 2.27
+## 2.28
+
+无事
