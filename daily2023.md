@@ -407,7 +407,7 @@ https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be
 
 ## 3.1
 
-canvas绘制两点之间曲线链接
+canvas绘制两点之间曲线链接 
 
 ```js
 var drawCurve = function (startX, startY, endX, endY) {   
