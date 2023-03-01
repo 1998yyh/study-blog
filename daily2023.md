@@ -404,3 +404,27 @@ https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be
 ## 2.28
 
 无事
+
+## 3.1
+
+canvas绘制两点之间曲线链接
+
+```js
+var drawCurve = function (startX, startY, endX, endY) {   
+  // 曲线控制点坐标
+  var cp1x = startX;
+  var cp1y = startY + (endY - startY) / 2;
+  // 这里的除数2和曲线的曲率相关，数值绝大，曲率越小
+  var cp2x = endX;
+  var cp2y = endY - (endY - startY) / 2;
+  
+  // 开始绘制曲线
+  context.beginPath();
+  context.lineWidth = 4;
+  context.strokeStyle = '#000';
+  context.moveTo(startX, startY);
+  // 绘制曲线点
+  context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
+  context.stroke();
+};
+```
