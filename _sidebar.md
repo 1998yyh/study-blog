@@ -4,6 +4,8 @@
   - [toLocalString](./base/toLocalString.md)
   - [阴间JS](./base/阴间js.md)
   - [decorator](./base/decorator.md)
+  - [IntersectionObserver](./base/IntersectionObserver.md)
+  - [MutationObserver](./base/mutationObserver.md)
   - [clipboard](./base/copy2Clipboard.md)
   - [web api crypto](./base/web-crypto-api.md)
   - [正则(一)](./base/regex-base.md)
@@ -49,6 +51,7 @@
   - [Texture](webgl/texture.md)
 + **杂项**
   - [Jest踩坑](./test/jest.md)
+  - [Jest Mock](./test/jest-mock.md)
   - [测试](./test/unit-test.md)
   - [调试](./debug.md)
   - [内存相关](./base/内存相关.md)

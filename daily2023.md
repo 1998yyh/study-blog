@@ -428,3 +428,27 @@ var drawCurve = function (startX, startY, endX, endY) {
   context.stroke();
 };
 ```
+
+## 3.2 
+
+再重温一遍
+
+``` js
+function foo(a,b,c){
+  arguments[0] = 42;
+  console.log(a)
+}
+
+function bar(a,b,c = 3){
+  arguments[0] = 42;
+  console.log(a)
+}
+
+foo(1,2);
+bar(1,2);
+```
+严格模式下，arguments是拷贝而不是引用
+
+而带默认值的方法判定为ES2015以后的语法，方法体会被自动指定为严格模式
+
+arguments在任何场合都不应该使用
