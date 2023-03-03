@@ -452,3 +452,76 @@ bar(1,2);
 而带默认值的方法判定为ES2015以后的语法，方法体会被自动指定为严格模式
 
 arguments在任何场合都不应该使用
+
+
+## 3.3 
+
+1. 容器查询 https://developer.chrome.com/en/blog/style-queries/
+
+据说是可以通过 
+
+``` css
+@container style(--detail: new) {
+  .comment-block {
+    display: block;
+  }
+  
+  .comment-block::after {
+    content: 'New';
+    border: 1px solid currentColor;
+    background: white;
+    ...
+  }
+}
+
+@container style(--detail: low-stock) {
+  .comment-block {
+    display: block;
+  }
+  
+  .comment-block::after {
+    content: 'Low Stock';
+    border: 1px solid currentColor;
+    background: white;
+    ...
+  }
+  
+  .media-img {
+    border: 2px solid brickred;
+  }
+}
+```
+
+2. 一个课程 地址是 
+
+主要讲的是 前端页面在用户切到后台的时候 我们应该做些什么 ? 比如是否要停止定时器或者一些动画 ,如果有接口请求 是否要中断它 
+
+https://frontendmasters.com/courses/background-javascript/?utm_source=javascriptweekly&utm_medium=email&utm_content=backgroundjs
+
+纯英文的
+
+
+3. 尤大对于vue3的状况的文章以及 视频 https://thenewstack.io/vue-2023/
+
+4. 对于 前端上传word转化pdf 记录
+
+R:》 如果为了保证效果，我比较推荐 openoffice，支持 headless 模式输出 PDF
+
+  比较完善的做法是 openoffice 跑在 headless 模式下并开一个端口监听，后端服务有库可以跟它做交互，就跟 chrome devtools protocol 一样，控制它打开文件、生成 PDF
+
+  这样的好处是你可以维护一个 openoffice 池，有新请求就从池里挑一个实例出来，用完再塞回去，还能定时重启以及监控😐
+
+  浏览器保证不了效果
+
+S:》 这后端给我拒绝了，说让我(前端)自己做 他说服务器压力顶不住，放在浏览器好一点
+
+R:》 虽然网上有库可以读取文件内容，但对于一些样式，无法很好地识别；并且这类库通常很大，显著影响加载速度
+
+  而 openoffice 这类软件，本来就是 office 的替代品，效果是可以保证的
+
+  如果你们领导只关注文档内容，那就前端随便找个库做吧
+
+  啊这，我搜了一下 npm，好像常见的做法都是用我说的 libreoffice😂
+
+J:》 或者，Puppeteer，前端做一个中间页面，用来预览用户上传的文件附件，然后再写个node服务，把网页的转成PDF
+

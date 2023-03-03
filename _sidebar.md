@@ -20,6 +20,7 @@
   - [遮罩](cssSkills/mask.md)
   - [滚动相关](cssSkills/滚动相关css属性.md)
   - [has](cssSkills/has伪类.md)
+  - [makeBetterAnimation](cssSkills/makeBetterAnimation.md)
   - [监听事件](cssSkills/css事件监听.md)
 + **Nodejs**
   - [stream](nodejs/nodejs-stream.md)
@@ -29,7 +30,6 @@
   - [基础属性](svg/svg.md)
   - [svgAni](svg/svgAni.md)
   - [svgFilter](svg/svgFilter.md)
-
 + **构建**
   - [rollup基础](engineer/rollup.md)
 + **CSS Fragment**
@@ -37,6 +37,7 @@
   - [粘性标题](cssFragment/stickyTitle.md)
   - [双层渐变进度条](cssFragment/gradientProgress.md)
   - [溢出渐变消失](cssFragment/overflowDisappear.md)
+  - [不定长溢出滚动](cssFragment/marquee.md)
   - [apple-clock](cssFragment/apple-clock.md)
   - [engraving-image](cssFragment/engraving-image.md)
   - [versionBadge](cssFragment/versionBadge.md)
