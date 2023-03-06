@@ -12,6 +12,8 @@
   - [正则(二)](./base/regex-position.md)
 + **Css skills**
   - [粘连效果](cssSkills/gooey-effect.md)
+  - [根据背景色切换color](cssSkills/根据背景色切换color.md)
+  - [高度从0到auto动画](cssSkills/autoHeight支持动画.md)
   - [使文本更粗](cssSkills/makeFontBolder.md)
   - [渐变文字](cssSkills/渐变文字.md)
   - [CSS变量相关](cssSkills/variable&property.md)
