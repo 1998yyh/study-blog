@@ -1,5 +1,7 @@
 # 记录一些遗漏的点
 
+文章搜集到的
+https://juejin.cn/post/6844904055039344654
 
 ### 1. unknown 和 any 的区别
 
@@ -20,3 +22,9 @@ const num5:number = num;
 // Error : type 'unknown' is not assignable to type 'number'
 const num6:number = num3;
 ```
+
+
+
+### 2. extends
+
+
