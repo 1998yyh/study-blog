@@ -550,4 +550,78 @@ never 是任何类型的子类型, 所以是 1
 
 
 
+## 3.17
 
+1. 开平方的操作 Math.sqrt(2) === 2**0.5 
+
+2. 随机mac地址的写法
+
+``` js
+function randomMac() {
+  const mac = [
+    (0x52).toString(16),
+    (0x54).toString(16),
+    (0x00).toString(16),
+    Math.floor((Math.random() * 0xff)).toString(16),
+    Math.floor((Math.random() * 0xff)).toString(16),
+    Math.floor((Math.random() * 0xff)).toString(16)
+  ]
+  return mac.join(':')
+}
+```
+
+3. semver https://juejin.cn/post/6844903516754935816
+
+只要有一个作者没有遵循 semver，引入了 breaking change，你的项目就挂了（参考之前我遇到的 antd eslint 的问题
+
+你给 typedoc 提 PR 就会发现，它依赖的某个东西（有可能是 @typescript-eslint，或者 ts-loader）也没有 typescript@^5 的 peer
+
+如果不是最底层的库，真的没办法跟进那么快。。我们业务项目至今迟迟没升级 react 18 就是因为一些库还不支持，又没有更好的选择
+
+ts 从 3 升到 4 也经历了一大波编译错误（主要是 Promise 的范型相关）
+
+所以一个是等待时机成熟，一个是需要有足够的人力。。
+
+像是pnpm swc webpack5 
+
+
+4. 生成随机码的函数
+
+```js
+export function genRamdomMAC() {
+  return 'xy-xx-xx-xx-xx-xx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    // 这个地方使用0x没有 0b清晰
+
+    const v = c === 'x' ? r : (r & 0b11 | 0b1000)
+    return v.toString(16)
+  })
+}
+```
+
+5. 对称加密 
+https://halfrost.com/symmetric_encryption/#toc-19
+
+基于大整数分解难题的加密算法应该指的是 RSA（我还没见过其它的），不过随着量子计算机的发展，RSA 并不能抵抗量子攻击
+
+啊这，我才发现基于椭圆曲线的 ECDSA 甚至比 RSA 还容易被量子攻击。。
+
+以后 ssh 不用它了
+
+
+6. 取颜色值的argb
+
+``` js
+(0xabcdef12 >> 0x18 & 0xff).toString(16);
+(0xabcdef12 >> 0x10 & 0xff).toString(16);
+(0xabcdef12 >> 0x08 & 0xff).toString(16);
+(0xabcdef12 >> 0x00 & 0xff).toString(16);
+
+```
+
+
+7. pnpm 问题 
+
+之前听 zkochan 分享，我问过一个问题：不同版本的 pnpm 生成的 lock file 冲突很明显，这个除了重新 pnpm i 以外有没有更好的解决办法？在未来 lock file 的格式是否会逐渐固定下来？
+大佬回答：我们确实在解决格式问题，但目前最推荐的做法还是 pnpm i。
