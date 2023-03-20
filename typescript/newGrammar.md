@@ -1,6 +1,86 @@
 # 新语法
 
-## satisfies 4.9-beta
+## 5.0.2 
+
+vscode 自身的ts版本 4.9.5 需要选择一下 node_modules 下的包版本
+
+`command + shift + p` 输入 `Select typescript version ...` 会出现这个然后选择 包版本5.0.2
+
+
+### const 类型参数
+
+Typescript 通常会把一个对象推断成一个更通用的类型。
+
+``` ts
+type HasNames = {names : readonly string[]};
+function getNamesExactly<T extends HasNames>(arg:T) :T["names"]{
+  return arg.names
+}
+
+// 推断的类型是: string[]
+const names = getNamesExactly({ names: ["Alice", "Bob", "Eve"]});
+
+// 如果想要推导的类型是 ["Alice", "Bob", "Eve"] 我们需要 as Const
+const names2 =  getNamesExactly({ names: ["Alice", "Bob", "Eve"]} as const);
+```
+
+这种方式用起来不够优雅 而且可能会忘了加, 所以TS5 的类型参数支持了const 描述符;
+
+``` ts
+type HasNames = { names: readonly string[] };
+function getNamesExactly<const T extends HasNames>(arg: T): T["names"] {
+    return arg.names;
+}
+
+// 推断类型: readonly ["Alice", "Bob", "Eve"]
+// 这样就不需要 as const 了
+const names = getNamesExactly({ names: ["Alice", "Bob", "Eve"] });
+```
+
+但是会有个问题 如果约束的类型 是 `可变类型` 不会推导出具体类型
+
+``` ts
+declare function test1<const T extends string[]>(args:T):void{}
+
+// 此处推到出来的 T 是 string[]
+const res = test1(["a","b","c"])
+```
+
+
+const 修饰符只能影响直接写在函数调用中的对象、数组和原始表达式的推断
+``` ts
+declare function fnGood<const T extends readonly string[]>(args: T): void;
+
+const arr = ["a", "b" ,"c"];
+// T 仍然是 string[] -- const 修饰符在这里没有任何效果
+fnGood(arr);
+// T 是 readonly string ["a", "b" ,"c"]
+fnGood(["a", "b" ,"c"]);
+```
+
+### 关系型运算符禁止隐式类型转换
+
+``` ts
+function func(ns: number | string) {
+  return ns * 4; // 错误，可能存在隐式强制转换
+}
+
+// 5.0 之前不会报错
+function func(ns: number | string) {
+  return ns > 4;
+}
+// 
+function func(ns: number | string) {
+  return +ns > 4; // OK
+}
+```
+
+
+
+
+##  4.9-beta
+
+### satisfies
 
 手动ts声明 时 会做类型检查
 
@@ -89,7 +169,6 @@ const obj:Obj = {
 
 但它只会提示声明的索引，动态添加的那些是不会提示的
 如果使用自动类型推导, 有些类型又不对 有需要手动改
-
 
 在 4.9新增了一个语法 satisfies(/ˈsætɪsfaɪz/)
 

@@ -625,3 +625,8 @@ https://halfrost.com/symmetric_encryption/#toc-19
 
 之前听 zkochan 分享，我问过一个问题：不同版本的 pnpm 生成的 lock file 冲突很明显，这个除了重新 pnpm i 以外有没有更好的解决办法？在未来 lock file 的格式是否会逐渐固定下来？
 大佬回答：我们确实在解决格式问题，但目前最推荐的做法还是 pnpm i。
+
+
+## 3.20
+
+1. dvh 是视频口相对视口的单位

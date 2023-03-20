@@ -1,0 +1,26 @@
+{
+  "name": "study-blog",
+  "version": "1.0.0",
+  "description": "在线地址： [https://1998yyh.github.io/study-blog/#/](https://1998yyh.github.io/study-blog/#/)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1998yyh/study-blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1998yyh/study-blog/issues"
+  },
+  "homepage": "https://github.com/1998yyh/study-blog#readme",
+  "dependencies": {
+    "typescript": "^5.0.2"
+  }
+}
