@@ -25,3 +25,11 @@ class Person {
 
 const p = new Person("Ray");
 p.greet();
+
+type TestLast<Arr extends string[]> = Arr extends [...infer Rest,infer Last extends string] ? `最后一个是:${Last}` : never;
+
+type NumInfer<Str> = Str extends `${infer Num extends number}` ? Num : never;
+
+type res = NumInfer<'123'>
+
+

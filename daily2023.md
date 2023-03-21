@@ -630,3 +630,47 @@ https://halfrost.com/symmetric_encryption/#toc-19
 ## 3.20
 
 1. dvh 是视频口相对视口的单位
+
+我们可以尝试通过 max函数去
+
+``` css
+@supports(padding: max(0px)) {
+  .post {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+}
+```
+
+
+2. 有没有什么好的方法可以预防pdf文件的xss攻击。需求是需要预览pdf文件，但是使用浏览器或者iframe去预览pdf文件会执行pdf文件中的js脚本，找了几个vue的pdf预览插件都是基于iframe的，有没有什么别的预览插件推荐的
+
+ csp 协议 https://www.ruanyifeng.com/blog/2016/09/csp.html
+
+
+3. page lifecycle API
+   page Visibility API
+
+   https://www.bookstack.cn/read/webapi-tutorial/docs-page-visibility.md
+
+
+## 3.21
+
+1. Chrome paint Profiler
+
+
+你可以使用Chrome DevTools中的Paint Profiler来重放页面的“绘图”。当你在屏幕上绘制简单元素时，文本、边框、轮廓、背景、伪元素等都是单独绘制的。对于我们大多数人来说，这一切都是瞬间出现的，我们不会多想。Paint Profiler允许您一步一步地查看浏览器是如何绘制页面的。
+
+
+
+制作一个新的时间线记录，选中“绘制”。
+确保出现一些绘画(例如重新加载网页)
+单击绘制记录。油漆记录被标记为绿色。
+在Summary窗格中，单击“Paint Profiler”
+
+
+
+2. 消除渐变的锯齿 
+
+抗锯齿的算法 及其一些理论的东西 https://juejin.cn/post/6844904180776173581 
+抗锯齿 css 中操作 https://github.com/chokcoco/iCSS/issues/209

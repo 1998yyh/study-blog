@@ -191,3 +191,14 @@ const obj = {
 ```
 
 但是这样就不能动态扩展了 比如 `obj.e==1` 这样会报错
+
+
+
+## 4.7
+
+### infer extends 
+
+``` ts
+type TestLast<Arr extends string[]> = Arr extends [...infer Rest,infer Last extends string] ? `最后一个是:${Last}` : never;
+
+```
