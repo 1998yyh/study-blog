@@ -674,3 +674,50 @@ https://halfrost.com/symmetric_encryption/#toc-19
 
 抗锯齿的算法 及其一些理论的东西 https://juejin.cn/post/6844904180776173581 
 抗锯齿 css 中操作 https://github.com/chokcoco/iCSS/issues/209
+
+
+## 3.22
+
+1. 老哥们讨论协同文档的问题 
+
+两种方案 1. dom 堆砌 2. cavnas绘制
+
+超过1000 行必卡
+
+canvas 能支持 10万行
+
+那就是没做离屏渲染吧. 
+现在视图都是用的乐观更新的, 两份数据 ,前端一份,后段一份,先更新前端,再发请求,请求成功不管,请求失败了回退是图, 没有协同算法 直接ws覆盖的 看谁的接口先返回.冲突本来想做编辑锁, 到那时体验不好
+
+可以考虑上个crdt(ot和crdt) 现在已经很成熟了
+
+
+如何设计crdt 算法:
+https://www.zxch3n.com/crdt-intro/design-crdt/
+
+
+https://juejin.cn/post/7049939780477386759
+
+
+2.  volta 不知道干啥的 有老哥说挺好用 可以局部切换node版本
+
+## 3.23
+
+1. 单字动画 通常会用GSAP 
+大佐的codepen
+
+https://codepen.io/wheatup/pen/OJoazBO??editors=1100
+
+用图的缺陷比较明显 换个文案加个字就要出图 
+
+不过可以以字的维度出图
+
+如果是纯英文的话 可以考虑bitMap字体 (字蛛也可以)
+
+https://www.midjourney.com/home/?callbackUrl=%2Fapp%2F
+
+
+bitmap fontSpider 
+
+字蛛构建流程地址 https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fyangchuansheng%2Ffont-spider-plus
+
