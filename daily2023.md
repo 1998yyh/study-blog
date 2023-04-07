@@ -721,3 +721,44 @@ bitmap fontSpider
 
 字蛛构建流程地址 https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fyangchuansheng%2Ffont-spider-plus
 
+
+## 4.4
+
+1. vite模板 后面可以把这个超过来做一下cli配置
+
+https://github.com/honghuangdc/soybean-admin
+
+https://github.com/pure-admin/vue-pure-admin
+
+## 4.7
+
+1. css 片段 (容器查询 / scroll snap / grid pile / aspect-ratio / @layer / logical properties)
+
+@layer 做什么用的
+
+2. css 支持了 角度函数 sin cos tan asin acos atan atan2
+
+我们可以通过 translate 进行旋转计算
+
+```css
+:root {
+  --radius: 20vmin;
+}
+
+.dot {
+  --angle: 30deg;
+  translate: /* Translation on X-axis */
+             calc(cos(var(--angle)) * var(--radius))
+
+             /* Translation on Y-axis */
+             calc(sin(var(--angle)) * var(--radius) * -1)
+  ;
+}
+```
+
+<!-- https://web.dev/css-trig-functions/?utm_source=CSS-Weekly&utm_campaign=Issue-544&utm_medium=email -->
+
+3. 一个dom堆叠的loading
+
+https://codepen.io/amit_sheen/pen/JjBLaGG
+
