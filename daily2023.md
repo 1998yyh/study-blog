@@ -912,4 +912,25 @@ methods:{
 且 执行顺序 为 App launch -> App Show -> page onLoad -> paeg onShow -> component beforeCreate -> component created -> component mounted -> page onReady
 
 
-3. 忘了 
+3. localStorage , sessionStorage 的存储限制是多大?
+《https://github.com/FrankKai/FrankKai.github.io/issues/179》
+
+PC:
+
+|  浏览器名称   | localStorage limit  | sessionStorage limit |
+|  ----  | ----  | --- |
+| chrome40  | 10mb | 10mb |
+| firefox 34  | 10mb | 10mb |
+| ie9  | 10mb | 10mb |
+| safari  | 10mb | 无限大 |
+
+
+Mobile:
+
+|  浏览器名称   | localStorage limit  | sessionStorage limit |
+|  ----  | ----  | --- |
+| chrome 40 for Android | 10mb | 10mb |
+| firefox 34 for Android | 10mb | 10mb |
+| Android Browser| 2mb | 无限大 |
+| mobile safari 8  | 5mb | 无限大 |
+| ios webview safari 8  | 5mb | 无限大 |
