@@ -835,3 +835,81 @@ https://zhuanlan.zhihu.com/p/434565485
 ## 4.21
 
 
+在pnpm的仓库的一个issues上 讨论了 感觉pnpm 好像比yarn 慢
+
+https://github.com/pnpm/pnpm/issues/6447
+
+1. 如果你使用独立脚本安装PNPM，或者你安装@pnpm/exe包，而不是NPMJS中的PNPM包(npm I -g @pnpm/exe)， PNPM运行命令会更快。
+
+pnpm install——frozen-lockfile曾经比Yarn快，但后来变差了。我不知道是什么变化引起的，但我注意到在我们的基准测试中。
+
+我相信pnpm add总是比较慢。
+
+pnpm在macOS上安装可能会慢一些，因为pnpm在macOS上使用硬链接，而Yarn会复制文件。复制速度更快，但使用更多的磁盘空间。Copy-on-write副本是最好的(我们在支持它的Linux文件系统上使用)，但在macOS上我们不能使用它，因为Node.js不允许它(#5001)
+
+
+用独立的pnpm运行命令似乎是最快的，但是用npm运行包含pnpm命令的脚本是最快的。
+
+这可能是由于Node.js字节码或模块缓存，但我没有证据。
+
+另外，我很好奇为什么@pnpm/exe运行得更快。是因为@pnpm/exe有自己的Node.js，使它加载更少的包时执行?以上翻译结果来自有道神经网络翻译（YNMT）· 通用场景
+
+
+在CI上使用@pnpm/exe确实给了我们一点提升。不幸的是，还不足以赶上纱线。
+
+使用标准的pnpm/action-setup:
+
+
+解决方案
+使用动态导入而不是顶层导入，顶层导入已经在文件pnpm/src/pnpm中应用了。是的，但这还不够。
+将一些常量/utils分离到较小的文件中，以防止总是导入整个模块。
+不幸的是，这是一项巨大的工作，不可能很快完成。
+
+
+
+## 5.6
+
+1. 小程序 父子组件传递函数this指向有问题 
+
+
+``` js
+// parent
+<son :callback='callback'> 
+  
+</son>
+
+data(){
+  name:'parent'
+},
+methods:{
+  callback(){
+    console.log(this.name)
+  }
+}
+
+// son
+
+data(){
+  name:'son'
+}
+
+methods:{
+  done(){
+    this.callback();
+
+  }
+}
+
+
+// 按照上面代码 小程序中会输出 son
+// h5 会输出 parent 
+
+// 且 小程序 使用 :callback='()=>callback()' 会编译报错
+```
+
+2. 小程序组件生命周期 无 onshow onload 等 只有vue的那几个
+
+且 执行顺序 为 App launch -> App Show -> page onLoad -> paeg onShow -> component beforeCreate -> component created -> component mounted -> page onReady
+
+
+3. 忘了 
