@@ -934,3 +934,15 @@ Mobile:
 | Android Browser| 2mb | 无限大 |
 | mobile safari 8  | 5mb | 无限大 |
 | ios webview safari 8  | 5mb | 无限大 |
+
+
+可以使用 localForage 可以突破离线存储 5MB的限制
+
+https://www.zhangxinxu.com/wordpress/2018/06/js-localforage-localstorage-indexdb/
+
+他会按照 indexdb -> websql -> localstorage 来敲套
+
+vue 生态可以使用 vif
+
+
+
