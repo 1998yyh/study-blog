@@ -1138,6 +1138,4 @@ const filterOdd = arr =>{
 方案三:
 ``` js
 const filterOdd = arr => Object.keys(arr = arr.group(e=>e)).filter(k=>arr[k].length & 1)
-
-
 ```
