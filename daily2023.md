@@ -1090,3 +1090,54 @@ type res2 = Test<never>
 
 当类型参数是never 出现在条件类型左边 直接返回never
 
+## 5.15
+
+对于小程序自动化测试 - 尝试
+
+1. uni-app多端处理的不是特别理想 文档内容特别差 按文档流程无法完成测试代码编写
+
+2. 微信小程序可以使用其自动化测试录制功能 可以录制部分流程 做自动化测试 
+
+3. 注意存在的问题是 公司小程序依赖不同账号, 依赖后台返回的接口状态 一个账号无法满足需求 
+
+
+
+找出数组中所有出现奇数次的元素
+
+``` js
+
+const input = ['A','B','B','C','A','B','B','C','D','A','B','B','C']
+
+const filterOddOccurrance = arr = {}
+
+console.log(filterOddOccurrance(input))
+```
+
+
+方案一:
+``` js
+const filterOdd = arr => {
+    const a = [];
+    arr.forEach(item=>{
+        a.includes(item) ? a.splice(a.indexOf(item),1) : a.push(item)
+    })
+    return 
+}
+```
+
+
+方案二:
+``` js
+const filterOdd = arr =>{
+    const m = new Map();
+    arr.forEach(i=>!m.has(i) ? m.set(i,1):m.delete(i))
+    return m.keys();
+}
+```
+
+方案三:
+``` js
+const filterOdd = arr => Object.keys(arr = arr.group(e=>e)).filter(k=>arr[k].length & 1)
+
+
+```
