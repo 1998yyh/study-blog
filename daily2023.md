@@ -1139,3 +1139,23 @@ const filterOdd = arr =>{
 ``` js
 const filterOdd = arr => Object.keys(arr = arr.group(e=>e)).filter(k=>arr[k].length & 1)
 ```
+
+## 5.24
+
+输出字节码
+
+``` js
+function test1(){
+    let i = 0;
+    while(i<10){
+        console.log(i)
+        i++
+    }
+}
+
+function test2(){
+    for(let i = 0; i< 10;i++){
+        console.log(i)
+    }
+}
+```
