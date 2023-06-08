@@ -1048,7 +1048,7 @@ if (!valid) console.log(ajv.errors)
 
 ## 05.11
 
-1. 一段文本 大小写翻转
+01. 一段文本 大小写翻转
 
 ```js
 const input = 'Hello World!';
@@ -1076,16 +1076,15 @@ const reverseCase = txt => [...txt].map(i => /[A-Z]/.test(i) ? i.toLowerCase() :
 const reverseCase = txt => text.replace(/[a-z]/gi, char => String.fromCharCode(char.charCodeAt(0) ^ 32));
 ```
 
-
 2. 
 
-``` ts
+```ts
 type res = never extends 1 ? 1 :2; // 1
 type Test<T> = T extends 1 ? 1:2; //never
 type res2 = Test<never>
 
-
 ```
+
 非泛型的时候 如果extends的是any 或者 unknow 或者 check 部分是 extends 部分的子类型 直接返回returnType 的类型
 
 当类型参数是never 出现在条件类型左边 直接返回never
@@ -1094,68 +1093,213 @@ type res2 = Test<never>
 
 对于小程序自动化测试 - 尝试
 
-1. uni-app多端处理的不是特别理想 文档内容特别差 按文档流程无法完成测试代码编写
+01. uni-app多端处理的不是特别理想 文档内容特别差 按文档流程无法完成测试代码编写
 
-2. 微信小程序可以使用其自动化测试录制功能 可以录制部分流程 做自动化测试 
+02. 微信小程序可以使用其自动化测试录制功能 可以录制部分流程 做自动化测试 
 
-3. 注意存在的问题是 公司小程序依赖不同账号, 依赖后台返回的接口状态 一个账号无法满足需求 
-
-
+03. 注意存在的问题是 公司小程序依赖不同账号, 依赖后台返回的接口状态 一个账号无法满足需求 
 
 找出数组中所有出现奇数次的元素
 
-``` js
-
-const input = ['A','B','B','C','A','B','B','C','D','A','B','B','C']
+```js
+const input = ['A', 'B', 'B', 'C', 'A', 'B', 'B', 'C', 'D', 'A', 'B', 'B', 'C']
 
 const filterOddOccurrance = arr = {}
 
 console.log(filterOddOccurrance(input))
 ```
 
-
 方案一:
-``` js
+
+```js
 const filterOdd = arr => {
     const a = [];
-    arr.forEach(item=>{
-        a.includes(item) ? a.splice(a.indexOf(item),1) : a.push(item)
+    arr.forEach(item => {
+        a.includes(item) ? a.splice(a.indexOf(item), 1) : a.push(item)
     })
-    return 
+    return
 }
 ```
 
-
 方案二:
-``` js
-const filterOdd = arr =>{
+
+```js
+const filterOdd = arr => {
     const m = new Map();
-    arr.forEach(i=>!m.has(i) ? m.set(i,1):m.delete(i))
+    arr.forEach(i => !m.has(i) ? m.set(i, 1) : m.delete(i))
     return m.keys();
 }
 ```
 
 方案三:
-``` js
-const filterOdd = arr => Object.keys(arr = arr.group(e=>e)).filter(k=>arr[k].length & 1)
+
+```js
+const filterOdd = arr => Object.keys(arr = arr.group(e => e)).filter(k => arr[k].length & 1)
 ```
 
 ## 5.24
 
 输出字节码
 
-``` js
-function test1(){
+node --print-bytecode --print-bytecode-filter=test2 test.js
+
+```js
+function test1() {
     let i = 0;
-    while(i<10){
+    while (i < 10) {
         console.log(i)
         i++
     }
 }
 
-function test2(){
-    for(let i = 0; i< 10;i++){
+function test2() {
+    for (let i = 0; i < 10; i++) {
         console.log(i)
     }
 }
 ```
+
+## 06.08
+
+01. css @scope 支持
+
+```html
+<style>
+    @scope (.blue) {
+        button {
+            background-color: blue;
+        }
+    }
+
+    @scope (.green) {
+        button {
+            background-color: green;
+        }
+    }
+
+    @scope (.red) {
+        button {
+            background-color: red;
+        }
+    }
+</style>
+<div class="red">
+    <div class="green">
+        <div class="blue">
+            <button>Click</button>
+        </div>
+    </div>
+</div>
+```
+
+如上代码 button 颜色为blue
+
+也可以设置边界
+
+第二个选择器设置一个下边界——即从这一点停止样式。
+
+```html
+ <style>
+     @scope (.component) to (.content) {
+         p {
+             color: red;
+         }
+     }
+ </style>
+ <div class="component">
+     <p>In scope.</p>
+     <div class="content">
+         <p>Out of scope.</p>
+     </div>
+ </div>
+```
+
+02. matches API
+
+Element接口的matches()方法测试指定的CSS选择器是否选择该元素。
+
+比如 :active : link 或者其他属性选择器
+
+03. Dialog 
+
+全局Dialog标签
+
+```html
+<form method="dialog">
+    <h3></h3>
+    <button>关闭</button>
+</form>
+</dialog>
+<button id="btn">显示DIalog</button>
+<script>
+    const btn = document.querySelector('#btn')
+    const dialog = document.querySelector('dialog');
+
+    btn.onclick = () => {
+        dialog.show();
+        // 或者调用
+        dialog.showModal();
+        // 通过这个方法打开的弹窗，会自带一个半透明的背景，并且完全水平垂直居中
+
+    }
+</script>
+
+<style>
+
+    /* 可以通过来生成顶层 */
+
+    dialog::backdrop {
+        background: rgba(255,0,0,.25);
+    }
+
+    /* 如果希望打开弹窗有动画，可以自定义默认样式，通过visibility的方式实现隐藏显示 */
+
+    dialog[open] {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+</style>
+
+
+```
+
+
+04. #top-layer层级
+
+JS 也无法模拟的系统级新特性 
+
+解决的问题 -> 
+一些弹框写在了某些容器下 采用fixed定位  但是由于父容器使用了 transform 会导致失效 , 
+
+在以前，或者说很多框架中，都会想办法把弹窗放到最外层的 body下，这样就不受影响了，比如下面是vue3中的处理方式
+
+```html
+<div>
+  <Teleport to="body"> <!--将子内容传送到body下-->
+  	<dialog></dialog>
+  </Teleport>
+</div>
+
+```
+
+
+虽然dialog仍然在原来位置上，但真正渲染到了一个#top-layer的层级上，这个层级非常特殊，已经超越了html文档流，可以说是独一档的存在，这样，无论的dialog在什么位置，最后渲染的地方其实都在#top-layer层级上，自然也不会被父容器裁剪被隐藏了
+
+
+05. 
+
+popover是一个全局属性。给任意元素添加popover以后，它就变成了一个悬浮层。
+popover属性有两个值，默认是auto自动模式，支持默认行为，比如点击空白关闭，键盘Esc关闭
+popover属性还支持manual手动模式，也就是没有以上默认行为
+控制popover有两种方式，分别是声明式和命令式
+声明式是指通过HTML属性来实现点击交互
+可以通过popovertarget属性将悬浮层的id和按钮相关联，这样就能通过按钮打开悬浮层了
+还可以通过popovertargetaction属性来设置点击行为，有show、hide、toggle3种方式
+命令式是指通过 JS API来实现对悬浮层的控制，相比声明式而言更加灵活
+控制悬浮层的方法有showPopover、hidePopover、togglePopover
+CSS伪类:open可以区分悬浮层的打开状态
+JS 可以通过matches(':open')来获取悬浮层的打开状态
+JS 还可以通过监听toggle事件来获取悬浮层的打开状态，方式是event.newState
+相比传统实现，原生popover最大的优势是支持顶层特性
