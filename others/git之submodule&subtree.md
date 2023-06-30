@@ -17,9 +17,9 @@
 `.gitmodule`  该配置文件保存了项目 URL 与已经拉取的本地目录之间的映射
 
 ``` js
-[submodule "xxxxx-xcx-common"]
-	path = xxxxx-xcx-common
-	url = https://xxxxxxx.com/xxxx/xxxxx.git
+[submodule "bjxy-xcx-common"]
+	path = bjxy-xcx-common
+	url = https://git.yingzhongtong.com/bj_fe/miniprogram/bjxy-xcx-components/bjxy-xcx-common.git
 
 ```
 
@@ -47,7 +47,7 @@
 
 ``` js
 //  ### 不同分支
-Submodule xxxxx-xcx-common 175334b..5b8f789:
+Submodule bjxy-xcx-common 175334b..5b8f789:
 ```
 
 我们如果在此时提交，那么你会将子模块锁定为其他人更新时的新代码。
@@ -128,4 +128,55 @@ $ git submodule update --init --recursive
 
 ## subtree
 
+```js
+git subtree add   --prefix=<prefix> <commit>
+git subtree add   --prefix=<prefix> <repository> <ref>
+git subtree pull  --prefix=<prefix> <repository> <ref>
+git subtree push  --prefix=<prefix> <repository> <ref>
+git subtree merge --prefix=<prefix> <commit>
+git subtree split --prefix=<prefix> [OPTIONS] [<commit>]
+```
 
+我们用subtree 的命令添加子项目 
+
+``` js
+git subtree add --prefix=foo git地址 <分支> <ref>
+```
+
+解释：
+
+--squash 是将 subtree 的改动合并到一个 commit，不用拉取子项目完整的历史纪录
+
+这里 --prefix 后面的 = 也可以使用空格，注意这里的 foo 就是项目克隆后在本地的目录名
+
+命令中的 master 指的是 subtree 项目的分支名
+
+可以使用 git status 和 git log 查看提交
+
+使用 git subtree 添加项目后，subtree 就将原来的项目作为这个主项目的一个普通文件夹来看待了，对于父级项目而言完全无缝透明。上面
+的命令就是将 foo 这个项目添加到主项目中 foo 文件夹下。
+
+日常更新的时候，正常的提交代码，如果更改了 foo 目录中的内容也正常的提交即可。
+
+
+
+### 更新子项目
+
+``` js
+git subtree pull --prefix=foo git地址 <分支>
+```
+
+
+### 推送子项目
+
+``` js
+git subtree push --prefix=foo git地址<分支>
+```
+
+
+### 简化
+
+我们已经知道了git subtree 的命令的基本用法，但是上述几个命令还是显得有点复杂，特别是子仓库的源仓库地址，特别不方便记忆。
+这里我们把子仓库的地址作为一个remote，方便记忆：
+
+git remote add -f libpng https://github.com/test/libpng.git
