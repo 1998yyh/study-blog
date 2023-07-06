@@ -180,3 +180,24 @@ git subtree push --prefix=foo git地址<分支>
 这里我们把子仓库的地址作为一个remote，方便记忆：
 
 git remote add -f libpng https://github.com/test/libpng.git
+
+
+### push原理以及优化
+
+我们在 subtree add 的时候 会生成一个commitID
+
+git 会遍历git log 然后找到这个commit 把之间的commit 涉及到那个目录的改动摘出来 单独push到子项目
+
+因为有个遍历的过程 所以这一步可能会比较慢, 
+
+当commit 多的时候 我们可以使用 
+
+``` js
+git subtree split --prefix=child --rejoin
+``` 
+
+他会单独生成一个commit 
+
+subtree push的时候会从上往下找commit 直到找到对应的commit 为止 
+
+所以split 命令就可以指定找到哪个commit , 之前的就不找了 从而优化性能
