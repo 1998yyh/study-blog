@@ -1303,3 +1303,59 @@ CSS伪类:open可以区分悬浮层的打开状态
 JS 可以通过matches(':open')来获取悬浮层的打开状态
 JS 还可以通过监听toggle事件来获取悬浮层的打开状态，方式是event.newState
 相比传统实现，原生popover最大的优势是支持顶层特性
+
+
+
+## 7.25 
+
+终于不是很忙碌 
+
+1. TS内置函数 Awaited
+
+
+正常我们定义一个函数接口，在`api.ts`定义如下
+```ts
+// api.ts
+interface fetchDataReturn {
+    name:string,
+    age:number,
+    sex:boolean
+}
+
+function fetchData():Promise<fetchDataReturn> {
+    return new Promise((resolve)=>{
+        setTimeout(()=>{
+            resolve({
+                name:'1',
+                age:1,
+                sex:false
+            })
+        })
+    })
+}
+```
+在调用的地方
+
+``` ts
+import { fetchDataReturn, fetchData} from 'api'
+
+async function process() {
+  const result: fetchDataReturn = await fetchData();
+  console.log(result); 
+}
+process();
+```
+
+Awaited这个内置函数可以帮助我们不需要引入 `return` 类型就可以 获取到data
+
+``` ts
+async function process() {
+  const result: Awaited<ReturnType<typeof fetchData>> = await fetchData();
+  console.log(result); // Output: "Data fetched successfully!"
+}
+```
+
+
+2. vite 4.4 更新 更快的css构建
+
+3. 2023 css state https://survey.devographics.com/en-US/survey/state-of-css/2023/outline/2 做个分享吧
