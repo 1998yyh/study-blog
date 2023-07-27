@@ -1359,3 +1359,12 @@ async function process() {
 2. vite 4.4 更新 更快的css构建
 
 3. 2023 css state https://survey.devographics.com/en-US/survey/state-of-css/2023/outline/2 做个分享吧
+
+
+
+## 7.26 
+
+1. 一个blend-mode 用的特别好的案例
+
+https://codepen.io/tommiehansen/pen/BaGyVVy
+
