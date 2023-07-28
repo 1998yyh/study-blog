@@ -1368,3 +1368,23 @@ async function process() {
 
 https://codepen.io/tommiehansen/pen/BaGyVVy
 
+
+## 7.28
+
+1. code golf 
+
+构造一个数组 3的倍数 值为 fizz  5的倍数 值为buzz 同时是 3和5 值为 fizzbuzz
+
+``` js
+[...Array(100)].map((_,i)=>++i%3?i:'fizz'+(i%5?'':'buzz')||i)
+
+
+```
+
+
+2. code golf
+
+https://www.geeksforgeeks.org/code-golfing-in-javascript/?ref=ml_lbp
+
+
+3. grid + clip-path 实现 GTA5 头图
