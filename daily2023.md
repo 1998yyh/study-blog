@@ -1388,3 +1388,42 @@ https://www.geeksforgeeks.org/code-golfing-in-javascript/?ref=ml_lbp
 
 
 3. grid + clip-path 实现 GTA5 头图
+
+
+## 7.31
+
+1. http3 - 
+
+h3 是这几年才出来的，而且它本质是 HTTP，不一定适用于所有场景（比如推拉流  - 不是， 他握手还是http， 然后使用alt-svc替换到udp协议
+
+那也可以直接用quic , 不就得了 , quic本身不就是仿的tcp，然后解决了tcp的问题的协议
+
+等于是个奇葩产品 
+
+quic 本身在某些地区可能被墙  因为之前墙都是基于 TCP 的阻断，后来就有人想出来用 quic 翻
+
+udp国内qos严重
+
+h3 = quic + http  quic里包含了tls  所有h3本身就是https的
+
+那 h3 可以用来传输 rtmp 数据吗🤔
+
+那有人还用 websocket 翻呢，websocket被禁了吗 - 对，百度云加速已经禁止转发 ws 协议了
+
+不过 vless 的 ws 协议本身就容易被识别
+
+以前我是用百度云加速转发，因为它跟 cloudflare 有合作；被禁了之后只能用 cloudflare 自己的 IP 了，慢死
+
+之所以不直接暴露服务器，因为容易被直接禁
+
+quic是h3的底层协议
+
+对，一些新技术国内部分地区用不了，例如 ESNI（因为这可以让运营商无法知道你要去哪儿；不过后来这协议也被 ECH 代替了
+
+quic 作为一个新协议，并且不容易被阻断，那直接一刀切
+
+一刀切那就都别用h3了呗
+
+除非哪天工信部大力推动 h3 标准落地
+
+我认为顶多阻断跨境h3流量
