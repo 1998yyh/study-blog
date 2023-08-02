@@ -1427,3 +1427,89 @@ quic 作为一个新协议，并且不容易被阻断，那直接一刀切
 除非哪天工信部大力推动 h3 标准落地
 
 我认为顶多阻断跨境h3流量
+
+
+## 8.2
+
+1. 发现一个图片服务 
+
+https://fastly.picsum.photos/id/1015/1920/1080.jpg
+
+2. 如果一个元素行内设置了`color：red !important`  
+
+原本内容
+
+``` html
+<style>
+.wrap{
+    display: block;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    inset: 0;
+    margin: auto;
+}
+
+.wrap {
+    /*  请开始你的表演 */
+}
+</style>
+
+<div class="wrap" style="color:red!important">
+    把我变成蓝色
+</div>
+```
+
+* 方案一
+``` css
+.wrap{
+    -webkit-text-fill-color: blue;
+}
+```
+
+* 方案二
+``` css
+.wrap{
+    filter: hue-rotate(240deg)
+}
+```
+
+* 方案三
+``` css
+.wrap:first-line{
+    color:blue;
+}
+```
+
+* 方案四
+  
+``` css
+.wrap{
+    background:#fff;
+}
+
+.wrap::after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    background-color: blue;
+    mix-blend-mode: color;
+}
+```
+
+
+* 方案五
+``` css
+.wrap::after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    backdrop-filter: hue-rotate(240deg);
+}
+```
