@@ -1513,3 +1513,52 @@ https://fastly.picsum.photos/id/1015/1920/1080.jpg
     backdrop-filter: hue-rotate(240deg);
 }
 ```
+
+## 08.08 
+
+1. 在看vue源码的时候注意到一个细节，就是初始化一个对象的时候常常用 `Object.create(null)` 。而不是一个空对象
+
+MDN对于其的定义是
+
+``` js
+Object.create(proto,[propertiesObject])
+```
+proto:新创建对象的原型对象
+
+propertiesObject:可选。要添加到新对象的可枚举（新添加的属性是其自身的属性，而不是其原型链上的属性）的属性。
+
+
+看下Object.create(null) 的使用场景
+
+首先看下 Object.create(null) 和 {} 创建的对象的区别
+
+![](https://pic.imgdb.cn/item/64d20dbe1ddac507cc00e686.jpg)
+
+从上图可以看到，使用create创建的对象，没有任何属性，显示No properties，我们可以把它当作一个非常纯净的map来使用，我们可以自己定义hasOwnProperty、toString方法，不管是有意还是不小心，我们完全不必担心会将原型链上的同名方法覆盖掉。
+
+``` js
+//Demo1:
+var a= {...省略很多属性和方法...};
+//如果想要检查a是否存在一个名为toString的属性，你必须像下面这样进行检查：
+if(Object.prototype.hasOwnProperty.call(a,'toString')){
+    ...
+}
+//为什么不能直接用a.hasOwnProperty('toString')?因为你可能给a添加了一个自定义的hasOwnProperty
+//你无法使用下面这种方式来进行判断,因为原型上的toString方法是存在的：
+if(a.toString){}
+
+//Demo2:
+var a=Object.create(null)
+//你可以直接使用下面这种方式判断，因为存在的属性，都将定义在a上面，除非手动指定原型：
+if(a.toString){}
+
+```
+
+另一个使用create(null)的理由是，在我们使用for..in循环的时候会遍历对象原型链上的属性，使用create(null)就不必再对属性进行检查了，当然，我们也可以直接使用Object.keys[]。
+
+
+2. 微信小程序 如果用户点击了授权 不在询问 想要删除 可以扫开发工具 -> 多账户调试 -> 添加测试号 -> 清楚授权数据
+
+
+3. :is :where 其中where中有一个非法就导致全部失效。
+
