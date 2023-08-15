@@ -535,3 +535,324 @@ function _proxy (data) {
 
 ```
 当我们访问data中的变量时，会代理到data 修改同理
+
+而vue3也在这里做了同样的事情,Vue 3 内部有很多状态属性，存储在不同的对象上，比如 setupState、ctx、data、props。这样用户取数据就会考虑具体从哪个对象中获取，这无疑增加了用户的使用负担，所以对 instance.ctx 进行代理，然后根据属性优先级关系依次完成从特定对象上获取值。
+
+#### get
+
+我们看一下proxy的get他的实现
+
+``` js
+export const PublicInstanceProxyHandlers = {
+  get({ _: instance }, key) {
+    const { ctx, setupState, data, props, accessCache, type, appContext } = instance
+    let normalizedProps
+    if (key[0] !== '$') {
+      // 从缓存中获取当前 key 存在于哪个属性中
+      const n = accessCache![key]
+      if (n !== undefined) {
+        switch (n) {
+          case AccessTypes.SETUP:
+            return setupState[key]
+          case AccessTypes.DATA:
+            return data[key]
+          case AccessTypes.CONTEXT:
+            return ctx[key]
+          case AccessTypes.PROPS:
+            return props![key]
+        }
+      } else if (setupState !== EMPTY_OBJ && hasOwn(setupState, key)) {
+        // 从 setupState 中取
+        accessCache![key] = AccessTypes.SETUP
+        return setupState[key]
+      } else if (data !== EMPTY_OBJ && hasOwn(data, key)) {
+        // 从 data 中取
+        accessCache![key] = AccessTypes.DATA
+        return data[key]
+      } else if (
+        (normalizedProps = instance.propsOptions[0]) &&
+        hasOwn(normalizedProps, key)
+      ) {
+        // 从 props 中取
+        accessCache![key] = AccessTypes.PROPS
+        return props![key]
+      } else if (ctx !== EMPTY_OBJ && hasOwn(ctx, key)) {
+        // 从 ctx 中取
+        accessCache![key] = AccessTypes.CONTEXT
+        return ctx[key]
+      } else if (!__FEATURE_OPTIONS_API__ || shouldCacheAccess) {
+        // 都取不到
+        accessCache![key] = AccessTypes.OTHER
+      }
+    }
+
+    const publicGetter = publicPropertiesMap[key]
+    let cssModule, globalProperties
+    if (publicGetter) {
+      // 以 $ 保留字开头的相关函数和方法
+      // ...
+    } else if (
+      // css module
+    (cssModule = type.__cssModules) && (cssModule = cssModule[key])
+    ) {
+      // ...
+    } else if (ctx !== EMPTY_OBJ && hasOwn(ctx, key)) {
+      // ...
+    } else if (
+      // 全局属性
+      ((globalProperties = appContext.config.globalProperties),
+      hasOwn(globalProperties, key))
+    ) {
+      // ...
+    } else if (__DEV__) {
+      // 一些告警
+      // ...
+    }
+  }
+}
+```
+
+如果我们知道 key 存在于哪个对象上，那么就可以直接通过对象取值的操作获取属性上的值了。
+
+如果我们不知道用户访问的 key 存在于哪个属性上，那只能通过 hasOwn 的方法先判断存在于哪个属性上，再通过对象取值的操作获取属性值，这无疑是多操作了一步，而且这个判断是比较耗费性能的。
+
+如果遇到大量渲染取值的操作，那么这块就是个性能瓶颈，所以这里用了 accessCache 来标记缓存 key 存在于哪个属性上。这其实也相当于用一部分空间换时间的优化。
+
+接下来，函数首先判断 key[0] !== '$' 的情况（$ 开头的一般是 Vue 组件实例上的内置属性），在 Vue 3 源码中，会依次从 setupState、data、props、ctx 这几类数据中取状态值。
+
+这里的定义顺序，决定了后续取值的优先级顺序：setupState >data >props > ctx。
+
+
+#### set
+
+然后看下set的实现
+
+``` js
+export const PublicInstanceProxyHandlers = {
+  set({ _: instance }, key, value) {
+    const { data, setupState, ctx } = instance
+    if (setupState !== EMPTY_OBJ && hasOwn(setupState, key)) {
+      // 设置 setupState
+      setupState[key] = value
+      return true
+    } else if (data !== EMPTY_OBJ && hasOwn(data, key)) {
+      // 设置 data
+      data[key] = value
+      return true
+    } else if (hasOwn(instance.props, key)) {
+      // 不能给 props 赋值
+      return false
+    }
+    if (key[0] === '$' && key.slice(1) in instance) {
+      // 不能给组件实例上的内置属性赋值
+      return false
+    } else {
+      // 用户自定义数据赋值
+      ctx[key] = value
+    }
+    return true
+  }
+}
+
+```
+
+可以看到这里也是和前面 get 函数类似的通过调用顺序来实现对 set 函数不同属性设置优先级的，可以直观地看到优先级关系为：setupState > data > props。同时这里也有说明：就是如果直接对 props 或者组件实例上的内置属性赋值，则会告警。
+
+
+#### has
+
+proxy 属性 has 的实现：
+
+``` js
+export const PublicInstanceProxyHandlers = {
+  has({_: { data, setupState, accessCache, ctx, appContext, propsOptions }}, key) {
+    let normalizedProps
+    return (
+      !!accessCache![key] ||
+      (data !== EMPTY_OBJ && hasOwn(data, key)) ||
+      (setupState !== EMPTY_OBJ && hasOwn(setupState, key)) ||
+      ((normalizedProps = propsOptions[0]) && hasOwn(normalizedProps, key)) ||
+      hasOwn(ctx, key) ||
+      hasOwn(publicPropertiesMap, key) ||
+      hasOwn(appContext.config.globalProperties, key)
+    )
+  },
+}
+```
+
+这个函数则是依次判断 key 是否存在于 accessCache > data > setupState > prop > ctx > publicPropertiesMap > globalProperties，然后返回结果。
+
+
+
+### setup调用
+
+我们继续看 `setupStatefulComponent` 后面代码
+
+``` js
+// 获取 setup 函数
+const { setup } = Component
+// 存在 setup 函数
+if (setup) {
+  // 根据 setup 函数的入参长度，判断是否需要创建 setupContext 对象
+  // 函数的length 表示参数的个数
+  const setupContext = (instance.setupContext =
+    setup.length > 1 ? createSetupContext(instance) : null)
+  // 调用 setup
+  const setupResult = callWithErrorHandling(setup, instance, 0, [instance.props, setupContext])
+  // 处理 setup 执行结果
+  handleSetupResult(instance, setupResult)
+}
+
+```
+
+此处的setup 获取的就是我们自己定义的函数
+
+
+``` html
+<template>
+  <p>{{ msg }}</p>
+</template>
+<script>
+  export default {
+    props: {
+      msg: String
+    },
+    setup (props, setupContext) {
+      // todo
+    }
+  }
+</script>
+```
+
+
+#### createSetupContext
+
+``` js
+function createSetupContext (instance) {
+  return {
+    get attrs() {
+      return attrs || (attrs = createAttrsProxy(instance))
+    },
+    slots: instance.slots,
+    emit: instance.emit,
+    expose
+  }
+}
+
+```
+
+#### callWithErrorHandling
+
+``` js
+export function callWithErrorHandling(
+  fn: Function,
+  instance: ComponentInternalInstance | null,
+  type: ErrorTypes,
+  args?: unknown[]
+) {
+  let res
+  try {
+    res = args ? fn(...args) : fn()
+  } catch (err) {
+    handleError(err, instance, type)
+  }
+  return res
+}
+```
+
+ Vue 3 很多函数的调用都是通过 callWithErrorHandling 来包裹
+
+ 这样的好处一方面可以由 Vue 内部统一 try...catch 处理用户代码运行可能出现的错误。
+ 
+ 另一方面这些错误也可以交由用户统一注册的 errorHandler 进行处理，比如上报给监控系统。
+
+
+ #### handleSetupResult
+
+ ``` js
+ function handleSetupResult(instance, setupResult) {
+  if (isFunction(setupResult)) {
+    // setup 返回渲染函数
+    instance.render = setupResult
+  }
+  else if (isObject(setupResult)) {
+    // proxyRefs 的作用就是把 setupResult 对象做一层代理
+    instance.setupState = proxyRefs(setupResult);
+  }
+  finishComponentSetup(instance)
+}
+
+```
+
+setup 返回值不一样的话，会有不同的处理，如果 setupResult 是个函数，那么会把该函数绑定到 render 上。
+
+``` html
+<script>
+  import { createVnode } from 'vue'
+  export default {
+    props: {
+      msg: String
+    },
+    setup (props, { emit }) {
+      return (ctx) => {
+        return [
+          createVnode('p', null, ctx.msg)
+        ]
+      }
+    }
+  }
+</script>
+
+```
+
+当 setupResult 是一个对象的时候，我们为 setupResult 对象通过 proxyRefs 作了一层代理，方便用户直接访问 ref 类型的值。比如，在模板中访问 setupResult 中的数据，就可以省略 .value 的取值，而由代理来默认取 .value 的值。
+
+最后完成实例设置
+
+``` js
+function finishComponentSetup(instance) {
+  // type 是个组件对象
+  const Component = instance.type;
+  
+  if (!instance.render) {
+    // 如果组件没有 render 函数，那么就需要把 template 编译成 render 函数
+    if (compile && !Component.render) {
+      if (Component.template) {
+        // 这里就是 runtime 模块和 compile 模块结合点
+        // 运行时编译
+        Component.render = compile(Component.template, {
+        isCustomElement: instance.appContext.config.isCustomElement || NO
+      })
+      }
+    }
+
+    instance.render = Component.render;
+  }
+  if (__FEATURE_OPTIONS_API__ && !(__COMPAT__ && skipOptions)) {
+    // 兼容选项式组件的调用逻辑
+  }
+}
+
+```
+
+这里主要做的就是根据 instance 上有没有 render 函数来判断是否需要进行运行时渲染，运行时渲染指的是在浏览器运行的过程中，动态编译 <template> 标签内的内容，产出渲染函数。对于编译时渲染，则是有渲染函数的，因为模板中的内容会被 webpack 中 vue-loader 这样的插件进行编译。
+
+这里有个 __FEATURE_OPTIONS_API__ 变量用来标记是否是兼容 选项式 API 调用，如果我们只使用 Composition Api 那么就可以通过 webpack 静态变量注入的方式关闭此特性。然后交由 Tree-Shacking 删除无用的代码，从而减少引用代码包的体积。
+
+## 组件更新
+
+
+``` js
+const setupRenderEffect = (instance, initialVNode, container, anchor, parentSuspense, isSVG, optimized) => {
+  function componentUpdateFn() {
+    if (!instance.isMounted) {
+      // 初始化组件
+    }
+    else {
+      // 更新组件
+    }
+  }
+  // 创建响应式的副作用渲染函数
+  instance.update = effect(componentUpdateFn, prodEffectOptions)
+}
+```

@@ -1562,3 +1562,49 @@ if(a.toString){}
 
 3. :is :where 其中where中有一个非法就导致全部失效。
 
+
+## 08.09 
+
+1. 一个函数的length 表示函数的入参长度
+
+``` js
+const a = (m,n)=>{}
+a.length = 2;
+
+const b = (x,y,z)=>{};
+b.length = 3;
+
+```
+
+
+## 08.10
+
+疯狂星期四
+
+``` js
+
+add[1][2][3] + 4 //10
+add[1][-1][3] * 2 // 6
++add[1][3] // 4
+
+```
+
+```js
+const makeProxy = (total = 0) => new Proxy([],{
+    get(_,prop){
+        if(prop=== Symbol.toPrimitive){
+            return ()=>total
+        }
+
+        return makeProxy(total+(+prop))
+    },
+})
+
+const add = makeProxy();
+```
+
+
+## 08.15
+
+1. https://codepen.io/wheatup/pen/GRwVwdV/fce68f6eb87f3aefa5d6ff9886194529?editors=1100 蛇形增加减少
+2. https://codepen.io/wheatup/pen/poQMdKP/365119e821503f753fb778db16b54896?editors=0110 弹球
