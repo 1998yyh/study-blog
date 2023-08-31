@@ -22,7 +22,6 @@ function halting(func,input){
 然后我们构造另一个函数
 
 ``` js
-
 function ni_ma(func){
   if(halting(func,func)){
     for(;;)

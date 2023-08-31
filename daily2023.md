@@ -1663,9 +1663,6 @@ new Date('2023-08-23')
 条件2：禁止出现任何值比较和条件语句（if、while、switch、三元表达式、==、!=、&&、||等）
 条件3（可选）：一行代码
 
-
-
-
 这种无条件式一般在计算机图形学和shader里面比较常用，因为值判断比较耗性能
 
 ``` js
@@ -1673,5 +1670,82 @@ Array.from({ length: 100 }, (_, i) => [++i, 'Fizz', 'Buzz', 'FizzBuzz'][!(i % 3)
 ```
 
 
-## 08.25
+## 08.30
+
+1. 为什么这段代码在chrome中不符合事件循环机制
+
+``` js
+console.log(1);
+
+setTimeout(()=>{
+    console.log(2);
+},0)
+
+const intervalId = setInterval(()=>{
+    console.log(3)
+},0)
+
+setTimeout(()=>{
+    console.log(10);
+    clearInterval(intervalId)
+},0)
+```
+
+在Chrome浏览器中不会输出3；在Node环境或者火狐浏览器中可以输出3。
+
+按照事件循环机制，应该是3个宏任务依次进入宏任务队列排队，那应该是先输出一次3再清除Interval才对，为什么Chrome环境输出结果是反常的？
+
+
+原因是在目前的 Chrome 里 setInterval 的最小延迟时间不是 0，而是 1，即便你写了 0，Chrome 也会改成 1，而 setTimeout 没有这个限制，
+
+所以 setTimeout 回调会先执行，也就执行了 clearInterval，所以不会打印 3。很久以前 setTimeout 和 setInterval 的 timeout 都有最小值 1ms 的限制，
+
+从 2014 年 Chrome 就想让 setTimeout 允许真正的  0ms，但失败了，因为测试代码改动太多。
+
+在命令行关掉这个特性 --disable-features=SetTimeoutWithoutClamp，setTimeout 就又延迟 1ms 执行了
+
+
+
+2. echarts 的截图测试
+
+echarts 的 visual test 还能录制 / 回放操作， 不是用的 rrweb 
+
+
+## 08.31
+
+疯狂星期四
+``` js
+const getCurrentFunctionName = () => {
+    // 开始你的表演
+};
+
+const foo = () => {
+    console.log(getCurrentFunctionName());
+}
+
+function bar() {
+    console.log(getCurrentFunctionName());
+}
+
+
+foo(); // foo
+bar(); // bar
+```
+
+
+答案：
+
+``` js
+
+const getCurrentFunctionName = () => {
+    const error = new Error();
+    const stackLines = error.stack.split('\n').slice(2);
+    const callerLine = stacklines[0].trim();
+    return callerLine.match(/at (\S+)/)[1]
+}
+
+
+const getCurrentFunctionName = () => new Error().stack.split('\n')[2].match(/at(.*)\(/[1])
+```
+
 
