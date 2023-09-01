@@ -1663,7 +1663,7 @@ new Date('2023-08-23')
 条件2：禁止出现任何值比较和条件语句（if、while、switch、三元表达式、==、!=、&&、||等）
 条件3（可选）：一行代码
 
-这种无条件式一般在计算机图形学和shader里面比较常用，因为值判断比较耗性能
+这种无条件式一般在计算机图形学和shader里面比较常用，因为值判断比较耗性能 判断使用object lookup 模拟
 
 ``` js
 Array.from({ length: 100 }, (_, i) => [++i, 'Fizz', 'Buzz', 'FizzBuzz'][!(i % 3) + !(i % 5) * 2])
@@ -1744,8 +1744,16 @@ const getCurrentFunctionName = () => {
     return callerLine.match(/at (\S+)/)[1]
 }
 
-
 const getCurrentFunctionName = () => new Error().stack.split('\n')[2].match(/at(.*)\(/[1])
 ```
 
+## 09.01
+
+1. C10K 问题 :
+
+Client 10000 问题 即 在同时连接到服务器的客户端数量超过10000个的环境中，即便硬件性能足够，依然无法正常提供服务，简而言之，就是单机1万个并发连接问题。
+
+2. Discord 为什么从 go 迁移到 rust 
+
+https://discord.com/blog/why-discord-is-switching-from-go-to-rust
 
