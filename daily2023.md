@@ -1757,3 +1757,45 @@ Client 10000 问题 即 在同时连接到服务器的客户端数量超过10000
 
 https://discord.com/blog/why-discord-is-switching-from-go-to-rust
 
+
+## 09.05
+
+1. 手写call
+
+```js
+Function.prototype.myCall = function(context){
+    if(typeof this !== 'function'){
+        console.error('type error')
+    }
+    let args = [...arguments].slice(1);
+    let result = null;
+    context = context || window;
+    context.fn = this;
+    result = context.fn(...args)
+    delete context.fn
+    return result;
+}
+```
+
+疑问的点在于,为什么要对`this 做类型约束`
+
+答：
+
+首先ES规范的第二条 就是这个
+
+> 1.Let func be the this value.
+> 2.If IsCallable(func) is false, throw a TypeError exception
+> 3.Perform PrepareForTailCall0.
+> 4.Return ? Call(func, thisArg, args).
+
+call 就是个普通函数，不管他写在哪里 , 只要this 可以被改变， 就不能依赖this 
+
+因为js没有类型限制，所以肯定要做各种防御式编程， 规范那么做说明可以通过现有范式达到这个场景
+
+
+
+1. canvas相关库性能比较 
+
+https://benchmarks.slaylines.io/webgl.html  
+
+结论：在渲染32000个DOM的场景下 WebGL帧率最稳 其次都是
