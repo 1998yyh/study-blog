@@ -129,6 +129,7 @@ const patch: PatchFn = (
       } else if (shapeFlag & ShapeFlags.COMPONENT) {
         processComponent();
       } else if (shapeFlag & ShapeFlags.TELEPORT) {
+        // other...
       }
   }
 
@@ -1041,3 +1042,123 @@ const patchChildren = (n1, n2, container, anchor, parentComponent, parentSuspens
 | 数组  | 空 | 删除旧的子节点 |
 | 数组  | 纯文本 | 删除旧的子节点，添加新文本节点 |
 | 数组  | 数组 | diff |
+
+
+抛开Diff算法，我们看下处理Vue组件
+
+
+#### processComponent
+
+``` js
+const processComponent = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
+  if (n1 == null) {
+    // 初始化的过程
+  }
+  else {
+    // 更新的过程
+    updateComponent(n1, n2, parentComponent, optimized)
+  }
+}
+
+const updateComponent = (n1, n2, optimized) => {
+  const instance = (n2.component = n1.component)!
+   // 根据新老节点判断是否需要更新子组件
+  if (shouldUpdateComponent(n1, n2, optimized)) {
+    //...
+    // 如果需要更新，则将新节点 vnode 赋值给 next
+    instance.next = n2
+    // 执行前面定义在 instance 上的 update 函数。
+    instance.update()
+  } else {
+    // 如果不需要更新，则将就节点的内容更新到新节点上即可
+    n2.el = n1.el
+    instance.vnode = n2
+  }
+}
+```
+
+updateComponent 函数首先通过 shouldUpdateComponent 函数来判断当前是否需要更新，因为有些VNode值变化并不需要立即显示更新子组件。
+
+``` html
+<template>
+   <div>{{msg}}</div>
+   <Child />
+</template>
+<script setup>
+import { ref } from 'vue'
+
+const msg = ref('hello')
+<script>
+```
+
+因为子组件不依赖父组件的状态数据，所以子组件是不需要更新的，这也从侧面反映出 Vue 的更新不仅是组件层面的细粒度更新，更在源码层面帮我们处理了一些不必要的子节点更新！
+
+最后执行的 instance.update，这个函数其实就是在 setupRenderEffect 内创建的。最终子组件的更新还会走一遍自己副作用函数的渲染，然后 patch 子组件的子模板 DOM，接上上面的流程。
+
+##### next
+
+``` html
+<template>
+  <div>
+    hello world
+    <hello :msg="msg" />
+    <button @click="changeMsg">修改 msg</button>
+  </div>
+</template>
+<script>
+import { ref } from 'vue'
+export default {
+  setup () {
+    const msg = ref('你好')
+    function changeMsg() {
+      msg.value = '你好啊，我变了'
+    }
+    return {
+      msg,
+      changeMsg
+    }
+  }
+}
+</script>
+
+<!-- hello.vue -->
+<template>
+  <div>
+    {{msg}}
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    msg: String
+  }
+}
+</script>
+```
+
+
+1. 点击 修改 msg 后， App 组件自身的数据变化，导致 App 组件进入 update 逻辑，此时是没有 next 的，接下来渲染新的子组件vnode，得到真实的模板vnode nextTree，用新旧subTree进行patch。
+2. 此时patch的元素类型是 div，进入更新普通元素的流程，先更新props，再更新子节点，当前div下的子节点有Hello组件时，进入组件的的更新流程。
+3. 在更新 Hello 组件时，根据 updateComponent 函数执行的逻辑，会先将Hello组件 instance.next 赋值为最新的子组件 vnode，之后再主动调用instance.update 进入上面的副作用渲染函数，这次的实例是 Hello 组件自身的渲染，且 next 存在值。
+
+当 next 存在时，会执行 updateComponentPreRender 函数：
+``` js
+const updateComponentPreRender = (instance, nextVNode, optimized) => {
+  // 新节点 vnode.component 赋值为 instance
+  nextVNode.component = instance
+  // 获取老节点的 props
+  const prevProps = instance.vnode.props
+  // 为 instance.vnode 赋值为新的组件 vnode 
+  instance.vnode = nextVNode
+  instance.next = null
+  // 更新 props
+  updateProps(instance, nextVNode.props, prevProps, optimized)
+  // 更新 slots
+  updateSlots(instance, nextVNode.children)
+}
+```
+
+updateComponentPreRender 函数核心功能就是完成了对实例上的属性、vnode 信息、slots 进行更新，当后续组件渲染的时候，得到的就是最新的值。
+
+总而言之，next 就是用来标记接下来需要渲染的子组件，如果 next 存在，则会进行子组件实例相关内容属性的更新操作，再进行子组件的更新流程。
+
