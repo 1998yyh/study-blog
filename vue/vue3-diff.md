@@ -356,9 +356,6 @@ move(nextChild, container, anchor, MoveType.REORDER)
 
 其中anchor 是参照物， 记录着上一次更新的节点信息， 也就是节点C的信息， 所以这里的意思就是把e挪动到了c前面
 
-
-
-
 ## 最长递增子序列
 
 假设我们的序列为 [5, 3, 4, 9] ，那么最长的递增子序列是 [3, 4]。

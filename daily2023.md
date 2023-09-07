@@ -1806,3 +1806,40 @@ https://benchmarks.slaylines.io/webgl.html
 1. web-worker 下载内容方案 
 
 https://juejin.cn/post/7273803674789953575
+
+
+
+## 09.07
+
+1. 疯狂星期四
+
+``` js
+let foo = // 
+if(!foo){
+    console.log(foo + 1) //2 
+}
+```
+
+答案
+``` js
+let foo = document.all
+foo[Symbol.toPrimitive] = () => 1;
+```
+
+
+2. 疯狂星期四
+
+``` js
+let foo = // 开始你的表演
+
+console.log(typeof foo);    // number
+console.log(1 + foo === 1); // false
+console.log(2 + foo === 2); // true
+```
+答案：Number.EPSILON
+
+解析： 
+1 的指数部分是 1023，尾数部分是 0，所以被解释为 2^(1023-1023) * (1+0) = 1；
+Number.EPSILON 的指数部分是 971，尾数部分是 0，所以被解释为 2^(971-1023) * (1+0) = 2^(-52)；
+在做加法的时候，1 的指数部分较大，所以先把 Number.EPSILON 转换成 2^(1023-1023) * 2^(-52)，这在二进制中刚好是 0.00...01（尾数部分最后一位是 1），所以加起来刚好是 1 + 0.00...01，值发生了变化；
+但如果第一个数字是 2，被解释为 2^(1024-1023) * (1+0)，在做加法时 Number.EPSILON 就会被转换为 2^(1024-1023) * 2^(-53)，但尾数一共就 52 位，所以最后一位 1 被丢弃了，结果就没有发生变化
