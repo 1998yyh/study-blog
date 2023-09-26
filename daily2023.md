@@ -1,19 +1,19 @@
-# 2023 年每日笔记 
+# 2023 年每日笔记
 
-## 1.30 
+## 1.30
 
-01. swc
+1.  swc
 
-插件存在的问题: 
+插件存在的问题:
 
 放到前端研发框架这样的复杂业务场景，JS 插件的能力是至关重要的。架构团队另说，我们几乎不可能要求业务方去用 JS 以外的语言去写插件。可是在复杂的场景中，业务几乎离不开对 JS Compiler 有定制化的诉求，比如用的比较多的 babel-plugin-import
 
 值得注意的是，在 swc 的场景下，并不是所有的插件都用 JS 写合适，前文有提到性能问题，swc 的作者也在尽力将 babel 社区主流的插件改用 Rust 来写。但是基于前面的原因，可扩展的 JS 插件是不可或缺的。
 
-01. 没有 presets 的概念
-02. plugin 自身能获取的信息过少：缺失 stat 信息，其中包含了当前正在处理的文件路径；无法给插件传递参数
-03. 缺少 @babel/types 这样的生态工具
-04. 没有 AST playground
+1.  没有 presets 的概念
+2.  plugin 自身能获取的信息过少：缺失 stat 信息，其中包含了当前正在处理的文件路径；无法给插件传递参数
+3.  缺少 @babel/types 这样的生态工具
+4.  没有 AST playground
 
 体验与感受 :
 
@@ -25,13 +25,13 @@ babel 确确实实已经经历过太多的考验和迭代，即使 swc 已经快
 
 ## 2.1
 
-01. 解决typescript 报错 无法重新声明块范围变量,从而导致编译报错 报错如下
+1.  解决 typescript 报错 无法重新声明块范围变量,从而导致编译报错 报错如下
 
 ![](https://pic.imgdb.cn/item/63d9cc3a588a5d166c06ffe8.jpg)
 
 之所以 tslint 会提示这个错误，是因为在 Commonjs 规范里，没有像 ESModule 能形成闭包的「模块」概念，所有的模块在引用时都默认被抛至全局，因此当再次声明某个模块时，TypeScript 会认为重复声明了两次相同的变量进而抛错。
 
-对于这个问题，最简单的解决方法是在报错的文件底部添加一行代码：***`export {}`***。这行代码会「欺骗」tslint 使其认为当前文件是一个 ESModule 模块，因此不存在变量重复声明的可能性。当使用这个方法时，记得这样配置你的 `tsconfig.json`
+对于这个问题，最简单的解决方法是在报错的文件底部添加一行代码：**_`export {}`_**。这行代码会「欺骗」tslint 使其认为当前文件是一个 ESModule 模块，因此不存在变量重复声明的可能性。当使用这个方法时，记得这样配置你的 `tsconfig.json`
 
 ```json
 {
@@ -39,80 +39,68 @@ babel 确确实实已经经历过太多的考验和迭代，即使 swc 已经快
   "compilerOptions": {
     /** ....  */
     // `esMoudleInterop` 这个配置允许文件中出现 export 关键字。
-    "esModuleInterop": true, // important!
+    "esModuleInterop": true // important!
     /** ....  */
   }
 }
 ```
 
-但是这样同时回带来一个问题 , 无法执行编译后的Javascript 代码 , babel虽然能够转译 但是并没有去掉, node 会由于无法识别关键字而报错
+但是这样同时回带来一个问题 , 无法执行编译后的 Javascript 代码 , babel 虽然能够转译 但是并没有去掉, node 会由于无法识别关键字而报错
 
-所以需要我们手动去删除掉 ` export {}` , 已经有包 `@babel/plugin-transform-modules-commonjs` 满足需求 
+所以需要我们手动去删除掉 ` export {}` , 已经有包 `@babel/plugin-transform-modules-commonjs` 满足需求
 使用方法
 
 ```js
 {
-    plugins: [
-        '@babel/plugin-transform-modules-commonjs'
-    ]
+  plugins: ["@babel/plugin-transform-modules-commonjs"];
 }
 ```
 
-## 2.2 
+## 2.2
 
-01. 我们吧第三方库代码打到了业务里面  如果用外链的形式引入第三方库, 会减少白屏的效果吗?
+1.  我们吧第三方库代码打到了业务里面 如果用外链的形式引入第三方库, 会减少白屏的效果吗?
 
 答:
 
-分场景 :
-01. 首次加载
-02. 二次加载
-03. 首次加载后,有新版本发布
-04. 你的静态资源有没有设置缓存
-05. 发布策略,增量发布还是替换发布
+分场景 : 01. 首次加载 02. 二次加载 03. 首次加载后,有新版本发布 04. 你的静态资源有没有设置缓存 05. 发布策略,增量发布还是替换发布
 
-首次加载 没有缓存 发两个bundle 和 打进一个bundle 的区别不大
+首次加载 没有缓存 发两个 bundle 和 打进一个 bundle 的区别不大
 第三方库独立引入的好处是 发新版本 这部分以来无需更新的话 可以享受到他的缓存
 其次就是同站点下的其他页面公用这个缓存
 拆分来发 利用浏览器的并行请求 是可以减少白屏
 
-如果拆开来发 用http2 反而会因为多路复用而降低性能
+如果拆开来发 用 http2 反而会因为多路复用而降低性能
 如果你要加载的本身就是大文件, 此时的瓶颈是带宽而不是延迟 这种情况没必要拆
-如果是bundle的话 至少要把vendor 拆出来 这样能利用缓存 
+如果是 bundle 的话 至少要把 vendor 拆出来 这样能利用缓存
 
-不常维护的系统 就http2 和 拆包选一个
+不常维护的系统 就 http2 和 拆包选一个
 
 多路复用只是降低了 链接延迟 但把一些并行的请求变成了串行
 
-这个可能是实现的问题 
+这个可能是实现的问题
 https://stackoverflow.com/questions/33658302/why-http-2-is-slower-than-plain-https
 
 ## 2.3
 
-01. 在Esmodule 使用__dirname 
+1.  在 Esmodule 使用\_\_dirname
 
 ```js
-import path, {
-    dirname
-} from "path"
-import {
-    fileURLToPath
-} from 'url'
-const __dirname = dirname(fileURLToPath(
-    import.meta.url));
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
 ```
 
-02. 前端监控方法
+2.  前端监控方法
 
 https://juejin.cn/post/7172072612430872584
 
-03. 检测白屏方法 : web-see
+3.  检测白屏方法 : web-see
 
-04. css 波浪 wave : https://codepen.io/andyfitz/pen/wvxpBWL
+4.  css 波浪 wave : https://codepen.io/andyfitz/pen/wvxpBWL
 
 ## 2.5
 
-01. 讨论关于js使用位运算 
+1.  讨论关于 js 使用位运算
 
 终于追到了。。。。要说到 v8 如何实现位运算，一个按位 or 光是编译器就要做这么多：
 https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/js-type-hint-lowering.cc;l=461?q=JSBitwiseOr&ss=chromium%2Fchromium%2Fsrc
@@ -126,23 +114,23 @@ https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/js-type
 
 ## 2.6
 
-01. 值得注意的是：块语句（大括号”｛｝＂中间的语句），如if和switch条件语句或for和while循环语句，不像函数，它们不会创建一个新的作用域。
+1.  值得注意的是：块语句（大括号”｛｝＂中间的语句），如 if 和 switch 条件语句或 for 和 while 循环语句，不像函数，它们不会创建一个新的作用域。
 
-不对，块级是有独立的作用域的，但是比起lexical作用域定义会松一些
+不对，块级是有独立的作用域的，但是比起 lexical 作用域定义会松一些
 
 ```js
 let a = 1;
 
 {
-    let a = 2;
-    console.log(a);
+  let a = 2;
+  console.log(a);
 }
 
 var a = 1;
 
 {
-    var a = 2;
-    console.log(a);
+  var a = 2;
+  console.log(a);
 }
 
 console.log(a);
@@ -153,17 +141,17 @@ console.log(a);
 
 ## 2.7
 
-01. uni-app 生命周期顺序 
+1.  uni-app 生命周期顺序
 
 App launch -> App Show -> page onLoad -> paeg onShow -> component beforeCreate -> component created -> component mounted -> page onReady
 
-## 2.8 
+## 2.8
 
 专心工作 无心抓鱼
 
-## 2.9 
+## 2.9
 
-01. web 版本更新提示
+1.  web 版本更新提示
 
 https://juejin.cn/post/7159484928136642567
 
@@ -171,111 +159,113 @@ https://juejin.cn/post/6995385715672481799
 
 ## 2.10
 
-01. 如果是node直接查数据库,推荐直接使用node的技术展 例如 sequelize 或者 typeorm 
+1.  如果是 node 直接查数据库,推荐直接使用 node 的技术展 例如 sequelize 或者 typeorm
 
-02. mybatis 跟 node 生态差的有点远 虽然手动转化也能做 但是 orm 也好 active record 也好 不就是为了以后可以增加字段关联的时候不用改那么多代码 手动转就失去了这个优势了
+2.  mybatis 跟 node 生态差的有点远 虽然手动转化也能做 但是 orm 也好 active record 也好 不就是为了以后可以增加字段关联的时候不用改那么多代码 手动转就失去了这个优势了
 
-03. 真正计算密集型的东西还得看性能, 多喝只是只吃了横向扩展 但是碳排放还是挺高
+3.  真正计算密集型的东西还得看性能, 多喝只是只吃了横向扩展 但是碳排放还是挺高
 
-04. 服务基本就这几个 服务发现 心跳检测 冒烟检测 复杂均衡
+4.  服务基本就这几个 服务发现 心跳检测 冒烟检测 复杂均衡
 
 冒烟检测: 一些基本的检测 有些时候服务不是跑起来就能接受流量的 会有一些预加载和预处理 只有这些检测完毕之后 冒烟检测才会通过 负载均衡才会把流量引过来
 
-05. 即使是ts 用ts-node运行的本质也是线打包 , 之后运行js 只能说冷启动的时间 会稍微慢一点点 这对serverless(或者叫函数计算)来说是致命的,但他们也有解决办法,不一定非得降低冷启动时间
+5.  即使是 ts 用 ts-node 运行的本质也是线打包 , 之后运行 js 只能说冷启动的时间 会稍微慢一点点 这对 serverless(或者叫函数计算)来说是致命的,但他们也有解决办法,不一定非得降低冷启动时间
 
-06. 静态文件肯定是nginx厉害 单实例百万链接 不过静态文件最好还是扔到cdn vue有一种写法是可以不打包直接挂到nginx后面,让浏览器运行 没有人会在线上跑dev server
+6.  静态文件肯定是 nginx 厉害 单实例百万链接 不过静态文件最好还是扔到 cdn vue 有一种写法是可以不打包直接挂到 nginx 后面,让浏览器运行 没有人会在线上跑 dev server
 
-07. 后端框架 python 有flask 和 django, go基本是gin搭起来的 , nodejs有egg next koa express , php 有laravel,thinkphp 
-  即使不提语言差异, 后端也会纠结mySql和mariaDB哪个好, RocketMq和Kafka该用哪个
-  java我不太了解 因为他似乎是主流语言中唯一一个 没有ide我深知连项目都不会编译 的语言 于是就一直没有怎么接触过
+7.  后端框架 python 有 flask 和 django, go 基本是 gin 搭起来的 , nodejs 有 egg next koa express , php 有 laravel,thinkphp
+    即使不提语言差异, 后端也会纠结 mySql 和 mariaDB 哪个好, RocketMq 和 Kafka 该用哪个
+    java 我不太了解 因为他似乎是主流语言中唯一一个 没有 ide 我深知连项目都不会编译 的语言 于是就一直没有怎么接触过
 
-08. js的数组并不是严格的数组实现, 而是类似于c++的vector (对于稀疏数组V8甚至用了哈希表),所以即使你pop了, 占用空间也没办法立即减少
+8.  js 的数组并不是严格的数组实现, 而是类似于 c++的 vector (对于稀疏数组 V8 甚至用了哈希表),所以即使你 pop 了, 占用空间也没办法立即减少
 
-09. Infinity 一般用于简化算法, 作为哨兵数字  
-    在一些 没有Infinity的场景 (如 C 语言切数据类型为Int)下  会使用-1 或者一个很大的数字来代替, 不过要特别判断一些东西 ,infinity 几乎不需要做特别判断 
+9.  Infinity 一般用于简化算法, 作为哨兵数字  
+    在一些 没有 Infinity 的场景 (如 C 语言切数据类型为 Int)下 会使用-1 或者一个很大的数字来代替, 不过要特别判断一些东西 ,infinity 几乎不需要做特别判断
 
-    例如归并排序的归并流程 , 只要在两个系列末尾加入一个Infinity , 就不需要判断一个序列已结束了 
+    例如归并排序的归并流程 , 只要在两个系列末尾加入一个 Infinity , 就不需要判断一个序列已结束了
 
-    Math.main 也是 如果另初始值为 Infinity 就只需要for 循环 不需要特判 ‘如果是第一个元素 则把它赋值给result 了 
-    
-    当然他也是作为IEEE754浮点数的一部分 , 用作1/0, 在js中只要数字的运算结果超过一定大小 也会变为Infinity 
+    Math.main 也是 如果另初始值为 Infinity 就只需要 for 循环 不需要特判 ‘如果是第一个元素 则把它赋值给 result 了
 
-    至于Number.MAX_VALUE 一般用不到 ,业务中常用的是number.MAX_SAFE_INTEGER 用于避免整数过大导致精度问题 (例如 API返回的order ID 如果超过了这个数字 前端就没办法展示 后端必须用String 返回)
+    当然他也是作为 IEEE754 浮点数的一部分 , 用作 1/0, 在 js 中只要数字的运算结果超过一定大小 也会变为 Infinity
+
+    至于 Number.MAX_VALUE 一般用不到 ,业务中常用的是 number.MAX_SAFE_INTEGER 用于避免整数过大导致精度问题 (例如 API 返回的 order ID 如果超过了这个数字 前端就没办法展示 后端必须用 String 返回)
 
     MAX_VALUE 几乎没有什么意义 不会有业务判断的数字这么大
 
-10. 当前时间是实时取的,它的精准度只取决于取数字的函数 例如,Date.now 就是毫秒级 performance.now就更精确一点 所谓的16.7ms 导致的误差其实是你点不准 也就是计数器没法在你点击的时候瞬间停止 但是计时器停止了之后 去到的时间一定是准确的
+10. 当前时间是实时取的,它的精准度只取决于取数字的函数 例如,Date.now 就是毫秒级 performance.now 就更精确一点 所谓的 16.7ms 导致的误差其实是你点不准 也就是计数器没法在你点击的时候瞬间停止 但是计时器停止了之后 去到的时间一定是准确的
 
-11. 有时候前端还是要了解一下 一些常见操作的时空小号 不然哪天把n的复杂度 搞成了 n^ 2就不好了 
+11. 有时候前端还是要了解一下 一些常见操作的时空小号 不然哪天把 n 的复杂度 搞成了 n^ 2 就不好了
 
-一个常见的例子就是为了优雅 而用reduce 来构造对象
+一个常见的例子就是为了优雅 而用 reduce 来构造对象
 
-```js 
-xxx.reduce((acc, cur)=>({
-  ...acc, 
-  [cur.key]:cur.value
-}), {})
+```js
+xxx.reduce(
+  (acc, cur) => ({
+    ...acc,
+    [cur.key]: cur.value,
+  }),
+  {}
+);
 
 // 这个地方使用 { ... acc} 来构造一个对象会消耗 O(Object.keys(x)) 的时间
-
 ```
 
-12. 
+12.
 
 r: 流式的堆甚至没办法解决最值问题 ?
 
-g: 当然 可以 维护k个元素的堆就行了 你贴的这个只是找一次kth-value 有价值
+g: 当然 可以 维护 k 个元素的堆就行了 你贴的这个只是找一次 kth-value 有价值
 
-r: 问题是不输入完整元素你是不知道 谁最大的 然而就这个问题来说 , 堆需要nlogn 或者如果不在线处理, 那直接 n+klogn
+r: 问题是不输入完整元素你是不知道 谁最大的 然而就这个问题来说 , 堆需要 nlogn 或者如果不在线处理, 那直接 n+klogn
 
-g: 要的就是已知数据里的kth-value 当有新数据时不断刷新 , 快排的思想做不到 它只能在单词o(n) 中找kth value , 我的意思是 在真实世界中 ,在一段 固定的数据里找一次 kth-value 并不常见, 还有就是不能处理大数据 因为空间不够,所以才需要支持流式计算 
+g: 要的就是已知数据里的 kth-value 当有新数据时不断刷新 , 快排的思想做不到 它只能在单词 o(n) 中找 kth value , 我的意思是 在真实世界中 ,在一段 固定的数据里找一次 kth-value 并不常见, 还有就是不能处理大数据 因为空间不够,所以才需要支持流式计算
 
-r: 堆能做到这个? 如果是大根堆 大小为k并不能保证挤出去的一定是最小的 
+r: 堆能做到这个? 如果是大根堆 大小为 k 并不能保证挤出去的一定是最小的
 
-g: 看你要维护什么数据 如果前k小 , 就维护小根堆,反之就维护大根堆 
+g: 看你要维护什么数据 如果前 k 小 , 就维护小根堆,反之就维护大根堆
 
-r: 因为堆内数据没有任何顺序保证 只有根元素有保证 我要找第k大 于是维护一个大小为k的大根堆 , 然后进来第k+1个元素了 该如何处理 有一个元素会被挤出去 但并不能保证是 当前堆中最小的, 搞不好第二小的被挤出去了也有可能
+r: 因为堆内数据没有任何顺序保证 只有根元素有保证 我要找第 k 大 于是维护一个大小为 k 的大根堆 , 然后进来第 k+1 个元素了 该如何处理 有一个元素会被挤出去 但并不能保证是 当前堆中最小的, 搞不好第二小的被挤出去了也有可能
 
-g: 你想错了 你说的这个是滑动窗口问题 ,这种情况下 就是窗口大小固定, (比如只看某个时间段内的数据) , 可以上平衡树 平衡树求 kth-value 可以用名次树 在O(logn)的insert/delete/query的复杂度下解决 
+g: 你想错了 你说的这个是滑动窗口问题 ,这种情况下 就是窗口大小固定, (比如只看某个时间段内的数据) , 可以上平衡树 平衡树求 kth-value 可以用名次树 在 O(logn)的 insert/delete/query 的复杂度下解决
 
 r: 平衡树 写起来太麻烦了 大材小用 看业务场景, 如果你说的是滑动窗口求 kth-value 我想不到更好的解法
 
-r: 我第一反应是滑动窗口的思路 确实有别的思路 
+r: 我第一反应是滑动窗口的思路 确实有别的思路
 
-g: 不是普通的平衡树 ,得实现名次树才行 treap和splay 都可以 但需要实现额外的方法 滑动窗口只能求最大或者最小 ,在这个问题中没有意义 ,你直接维护个单调栈就可以
+g: 不是普通的平衡树 ,得实现名次树才行 treap 和 splay 都可以 但需要实现额外的方法 滑动窗口只能求最大或者最小 ,在这个问题中没有意义 ,你直接维护个单调栈就可以
 
-13. js的位 运算效率超级低, 因为js的number并不是int 没法直接算 
+13. js 的位 运算效率超级低, 因为 js 的 number 并不是 int 没法直接算
 
-  chromium在执行js之前会试图做优化 实际上  | 运算符 会被转化成调用 IrOpcode::BitwiseOr  
+chromium 在执行 js 之前会试图做优化 实际上 | 运算符 会被转化成调用 IrOpcode::BitwiseOr
 
-  你以为写的js 实际上 被转化成了一堆runtime的调用 , 很多语言都这样 go也是 , 一个make 会被抓花城runtime的各类函数 , 取决于make的参数是啥 
+你以为写的 js 实际上 被转化成了一堆 runtime 的调用 , 很多语言都这样 go 也是 , 一个 make 会被抓花城 runtime 的各类函数 , 取决于 make 的参数是啥
 
-  这是JIT(Just In time)通用的东西, 不光chromium有, 但js这种语言过于灵活 , 一个变量啥类型都有 所以实际上我们以为的底层操作反而会很慢
+这是 JIT(Just In time)通用的东西, 不光 chromium 有, 但 js 这种语言过于灵活 , 一个变量啥类型都有 所以实际上我们以为的底层操作反而会很慢
 
-14. 我倒是比较看好flat 因为原生实现迟早会被优化 除非当下的需求必须要求性能,否则比较推荐原生, 代码简单而且未来有潜力 
+14. 我倒是比较看好 flat 因为原生实现迟早会被优化 除非当下的需求必须要求性能,否则比较推荐原生, 代码简单而且未来有潜力
 
-前端这些年的新东西大都是让代码写的更优雅 而后端的新东西大多都是在解决业务问题 
+前端这些年的新东西大都是让代码写的更优雅 而后端的新东西大多都是在解决业务问题
 
 一个前端目前遇到的业务挑战没有后端那么多 一个是后端的语言,概念,工具都很成熟了 ,目前的瓶颈是水平扩展 高可用 数据一致性
 
 后端的请求凉椅上来 ,之前所有的架构几乎都要推翻, 至于后端写前端 只是他们缺少一个管理页面罢了 , 而且很久以前后端也要写页面 只是现在分开了而已
 
-15. v8的Map使用OrderedHashTable 做的 是一个维持key插入顺序的hash表
+15. v8 的 Map 使用 OrderedHashTable 做的 是一个维持 key 插入顺序的 hash 表
 
-反正想看某个js类型这么实现的 直接去搜v8/src/objects 下面找 或者全局搜索 JSxxx 例如 JSNumber JSBigint JSmap 
+反正想看某个 js 类型这么实现的 直接去搜 v8/src/objects 下面找 或者全局搜索 JSxxx 例如 JSNumber JSBigint JSmap
 
 如果遇到数据结构（例如这儿的 OrderedHashTable），一般里面都会附上注释，图中的注释还给了 MDN Wiki 的参考链接：https://wiki.mozilla.org/User:Jorend/Deterministic_hash_tables
 
-它的搜索做的非常好 可以搜关键字 也可以基于reference跳转
+它的搜索做的非常好 可以搜关键字 也可以基于 reference 跳转
 
 ## 2.13
 
-01. Object.is(NaN,NaN) 和 isNan(NaN) 没有区别
-02. Number.isNaN() 和 isNaN 有一个转化的区别 isNaN(x) = Number.isNaN(Number(xx))
+1.  Object.is(NaN,NaN) 和 isNan(NaN) 没有区别
+2.  Number.isNaN() 和 isNaN 有一个转化的区别 isNaN(x) = Number.isNaN(Number(xx))
 
 ## 2.14
 
-01. 画一条三次贝塞尔曲线曲线   https://codepen.io/Chokcoco/pen/mdGdejG
+1.  画一条三次贝塞尔曲线曲线 https://codepen.io/Chokcoco/pen/mdGdejG
 
 ## 2.15
 
@@ -287,46 +277,46 @@ g: 不是普通的平衡树 ,得实现名次树才行 treap和splay 都可以 �
 
 ## 2.17
 
-01. Jest 单元测试 如果需要使用浏览器中API 需要配合js-dom
-02. `color-contrast`  color-contrast()函数符号接受一个颜色值，并将其与其他颜色值的列表进行比较，从列表中选择对比度最高的一个。
-03. npm cache 
+1.  Jest 单元测试 如果需要使用浏览器中 API 需要配合 js-dom
+2.  `color-contrast` color-contrast()函数符号接受一个颜色值，并将其与其他颜色值的列表进行比较，从列表中选择对比度最高的一个。
+3.  npm cache
 
-NPM缓存是节点包管理器在安装新包时使用的存储在计算机上的包的集合。这个缓存有助于加快安装过程，因为它不需要重复下载相同的包。缓存还允许NPM跟踪你的计算机安装了哪些扩展、文件和包。
+NPM 缓存是节点包管理器在安装新包时使用的存储在计算机上的包的集合。这个缓存有助于加快安装过程，因为它不需要重复下载相同的包。缓存还允许 NPM 跟踪你的计算机安装了哪些扩展、文件和包。
 
-不幸的是，随着时间的推移，这个缓存文件夹可能会变得混乱，因为NPM会定期更新旧包或安装新包。这种混乱可能会导致安装新包时出现问题，因为它可能无法识别机器上已经安装了哪些文件。
+不幸的是，随着时间的推移，这个缓存文件夹可能会变得混乱，因为 NPM 会定期更新旧包或安装新包。这种混乱可能会导致安装新包时出现问题，因为它可能无法识别机器上已经安装了哪些文件。
 
-首先我要说的是，不建议清理NPM缓存，除非你因为数据损坏问题而面临错误，或者只是想释放磁盘空间。NPM非常擅长处理缓存，如果有异常，它会尝试自动修复它或让你知道任何可能的损坏。
+首先我要说的是，不建议清理 NPM 缓存，除非你因为数据损坏问题而面临错误，或者只是想释放磁盘空间。NPM 非常擅长处理缓存，如果有异常，它会尝试自动修复它或让你知道任何可能的损坏。
 
-这里有一些你可能想要清理你的NPM缓存的原因:
+这里有一些你可能想要清理你的 NPM 缓存的原因:
 
-01. 释放磁盘空间。
-02. 消除“Please run npm cache clean”错误。
-03. 修复无法正确下载的库。
-04. 重新安装没有缓存的库(虽然不知道为什么你会这样做)。
+1.  释放磁盘空间。
+2.  消除“Please run npm cache clean”错误。
+3.  修复无法正确下载的库。
+4.  重新安装没有缓存的库(虽然不知道为什么你会这样做)。
 
-``` js
-npm cache clean --force  
+```js
+npm cache clean --force
 ```
 
-这个命令将删除NPM缓存中存储的所有数据，包括任何过时版本的包。请注意，在运行此命令时使用" -force "标志非常重要，因为它可以确保删除所有数据，即使可能由于缓存损坏或其他原因而出现错误。
+这个命令将删除 NPM 缓存中存储的所有数据，包括任何过时版本的包。请注意，在运行此命令时使用" -force "标志非常重要，因为它可以确保删除所有数据，即使可能由于缓存损坏或其他原因而出现错误。
 
 ```js
 npm cache verify
 ```
 
-npm cache verify是一个命令，用于验证npm缓存中所有已安装包的完整性。它验证缓存文件夹的内容，垃圾收集任何不需要的数据，并验证缓存索引和所有缓存数据的完整性。
+npm cache verify 是一个命令，用于验证 npm 缓存中所有已安装包的完整性。它验证缓存文件夹的内容，垃圾收集任何不需要的数据，并验证缓存索引和所有缓存数据的完整性。
 
-删除NPM缓存不同于从项目中删除node_modules文件夹。NPM缓存对于您的计算机是全局的，而node_modules文件夹则存储在每个项目中。如果你只是删除node_modules文件夹并重新安装所有的包，你仍然可以从NPM缓存中获取这些包，并且清理NPM缓存，不会影响你的项目库。
+删除 NPM 缓存不同于从项目中删除 node_modules 文件夹。NPM 缓存对于您的计算机是全局的，而 node_modules 文件夹则存储在每个项目中。如果你只是删除 node_modules 文件夹并重新安装所有的包，你仍然可以从 NPM 缓存中获取这些包，并且清理 NPM 缓存，不会影响你的项目库。
 
-NPM缓存是NPM包管理器的重要组成部分，它有助于加快安装过程，并跟踪在您的机器上安装了哪些包。清理NPM缓存可以帮助释放磁盘空间，修复损坏的库，并避免遇到“请运行NPM缓存清理”错误。
+NPM 缓存是 NPM 包管理器的重要组成部分，它有助于加快安装过程，并跟踪在您的机器上安装了哪些包。清理 NPM 缓存可以帮助释放磁盘空间，修复损坏的库，并避免遇到“请运行 NPM 缓存清理”错误。
 
-不建议清理NPM缓存，除非你真的需要，但如果你需要它，现在你知道怎么做了。
+不建议清理 NPM 缓存，除非你真的需要，但如果你需要它，现在你知道怎么做了。
 
-04. https://javascriptkicks.us9.list-manage.com/track/click?u=4ba84fe3f6d629e746e48e5b7&id=1d04ca3374&e=cfe47b0953 
+4.  https://javascriptkicks.us9.list-manage.com/track/click?u=4ba84fe3f6d629e746e48e5b7&id=1d04ca3374&e=cfe47b0953
 
-interface 和 type的区别 
+interface 和 type 的区别
 
-05. TresJS Bring Three to the Vue ecosystem 这个库将threejs 引入 vue的生态系统
+5.  TresJS Bring Three to the Vue ecosystem 这个库将 threejs 引入 vue 的生态系统
 
 地址 - https://tresjs.org/
 
@@ -336,15 +326,15 @@ interface 和 type的区别
 
 ## 2.21
 
-01. mutation-observer 
+1.  mutation-observer
 
-02. intersection-observer :
+2.  intersection-observer :
 
 提供了一种异步观察目标元素与其祖先元素或顶级文档视口（viewport）交叉状态的方法
 
 当一个 IntersectionObserver 对象被创建时，其被配置为监听根中一段给定比例的可见区域。一旦 IntersectionObserver 被创建，则无法更改其配置，所以一个给定的观察者对象只能用来监听可见区域的特定变化值；然而，你可以在同一个观察者对象中配置监听多个目标元素。
 
-## 2.22 
+## 2.22
 
 可以写个批量曝光的方法
 
@@ -352,9 +342,9 @@ https://juejin.cn/post/7018430369321975822
 
 ## 2.23
 
-微信小程序picker-view 的问题 
+微信小程序 picker-view 的问题
 
-picker-view的bindchange事件（选项变更事件）会随着动画结束延迟触发，目前动画时长太久，导致bindchange触发延迟太久
+picker-view 的 bindchange 事件（选项变更事件）会随着动画结束延迟触发，目前动画时长太久，导致 bindchange 触发延迟太久
 
 只要滚得快一点，那么通知事件就会迟到，导致用户点击确认按钮后得到的数据和其看到的选择项会不一样
 
@@ -364,14 +354,14 @@ https://developers.weixin.qq.com/community/develop/doc/0002c6f63c86b8cccd17af72c
 
 https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be54c14
 
-暂时的解决方案 
+暂时的解决方案
 ![](https://pic.imgdb.cn/item/63f748acf144a010078992b5.jpg)
 
 ## 2.24
 
-01. iOS and iPadOS 16.4 beta 1 这个版本中 支持了很多属性 比如`媒体查询`,`@property`,`font-size-adjust(按比例缩小font-size)`等属性
+1.  iOS and iPadOS 16.4 beta 1 这个版本中 支持了很多属性 比如`媒体查询`,`@property`,`font-size-adjust(按比例缩小font-size)`等属性
 
-增加了对Web推送到主屏幕Web应用程序的支持。Web Push使得Web开发人员可以通过使用Push API、notifications API和Service worker一起工作来向用户发送推送通知。
+增加了对 Web 推送到主屏幕 Web 应用程序的支持。Web Push 使得 Web 开发人员可以通过使用 Push API、notifications API 和 Service worker 一起工作来向用户发送推送通知。
 
 ## 2.27
 
@@ -381,122 +371,122 @@ https://developers.weixin.qq.com/community/develop/doc/00086ede9f4af82fdd8ca65be
 
 ## 3.1
 
-canvas绘制两点之间曲线链接 
+canvas 绘制两点之间曲线链接
 
 ```js
-var drawCurve = function(startX, startY, endX, endY) {
-    // 曲线控制点坐标
-    var cp1x = startX;
-    var cp1y = startY + (endY - startY) / 2;
-    // 这里的除数2和曲线的曲率相关，数值绝大，曲率越小
-    var cp2x = endX;
-    var cp2y = endY - (endY - startY) / 2;
+var drawCurve = function (startX, startY, endX, endY) {
+  // 曲线控制点坐标
+  var cp1x = startX;
+  var cp1y = startY + (endY - startY) / 2;
+  // 这里的除数2和曲线的曲率相关，数值绝大，曲率越小
+  var cp2x = endX;
+  var cp2y = endY - (endY - startY) / 2;
 
-    // 开始绘制曲线
-    context.beginPath();
-    context.lineWidth = 4;
-    context.strokeStyle = '#000';
-    context.moveTo(startX, startY);
-    // 绘制曲线点
-    context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-    context.stroke();
+  // 开始绘制曲线
+  context.beginPath();
+  context.lineWidth = 4;
+  context.strokeStyle = "#000";
+  context.moveTo(startX, startY);
+  // 绘制曲线点
+  context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
+  context.stroke();
 };
 ```
 
-## 3.2 
+## 3.2
 
 再重温一遍
 
 ```js
 function foo(a, b, c) {
-    arguments[0] = 42;
-    console.log(a)
+  arguments[0] = 42;
+  console.log(a);
 }
 
 function bar(a, b, c = 3) {
-    arguments[0] = 42;
-    console.log(a)
+  arguments[0] = 42;
+  console.log(a);
 }
 
 foo(1, 2);
 bar(1, 2);
 ```
 
-严格模式下，arguments是拷贝而不是引用
+严格模式下，arguments 是拷贝而不是引用
 
-而带默认值的方法判定为ES2015以后的语法，方法体会被自动指定为严格模式
+而带默认值的方法判定为 ES2015 以后的语法，方法体会被自动指定为严格模式
 
-arguments在任何场合都不应该使用
+arguments 在任何场合都不应该使用
 
-## 3.3 
+## 3.3
 
-01. 容器查询 https://developer.chrome.com/en/blog/style-queries/
+1.  容器查询 https://developer.chrome.com/en/blog/style-queries/
 
-据说是可以通过 
+据说是可以通过
 
 ```css
 @container style(--detail: new) {
-    .comment-block {
-        display: block;
-    }
+  .comment-block {
+    display: block;
+  }
 
-    .comment-block::after {
-        content: 'New';
-        border: 1px solid currentColor;
-        background: white;
-        ...
-    }
+  .comment-block::after {
+    content: "New";
+    border: 1px solid currentColor;
+    background: white;
+    ...;
+  }
 }
 
 @container style(--detail: low-stock) {
-    .comment-block {
-        display: block;
-    }
+  .comment-block {
+    display: block;
+  }
 
-    .comment-block::after {
-        content: 'Low Stock';
-        border: 1px solid currentColor;
-        background: white;
-        ...
-    }
+  .comment-block::after {
+    content: "Low Stock";
+    border: 1px solid currentColor;
+    background: white;
+    ...;
+  }
 
-    .media-img {
-        border: 2px solid brickred;
-    }
+  .media-img {
+    border: 2px solid brickred;
+  }
 }
 ```
 
-02. 一个课程 地址是 
+2.  一个课程 地址是
 
-主要讲的是 前端页面在用户切到后台的时候 我们应该做些什么 ? 比如是否要停止定时器或者一些动画 , 如果有接口请求 是否要中断它 
+主要讲的是 前端页面在用户切到后台的时候 我们应该做些什么 ? 比如是否要停止定时器或者一些动画 , 如果有接口请求 是否要中断它
 
 https://frontendmasters.com/courses/background-javascript/?utm_source=javascriptweekly&utm_medium=email&utm_content=backgroundjs
 
 纯英文的
 
-03. 尤大对于vue3的状况的文章以及 视频 https://thenewstack.io/vue-2023/
+3.  尤大对于 vue3 的状况的文章以及 视频 https://thenewstack.io/vue-2023/
 
-04. 对于 前端上传word转化pdf 记录
+4.  对于 前端上传 word 转化 pdf 记录
 
 R:》 如果为了保证效果，我比较推荐 openoffice，支持 headless 模式输出 PDF
 
-  比较完善的做法是 openoffice 跑在 headless 模式下并开一个端口监听，后端服务有库可以跟它做交互，就跟 chrome devtools protocol 一样，控制它打开文件、生成 PDF
+比较完善的做法是 openoffice 跑在 headless 模式下并开一个端口监听，后端服务有库可以跟它做交互，就跟 chrome devtools protocol 一样，控制它打开文件、生成 PDF
 
-  这样的好处是你可以维护一个 openoffice 池，有新请求就从池里挑一个实例出来，用完再塞回去，还能定时重启以及监控😐
+这样的好处是你可以维护一个 openoffice 池，有新请求就从池里挑一个实例出来，用完再塞回去，还能定时重启以及监控 😐
 
-  浏览器保证不了效果
+浏览器保证不了效果
 
 S:》 这后端给我拒绝了，说让我(前端)自己做 他说服务器压力顶不住，放在浏览器好一点
 
 R:》 虽然网上有库可以读取文件内容，但对于一些样式，无法很好地识别；并且这类库通常很大，显著影响加载速度
 
-  而 openoffice 这类软件，本来就是 office 的替代品，效果是可以保证的
+而 openoffice 这类软件，本来就是 office 的替代品，效果是可以保证的
 
-  如果你们领导只关注文档内容，那就前端随便找个库做吧
+如果你们领导只关注文档内容，那就前端随便找个库做吧
 
-  啊这，我搜了一下 npm，好像常见的做法都是用我说的 libreoffice😂
+啊这，我搜了一下 npm，好像常见的做法都是用我说的 libreoffice😂
 
-J:》 或者，Puppeteer，前端做一个中间页面，用来预览用户上传的文件附件，然后再写个node服务，把网页的转成PDF
+J:》 或者，eteer，前端做一个中间页面，用来预览用户上传的文件附件，然后再写个 node 服务，把网页的转成 PDF
 
 ## 3.6
 
@@ -507,40 +497,40 @@ J:》 或者，Puppeteer，前端做一个中间页面，用来预览用户上�
 ## 3.8
 
 ```ts
-type res =  never extends 1 ? 1:2;
+type res = never extends 1 ? 1 : 2;
 //  type res = 1
-type Test<T> = T extends 1 ? 1:2;
+type Test<T> = T extends 1 ? 1 : 2;
 type res2 = Test<never>;
 // type res2 = never;
 ```
 
-第一个 非范型的时候 如果 extends 的是any 或者 unknow 或者 check部分是extends 部分的字类型, 直接返回 trueType 的类型
+第一个 非范型的时候 如果 extends 的是 any 或者 unknow 或者 check 部分是 extends 部分的字类型, 直接返回 trueType 的类型
 
 never 是任何类型的子类型, 所以是 1
 
-第二个 当类型参数是 never 出现在条件类型左边 直接返回never 
+第二个 当类型参数是 never 出现在条件类型左边 直接返回 never
 
 ## 3.17
 
-01. 开平方的操作 Math.sqrt(2) === 2**0.5 
+1.  开平方的操作 Math.sqrt(2) === 2\*\*0.5
 
-02. 随机mac地址的写法
+2.  随机 mac 地址的写法
 
 ```js
 function randomMac() {
-    const mac = [
-        (0x52).toString(16),
-        (0x54).toString(16),
-        (0x00).toString(16),
-        Math.floor((Math.random() * 0xff)).toString(16),
-        Math.floor((Math.random() * 0xff)).toString(16),
-        Math.floor((Math.random() * 0xff)).toString(16)
-    ]
-    return mac.join(':')
+  const mac = [
+    (0x52).toString(16),
+    (0x54).toString(16),
+    (0x00).toString(16),
+    Math.floor(Math.random() * 0xff).toString(16),
+    Math.floor(Math.random() * 0xff).toString(16),
+    Math.floor(Math.random() * 0xff).toString(16),
+  ];
+  return mac.join(":");
 }
 ```
 
-03. semver https://juejin.cn/post/6844903516754935816
+3.  semver https://juejin.cn/post/6844903516754935816
 
 只要有一个作者没有遵循 semver，引入了 breaking change，你的项目就挂了（参考之前我遇到的 antd eslint 的问题
 
@@ -552,25 +542,25 @@ ts 从 3 升到 4 也经历了一大波编译错误（主要是 Promise 的范�
 
 所以一个是等待时机成熟，一个是需要有足够的人力。。
 
-像是pnpm swc webpack5 
+像是 pnpm swc webpack5
 
-04. 生成随机码的函数
+4.  生成随机码的函数
 
 ```js
 export function genRamdomMAC() {
-    return 'xy-xx-xx-xx-xx-xx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0
-        const v = c === 'x' ? r : (r & 0x3 | 0x8)
-        // 这个地方使用0x没有 0b清晰
+  return "xy-xx-xx-xx-xx-xx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    // 这个地方使用0x没有 0b清晰
 
-        const v = c === 'x' ? r : (r & 0b11 | 0b1000)
-        return v.toString(16)
-    })
+    const v = c === "x" ? r : (r & 0b11) | 0b1000;
+    return v.toString(16);
+  });
 }
 ```
 
-05. 对称加密 
-https://halfrost.com/symmetric_encryption/#toc-19
+5.  对称加密
+    https://halfrost.com/symmetric_encryption/#toc-19
 
 基于大整数分解难题的加密算法应该指的是 RSA（我还没见过其它的），不过随着量子计算机的发展，RSA 并不能抵抗量子攻击
 
@@ -578,104 +568,104 @@ https://halfrost.com/symmetric_encryption/#toc-19
 
 以后 ssh 不用它了
 
-06. 取颜色值的argb
+6.  取颜色值的 argb
 
 ```js
-(0xabcdef12 >> 0x18 & 0xff).toString(16);
-(0xabcdef12 >> 0x10 & 0xff).toString(16);
-(0xabcdef12 >> 0x08 & 0xff).toString(16);
-(0xabcdef12 >> 0x00 & 0xff).toString(16);
+((0xabcdef12 >> 0x18) & 0xff).toString(16);
+((0xabcdef12 >> 0x10) & 0xff).toString(16);
+((0xabcdef12 >> 0x08) & 0xff).toString(16);
+((0xabcdef12 >> 0x00) & 0xff).toString(16);
 ```
 
-07. pnpm 问题 
+7.  pnpm 问题
 
 之前听 zkochan 分享，我问过一个问题：不同版本的 pnpm 生成的 lock file 冲突很明显，这个除了重新 pnpm i 以外有没有更好的解决办法？在未来 lock file 的格式是否会逐渐固定下来？
 大佬回答：我们确实在解决格式问题，但目前最推荐的做法还是 pnpm i。
 
 ## 3.20
 
-01. dvh 是视频口相对视口的单位
+1.  dvh 是视频口相对视口的单位
 
-我们可以尝试通过 max函数去
+我们可以尝试通过 max 函数去
 
 ```css
-@supports(padding: max(0px)) {
-    .post {
-        padding-left: max(12px, env(safe-area-inset-left));
-        padding-right: max(12px, env(safe-area-inset-right));
-    }
+@supports (padding: max(0px)) {
+  .post {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
 }
 ```
 
-02. 有没有什么好的方法可以预防pdf文件的xss攻击。需求是需要预览pdf文件，但是使用浏览器或者iframe去预览pdf文件会执行pdf文件中的js脚本，找了几个vue的pdf预览插件都是基于iframe的，有没有什么别的预览插件推荐的
+2.  有没有什么好的方法可以预防 pdf 文件的 xss 攻击。需求是需要预览 pdf 文件，但是使用浏览器或者 iframe 去预览 pdf 文件会执行 pdf 文件中的 js 脚本，找了几个 vue 的 pdf 预览插件都是基于 iframe 的，有没有什么别的预览插件推荐的
 
- csp 协议 https://www.ruanyifeng.com/blog/2016/09/csp.html
+csp 协议 https://www.ruanyifeng.com/blog/2016/09/csp.html
 
-03. page lifecycle API
-   page Visibility API
+3.  page lifecycle API
+    page Visibility API
 
-   https://www.bookstack.cn/read/webapi-tutorial/docs-page-visibility.md
+https://www.bookstack.cn/read/webapi-tutorial/docs-page-visibility.md
 
 ## 3.21
 
-01. Chrome paint Profiler
+1.  Chrome paint Profiler
 
-你可以使用Chrome DevTools中的Paint Profiler来重放页面的“绘图”。当你在屏幕上绘制简单元素时，文本、边框、轮廓、背景、伪元素等都是单独绘制的。对于我们大多数人来说，这一切都是瞬间出现的，我们不会多想。Paint Profiler允许您一步一步地查看浏览器是如何绘制页面的。
+你可以使用 Chrome DevTools 中的 Paint Profiler 来重放页面的“绘图”。当你在屏幕上绘制简单元素时，文本、边框、轮廓、背景、伪元素等都是单独绘制的。对于我们大多数人来说，这一切都是瞬间出现的，我们不会多想。Paint Profiler 允许您一步一步地查看浏览器是如何绘制页面的。
 
 制作一个新的时间线记录，选中“绘制”。
 确保出现一些绘画(例如重新加载网页)
 单击绘制记录。油漆记录被标记为绿色。
-在Summary窗格中，单击“Paint Profiler”
+在 Summary 窗格中，单击“Paint Profiler”
 
-02. 消除渐变的锯齿 
+2.  消除渐变的锯齿
 
-抗锯齿的算法 及其一些理论的东西 https://juejin.cn/post/6844904180776173581 
+抗锯齿的算法 及其一些理论的东西 https://juejin.cn/post/6844904180776173581
 抗锯齿 css 中操作 https://github.com/chokcoco/iCSS/issues/209
 
 ## 3.22
 
-01. 老哥们讨论协同文档的问题 
+1.  老哥们讨论协同文档的问题
 
-两种方案 1. dom 堆砌 2. cavnas绘制
+两种方案 1. dom 堆砌 2. cavnas 绘制
 
-超过1000 行必卡
+超过 1000 行必卡
 
-canvas 能支持 10万行
+canvas 能支持 10 万行
 
-那就是没做离屏渲染吧. 
-现在视图都是用的乐观更新的, 两份数据 , 前端一份, 后段一份, 先更新前端, 再发请求, 请求成功不管, 请求失败了回退是图, 没有协同算法 直接ws覆盖的 看谁的接口先返回. 冲突本来想做编辑锁, 到那时体验不好
+那就是没做离屏渲染吧.
+现在视图都是用的乐观更新的, 两份数据 , 前端一份, 后段一份, 先更新前端, 再发请求, 请求成功不管, 请求失败了回退是图, 没有协同算法 直接 ws 覆盖的 看谁的接口先返回. 冲突本来想做编辑锁, 到那时体验不好
 
-可以考虑上个crdt(ot和crdt) 现在已经很成熟了
+可以考虑上个 crdt(ot 和 crdt) 现在已经很成熟了
 
-如何设计crdt 算法:
+如何设计 crdt 算法:
 https://www.zxch3n.com/crdt-intro/design-crdt/
 
 https://juejin.cn/post/7049939780477386759
 
-02.  volta 不知道干啥的 有老哥说挺好用 可以局部切换node版本
+2.  volta 不知道干啥的 有老哥说挺好用 可以局部切换 node 版本
 
 ## 3.23
 
-01. 单字动画 通常会用GSAP 
-大佐的codepen
+1.  单字动画 通常会用 GSAP
+    大佐的 codepen
 
 https://codepen.io/wheatup/pen/OJoazBO??editors=1100
 
-用图的缺陷比较明显 换个文案加个字就要出图 
+用图的缺陷比较明显 换个文案加个字就要出图
 
 不过可以以字的维度出图
 
-如果是纯英文的话 可以考虑bitMap字体 (字蛛也可以)
+如果是纯英文的话 可以考虑 bitMap 字体 (字蛛也可以)
 
 https://www.midjourney.com/home/?callbackUrl=%2Fapp%2F
 
-bitmap fontSpider 
+bitmap fontSpider
 
 字蛛构建流程地址 https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fyangchuansheng%2Ffont-spider-plus
 
 ## 4.4
 
-01. vite模板 后面可以把这个超过来做一下cli配置
+1.  vite 模板 后面可以把这个超过来做一下 cli 配置
 
 https://github.com/honghuangdc/soybean-admin
 
@@ -683,48 +673,46 @@ https://github.com/pure-admin/vue-pure-admin
 
 ## 4.7
 
-01. css 片段 (容器查询 / scroll snap / grid pile / aspect-ratio / @layer / logical properties)
+1.  css 片段 (容器查询 / scroll snap / grid pile / aspect-ratio / @layer / logical properties)
 
 @layer 做什么用的
 
-02. css 支持了 角度函数 sin cos tan asin acos atan atan2
+2.  css 支持了 角度函数 sin cos tan asin acos atan atan2
 
 我们可以通过 translate 进行旋转计算
 
 ```css
 :root {
-    --radius: 20vmin;
+  --radius: 20vmin;
 }
 
 .dot {
-    --angle: 30deg;
-    translate:
-        /* Translation on X-axis */
-        calc(cos(var(--angle)) * var(--radius))
-        /* Translation on Y-axis */
-        calc(sin(var(--angle)) * var(--radius) * -1);
+  --angle: 30deg;
+  translate:
+        /* Translation on X-axis */ calc(cos(var(--angle)) * var(--radius)) /* Translation on Y-axis */
+    calc(sin(var(--angle)) * var(--radius) * -1);
 }
 ```
 
 <!-- https://web.dev/css-trig-functions/?utm_source=CSS-Weekly&utm_campaign=Issue-544&utm_medium=email -->
 
-03. 一个dom堆叠的loading
+3.  一个 dom 堆叠的 loading
 
 https://codepen.io/amit_sheen/pen/JjBLaGG
 
 ## 4.13
 
-01. GLSL Shader : `https://codepen.io/ksenia-k/pen/poOMpzx`
-02. Colorful Theme Switch(switch切换) : `https://codepen.io/jkantner/pen/eYPYppR`
-03. Page change(页面切换) : `https://codepen.io/konstantindenerz/pen/abaXabq`
-04. Button超级炫 : `https://codepen.io/jh3y/pen/LYJMPBL`
+1.  GLSL Shader : `https://codepen.io/ksenia-k/pen/poOMpzx`
+2.  Colorful Theme Switch(switch 切换) : `https://codepen.io/jkantner/pen/eYPYppR`
+3.  Page change(页面切换) : `https://codepen.io/konstantindenerz/pen/abaXabq`
+4.  Button 超级炫 : `https://codepen.io/jh3y/pen/LYJMPBL`
 
-05. text-wrap:balance (stag4阶段)
-06. working with webxr (https://www.youtube.com/playlist?list=PLpM_sf_d5YTPXeVp4cmgN_cNBj9pNTEmZ#react3dfiber)
+5.  text-wrap:balance (stag4 阶段)
+6.  working with webxr (https://www.youtube.com/playlist?list=PLpM_sf_d5YTPXeVp4cmgN_cNBj9pNTEmZ#react3dfiber)
 
 ## 4.14
 
-01. 银行家算法  是浮点数取整常用的算法 -> 
+1.  银行家算法 是浮点数取整常用的算法 ->
 
 https://mp.weixin.qq.com/s/jB3384p2mi5rtpE7i4ffzQ
 https://juejin.cn/post/7206871218032918565?share_token=57678acc-f269-4f72-9dfd-b016a07ad900
@@ -741,75 +729,75 @@ https://juejin.cn/post/7206871218032918565?share_token=57678acc-f269-4f72-9dfd-b
 
 从统计学的角度 : ’奇进偶舍' 比 四舍五入更为精准
 
-> 假设有5位储户的利息分别是0.000、0.001、0.002、0.003、0.004，这些厘被四舍五入了，因此银行赚了。但另外5位储户的利息分别是0.005、0.006、0.007、0.008、0.009，那么他们每人拿到的利息就是0.01，银行亏了。
+> 假设有 5 位储户的利息分别是 0.000、0.001、0.002、0.003、0.004，这些厘被四舍五入了，因此银行赚了。但另外 5 位储户的利息分别是 0.005、0.006、0.007、0.008、0.009，那么他们每人拿到的利息就是 0.01，银行亏了。
 
 而根据本福特定律的相关测算，首位非零数字的出现是有概率分布的，数字越低概率越大。但非首位的数，基本符合随机分布。
 
-那么上述10位储户的利息，经过四舍五入之后，银行的盈利情况如下：
+那么上述 10 位储户的利息，经过四舍五入之后，银行的盈利情况如下：
 
 ```
 0.000 + 0.001 + 0.002 + 0.003 + 0.004 - 0.005 - 0.004 - 0.003 - 0.002 - 0.001 = -0.005
 ```
 
-银行亏了0.005！
+银行亏了 0.005！
 
 这怎么能行！资本家的钱是你能轻易赚走的么？
 
-而同样的数据，用“奇进偶舍”的规则计算后，刚好俩俩抵消，盈利为0，在这个案例几乎完美！
+而同样的数据，用“奇进偶舍”的规则计算后，刚好俩俩抵消，盈利为 0，在这个案例几乎完美！
 
 不过，并不是所有的案例都如此完美，但本福特定律从统计学层面已经很好的解释和规避了大部分情况下的误差。
 
-02. ue和前端不通过后台直接通信的方法 - 
-展示上是虚幻引擎里掏了个浏览器, 把浏览器盖在引擎画面上, 交互也是通过浏览器内嵌实现的, UE给浏览器煮鱼监听方法, web端调用其对应方法.
+2.  ue 和前端不通过后台直接通信的方法 -
+    展示上是虚幻引擎里掏了个浏览器, 把浏览器盖在引擎画面上, 交互也是通过浏览器内嵌实现的, UE 给浏览器煮鱼监听方法, web 端调用其对应方法.
 
-03. 位运算的有效数据范围 int32
+3.  位运算的有效数据范围 int32
 
 ```js
-let a = Date.now()
-a === ~~a // false
+let a = Date.now();
+a === ~~a; // false
 ```
 
-04. 判断奇数 3&1 === 1  4 & 1 === 0;
+4.  判断奇数 3&1 === 1 4 & 1 === 0;
 
-05. 猜颜色 https://codepen.io/wheatup/pen/dygGQOO?editors=0110
+5.  猜颜色 https://codepen.io/wheatup/pen/dygGQOO?editors=0110
 
-06. npm 包下载问题 如何在外层下载子目录下的node_modules https://zhuanlan.zhihu.com/p/38040253
+6.  npm 包下载问题 如何在外层下载子目录下的 node_modules https://zhuanlan.zhihu.com/p/38040253
 
-07. 使用API Extractor 管理 API
-https://zhuanlan.zhihu.com/p/434565485
+7.  使用 API Extractor 管理 API
+    https://zhuanlan.zhihu.com/p/434565485
 
 ## 4.21
 
-在pnpm的仓库的一个issues上 讨论了 感觉pnpm 好像比yarn 慢
+在 pnpm 的仓库的一个 issues 上 讨论了 感觉 pnpm 好像比 yarn 慢
 
 https://github.com/pnpm/pnpm/issues/6447
 
-01. 如果你使用独立脚本安装PNPM，或者你安装@pnpm/exe包，而不是NPMJS中的PNPM包(npm I -g @pnpm/exe)， PNPM运行命令会更快。
+1.  如果你使用独立脚本安装 PNPM，或者你安装@pnpm/exe 包，而不是 NPMJS 中的 PNPM 包(npm I -g @pnpm/exe)， PNPM 运行命令会更快。
 
-pnpm install——frozen-lockfile曾经比Yarn快，但后来变差了。我不知道是什么变化引起的，但我注意到在我们的基准测试中。
+pnpm install——frozen-lockfile 曾经比 Yarn 快，但后来变差了。我不知道是什么变化引起的，但我注意到在我们的基准测试中。
 
-我相信pnpm add总是比较慢。
+我相信 pnpm add 总是比较慢。
 
-pnpm在macOS上安装可能会慢一些，因为pnpm在macOS上使用硬链接，而Yarn会复制文件。复制速度更快，但使用更多的磁盘空间。Copy-on-write副本是最好的(我们在支持它的Linux文件系统上使用)，但在macOS上我们不能使用它，因为Node.js不允许它(#5001)
+pnpm 在 macOS 上安装可能会慢一些，因为 pnpm 在 macOS 上使用硬链接，而 Yarn 会复制文件。复制速度更快，但使用更多的磁盘空间。Copy-on-write 副本是最好的(我们在支持它的 Linux 文件系统上使用)，但在 macOS 上我们不能使用它，因为 Node.js 不允许它(#5001)
 
-用独立的pnpm运行命令似乎是最快的，但是用npm运行包含pnpm命令的脚本是最快的。
+用独立的 pnpm 运行命令似乎是最快的，但是用 npm 运行包含 pnpm 命令的脚本是最快的。
 
-这可能是由于Node.js字节码或模块缓存，但我没有证据。
+这可能是由于 Node.js 字节码或模块缓存，但我没有证据。
 
-另外，我很好奇为什么@pnpm/exe运行得更快。是因为@pnpm/exe有自己的Node.js，使它加载更少的包时执行? 以上翻译结果来自有道神经网络翻译（YNMT）· 通用场景
+另外，我很好奇为什么@pnpm/exe 运行得更快。是因为@pnpm/exe 有自己的 Node.js，使它加载更少的包时执行? 以上翻译结果来自有道神经网络翻译（YNMT）· 通用场景
 
-在CI上使用@pnpm/exe确实给了我们一点提升。不幸的是，还不足以赶上纱线。
+在 CI 上使用@pnpm/exe 确实给了我们一点提升。不幸的是，还不足以赶上纱线。
 
-使用标准的pnpm/action-setup:
+使用标准的 pnpm/action-setup:
 
 解决方案
-使用动态导入而不是顶层导入，顶层导入已经在文件pnpm/src/pnpm中应用了。是的，但这还不够。
-将一些常量/utils分离到较小的文件中，以防止总是导入整个模块。
+使用动态导入而不是顶层导入，顶层导入已经在文件 pnpm/src/pnpm 中应用了。是的，但这还不够。
+将一些常量/utils 分离到较小的文件中，以防止总是导入整个模块。
 不幸的是，这是一项巨大的工作，不可能很快完成。
 
 ## 5.6
 
-01. 小程序 父子组件传递函数this指向有问题 
+1.  小程序 父子组件传递函数 this 指向有问题
 
 ```js
 // parent
@@ -842,38 +830,38 @@ methods: {
 }
 
 // 按照上面代码 小程序中会输出 son
-// h5 会输出 parent 
+// h5 会输出 parent
 
 // 且 小程序 使用 :callback='()=>callback()' 会编译报错
 ```
 
-02. 小程序组件生命周期 无 onshow onload 等 只有vue的那几个
+2.  小程序组件生命周期 无 onshow onload 等 只有 vue 的那几个
 
 且 执行顺序 为 App launch -> App Show -> page onLoad -> paeg onShow -> component beforeCreate -> component created -> component mounted -> page onReady
 
-03. localStorage , sessionStorage 的存储限制是多大?
-《https://github.com/FrankKai/FrankKai.github.io/issues/179》
+3.  localStorage , sessionStorage 的存储限制是多大?
+    《https://github.com/FrankKai/FrankKai.github.io/issues/179》
 
 PC:
 
-|  浏览器名称   | localStorage limit  | sessionStorage limit |
-|  ----  | ----  | --- |
-| chrome40  | 10mb | 10mb |
-| firefox 34  | 10mb | 10mb |
-| ie9  | 10mb | 10mb |
-| safari  | 10mb | 无限大 |
+| 浏览器名称 | localStorage limit | sessionStorage limit |
+| ---------- | ------------------ | -------------------- |
+| chrome40   | 10mb               | 10mb                 |
+| firefox 34 | 10mb               | 10mb                 |
+| ie9        | 10mb               | 10mb                 |
+| safari     | 10mb               | 无限大               |
 
 Mobile:
 
-|  浏览器名称   | localStorage limit  | sessionStorage limit |
-|  ----  | ----  | --- |
-| chrome 40 for Android | 10mb | 10mb |
-| firefox 34 for Android | 10mb | 10mb |
-| Android Browser| 2mb | 无限大 |
-| mobile safari 8  | 5mb | 无限大 |
-| ios webview safari 8  | 5mb | 无限大 |
+| 浏览器名称             | localStorage limit | sessionStorage limit |
+| ---------------------- | ------------------ | -------------------- |
+| chrome 40 for Android  | 10mb               | 10mb                 |
+| firefox 34 for Android | 10mb               | 10mb                 |
+| Android Browser        | 2mb                | 无限大               |
+| mobile safari 8        | 5mb                | 无限大               |
+| ios webview safari 8   | 5mb                | 无限大               |
 
-可以使用 localForage 可以突破离线存储 5MB的限制
+可以使用 localForage 可以突破离线存储 5MB 的限制
 
 https://www.zhangxinxu.com/wordpress/2018/06/js-localforage-localstorage-indexdb/
 
@@ -883,9 +871,9 @@ vue 生态可以使用 vif
 
 ## 5.9
 
-01. 小程序分包 引用submodule内容时 如果主包没有使用可能会导致部分代码缺失
+1.  小程序分包 引用 submodule 内容时 如果主包没有使用可能会导致部分代码缺失
 
-01. TTI (Time to Interactive) 可交互时间
+1.  TTI (Time to Interactive) 可交互时间
 
 https://web.dev/i18n/zh/tti/
 
@@ -893,7 +881,7 @@ TTI 指标测量页面从开始加载到主要子资源完成渲染，并能够�
 
 如需根据网页的性能跟踪计算 TTI，请执行以下步骤：
 
-先进行First Contentful Paint 首次内容绘制 (FCP)。
+先进行 First Contentful Paint 首次内容绘制 (FCP)。
 
 沿时间轴正向搜索时长至少为 5 秒的安静窗口，其中，安静窗口的定义为：没有长任务且不超过两个正在处理的网络 GET 请求。
 
@@ -909,28 +897,28 @@ TTI 是安静窗口之前最后一个长任务的结束时间（如果没有找�
 在最坏的情况下，他们会认为页面已损坏，因此很可能直接离开。他们甚至可能对您的品牌价值丧失信心或信任。
 为了避免这个问题，请尽一切努力将 FCP 和 TTI 之间的差值降至最低。如果两者在某些情况下确实存在明显差异，请通过视觉指示器清楚表明页面上的组件还无法进行交互。
 
-可以使用 `lighthoust` 或者 `webPageTest` 工具测量TTI
+可以使用 `lighthoust` 或者 `webPageTest` 工具测量 TTI
 
-标准: 网站普通移动硬件上进行测试时, 应该努力将可交互时间控制在5s以内
+标准: 网站普通移动硬件上进行测试时, 应该努力将可交互时间控制在 5s 以内
 
-如果改进: 
+如果改进:
 
-01. 缩小 JavaScript
-02. 预连接到所需的来源
-03. 预加载关键请求
-04. 减少第三方代码的影响
-05. 最小化关键请求深度
-06. 减少 JavaScript 执行时间
-07. 最小化主线程工作
-08. 保持较低的请求数和较小的传输大小
+1.  缩小 JavaScript
+2.  预连接到所需的来源
+3.  预加载关键请求
+4.  减少第三方代码的影响
+5.  最小化关键请求深度
+6.  减少 JavaScript 执行时间
+7.  最小化主线程工作
+8.  保持较低的请求数和较小的传输大小
 
-02. First Input Delay 首次输入延迟 (FID)
+9.  First Input Delay 首次输入延迟 (FID)
 
 https://web.dev/fid/
 
 FID 测量从用户第一次与页面交互（例如当他们单击链接、点按按钮或使用由 JavaScript 驱动的自定义控件）直到浏览器对交互作出响应，并实际能够开始处理事件处理程序所经过的时间。
 
-为了提供良好的用户体验，网站应该努力将首次输入延迟设控制在100 毫秒或以内。为了确保您能够在大部分用户的访问期间达成建议目标值，一个良好的测量阈值为页面加载的第 75 个百分位数，且该阈值同时适用于移动和桌面设备。
+为了提供良好的用户体验，网站应该努力将首次输入延迟设控制在 100 毫秒或以内。为了确保您能够在大部分用户的访问期间达成建议目标值，一个良好的测量阈值为页面加载的第 75 个百分位数，且该阈值同时适用于移动和桌面设备。
 
 作为编写事件响应代码的开发者，我们通常会假定代码会在事件发生时立即运行。但作为用户，我们都常常面临相反的情况，当我们在手机上加载了一个网页并试图与网页交互，接着却因为网页没有任何反应而感到沮丧。
 
@@ -938,32 +926,31 @@ FID 测量从用户第一次与页面交互（例如当他们单击链接、点�
 
 ```js
 new PerformanceObserver((entryList) => {
-    for (const entry of entryList.getEntries()) {
-        const delay = entry.processingStart - entry.startTime;
-        console.log('FID candidate:', delay, entry);
-    }
+  for (const entry of entryList.getEntries()) {
+    const delay = entry.processingStart - entry.startTime;
+    console.log("FID candidate:", delay, entry);
+  }
 }).observe({
-    type: 'first-input',
-    buffered: true
+  type: "first-input",
+  buffered: true,
 });
 ```
 
 ## 5.10
 
-eng
-01. ts 之争论
+eng 01. ts 之争论
 
-反方: 
-  js: 1+1=2
-  ts: add: MathFunction<int, int>(1 as number, 1 as number) = 2 as number
+反方:
+js: 1+1=2
+ts: add: MathFunction<int, int>(1 as number, 1 as number) = 2 as number
 
 虽然屎的确难吃，但是白饭谁吃得下啊，可以先为浇头，后期高级的烹饪方法可以慢慢学，总比光吃白饭要好很多
 
-ts上限高，下线也低，啰嗦就不说了，定义了一堆东西反而成了坑你的陷阱，自掘坟墓
+ts 上限高，下线也低，啰嗦就不说了，定义了一堆东西反而成了坑你的陷阱，自掘坟墓
 
-主要是ts还会让人放松警惕，无法养成运行时类型检查和防御式编程的习惯，以为编译时不报错就万事大吉，出问题都是在线上 烦就烦在这点 所有类型都是意淫
+主要是 ts 还会让人放松警惕，无法养成运行时类型检查和防御式编程的习惯，以为编译时不报错就万事大吉，出问题都是在线上 烦就烦在这点 所有类型都是意淫
 
-其实恰恰相反，ts就是你自己的一套逻辑自洽去cover所有的case，而这个所有的case必须是你能意料到的，万一你忘了一个case，编译肯定是没有问题的
+其实恰恰相反，ts 就是你自己的一套逻辑自洽去 cover 所有的 case，而这个所有的 case 必须是你能意料到的，万一你忘了一个 case，编译肯定是没有问题的
 
 一个参数的类型被定义了，你就不会想到去检查它是不是空，或者是别的类型
 
@@ -974,7 +961,7 @@ ts上限高，下线也低，啰嗦就不说了，定义了一堆东西反而成
 
 两个开发负责的模块有共用的部分，A 开发加了个字段，B 在调用的时候没有加，代码一合一上线，就是运行时错误
 
-然而对于业务代码来说，不需要那么多的防御式编程。。我们项目几乎没这东西 而且即使用了 js，开发也不会防御式编程😂‘
+然而对于业务代码来说，不需要那么多的防御式编程。。我们项目几乎没这东西 而且即使用了 js，开发也不会防御式编程 😂‘
 
 对服务端的防御直接做到 API 层就是了 基于类型的数据校验，用 zod 足够了
 
@@ -988,153 +975,162 @@ ts上限高，下线也低，啰嗦就不说了，定义了一堆东西反而成
 
 空值就几种可能：开发用 as any 传进去了，或者后端返回了空；前者直接去真人快打，后者 zod 可以在 axios 中间件里面报错
 
-02. ajv Ajv JSON schema validator  https://ajv.js.org/
+2.  ajv Ajv JSON schema validator https://ajv.js.org/
 
-一个通过json配置来校验参数的插件
+一个通过 json 配置来校验参数的插件
 
 ```js
-const Ajv = require("ajv")
-const ajv = new Ajv()
+const Ajv = require("ajv");
+const ajv = new Ajv();
 
 const schema = {
-    type: "object",
-    properties: {
-        foo: {
-            type: "integer"
-        },
-        bar: {
-            type: "string"
-        }
+  type: "object",
+  properties: {
+    foo: {
+      type: "integer",
     },
-    required: ["foo"],
-    additionalProperties: false
-}
+    bar: {
+      type: "string",
+    },
+  },
+  required: ["foo"],
+  additionalProperties: false,
+};
 
 const data = {
-    foo: 1,
-    bar: "abc"
-}
-const valid = ajv.validate(schema, data)
-if (!valid) console.log(ajv.errors)
+  foo: 1,
+  bar: "abc",
+};
+const valid = ajv.validate(schema, data);
+if (!valid) console.log(ajv.errors);
 ```
 
-03. OPPO FIND N2 Flip 且 自带的浏览器 存在问题
+3.  OPPO FIND N2 Flip 且 自带的浏览器 存在问题
 
- 使用 `<input type="checkbox" />` 存在问题
+使用 `<input type="checkbox" />` 存在问题
 
-```js
-< input type = "checkbox": value = "value"
-@change = "change" / >
+```html
+<input type="checkbox" : value="value" @change="change" />
 
-    <
-    script >
-
-    export default {
-        data() {
-            return {
-                value: false
-            }
-        },
-        methods: {
-            change() {
-                this.$emit('update:value', !this.value)
-            }
-        }
-    } <
-    /script>
+<script>
+  export default {
+    data() {
+      return {
+        value: false,
+      };
+    },
+    methods: {
+      change() {
+        this.$emit("update:value", !this.value);
+      },
+    },
+  };
+</script>
 ```
 
 这种情况下 不论点击哪里 都会触发 `@change`
 
 ## 05.11
 
-01. 一段文本 大小写翻转
+1.  一段文本 大小写翻转
 
 ```js
-const input = 'Hello World!';
+const input = "Hello World!";
 
-const reverseCase = txt => text.replace(/[a-z]/gi, char => String.fromCharCode(char.charCodeAt(0) ^ 32));
+const reverseCase = (txt) =>
+  text.replace(/[a-z]/gi, (char) =>
+    String.fromCharCode(char.charCodeAt(0) ^ 32)
+  );
 
 console.log(reverseCase(input)); // "hELLO wORLD!"
 ```
 
-方法1: 
+方法 1:
 
 ```js
-const reverseCase = txt => txt.replace(/[a-zA-Z]/g, c => c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase());
+const reverseCase = (txt) =>
+  txt.replace(/[a-zA-Z]/g, (c) =>
+    c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()
+  );
 ```
 
-方法2:
+方法 2:
 
 ```js
-const reverseCase = txt => [...txt].map(i => /[A-Z]/.test(i) ? i.toLowerCase() : i.toUpperCase()).join('');
+const reverseCase = (txt) =>
+  [...txt]
+    .map((i) => (/[A-Z]/.test(i) ? i.toLowerCase() : i.toUpperCase()))
+    .join("");
 ```
 
-方法3(最短):
+方法 3(最短):
 
 ```js
-const reverseCase = txt => text.replace(/[a-z]/gi, char => String.fromCharCode(char.charCodeAt(0) ^ 32));
+const reverseCase = (txt) =>
+  text.replace(/[a-z]/gi, (char) =>
+    String.fromCharCode(char.charCodeAt(0) ^ 32)
+  );
 ```
 
-2. 
+2.
 
 ```ts
-type res = never extends 1 ? 1 :2; // 1
-type Test<T> = T extends 1 ? 1:2; //never
-type res2 = Test<never>
-
+type res = never extends 1 ? 1 : 2; // 1
+type Test<T> = T extends 1 ? 1 : 2; //never
+type res2 = Test<never>;
 ```
 
-非泛型的时候 如果extends的是any 或者 unknow 或者 check 部分是 extends 部分的子类型 直接返回returnType 的类型
+非泛型的时候 如果 extends 的是 any 或者 unknow 或者 check 部分是 extends 部分的子类型 直接返回 returnType 的类型
 
-当类型参数是never 出现在条件类型左边 直接返回never
+当类型参数是 never 出现在条件类型左边 直接返回 never
 
 ## 5.15
 
 对于小程序自动化测试 - 尝试
 
-01. uni-app多端处理的不是特别理想 文档内容特别差 按文档流程无法完成测试代码编写
+1.  uni-app 多端处理的不是特别理想 文档内容特别差 按文档流程无法完成测试代码编写
 
-02. 微信小程序可以使用其自动化测试录制功能 可以录制部分流程 做自动化测试 
+2.  微信小程序可以使用其自动化测试录制功能 可以录制部分流程 做自动化测试
 
-03. 注意存在的问题是 公司小程序依赖不同账号, 依赖后台返回的接口状态 一个账号无法满足需求 
+3.  注意存在的问题是 公司小程序依赖不同账号, 依赖后台返回的接口状态 一个账号无法满足需求
 
 找出数组中所有出现奇数次的元素
 
 ```js
-const input = ['A', 'B', 'B', 'C', 'A', 'B', 'B', 'C', 'D', 'A', 'B', 'B', 'C']
+const input = ["A", "B", "B", "C", "A", "B", "B", "C", "D", "A", "B", "B", "C"];
 
-const filterOddOccurrance = arr = {}
+const filterOddOccurrance = (arr = {});
 
-console.log(filterOddOccurrance(input))
+console.log(filterOddOccurrance(input));
 ```
 
 方案一:
 
 ```js
-const filterOdd = arr => {
-    const a = [];
-    arr.forEach(item => {
-        a.includes(item) ? a.splice(a.indexOf(item), 1) : a.push(item)
-    })
-    return
-}
+const filterOdd = (arr) => {
+  const a = [];
+  arr.forEach((item) => {
+    a.includes(item) ? a.splice(a.indexOf(item), 1) : a.push(item);
+  });
+  return;
+};
 ```
 
 方案二:
 
 ```js
-const filterOdd = arr => {
-    const m = new Map();
-    arr.forEach(i => !m.has(i) ? m.set(i, 1) : m.delete(i))
-    return m.keys();
-}
+const filterOdd = (arr) => {
+  const m = new Map();
+  arr.forEach((i) => (!m.has(i) ? m.set(i, 1) : m.delete(i)));
+  return m.keys();
+};
 ```
 
 方案三:
 
 ```js
-const filterOdd = arr => Object.keys(arr = arr.group(e => e)).filter(k => arr[k].length & 1)
+const filterOdd = (arr) =>
+  Object.keys((arr = arr.group((e) => e))).filter((k) => arr[k].length & 1);
 ```
 
 ## 5.24
@@ -1145,84 +1141,84 @@ node --print-bytecode --print-bytecode-filter=test2 test.js
 
 ```js
 function test1() {
-    let i = 0;
-    while (i < 10) {
-        console.log(i)
-        i++
-    }
+  let i = 0;
+  while (i < 10) {
+    console.log(i);
+    i++;
+  }
 }
 
 function test2() {
-    for (let i = 0; i < 10; i++) {
-        console.log(i)
-    }
+  for (let i = 0; i < 10; i++) {
+    console.log(i);
+  }
 }
 ```
 
 ## 06.08
 
-01. css @scope 支持
+1.  css @scope 支持
 
 ```html
 <style>
-    @scope (.blue) {
-        button {
-            background-color: blue;
-        }
+  @scope (.blue) {
+    button {
+      background-color: blue;
     }
+  }
 
-    @scope (.green) {
-        button {
-            background-color: green;
-        }
+  @scope (.green) {
+    button {
+      background-color: green;
     }
+  }
 
-    @scope (.red) {
-        button {
-            background-color: red;
-        }
+  @scope (.red) {
+    button {
+      background-color: red;
     }
+  }
 </style>
 <div class="red">
-    <div class="green">
-        <div class="blue">
-            <button>Click</button>
-        </div>
+  <div class="green">
+    <div class="blue">
+      <button>Click</button>
     </div>
+  </div>
 </div>
 ```
 
-如上代码 button 颜色为blue
+如上代码 button 颜色为 blue
 
 也可以设置边界
 
 第二个选择器设置一个下边界——即从这一点停止样式。
 
 ```html
- <style>
-     @scope (.component) to (.content) {
-         p {
-             color: red;
-         }
-     }
- </style>
- <div class="component">
-     <p>In scope.</p>
-     <div class="content">
-         <p>Out of scope.</p>
-     </div>
- </div>
+<style>
+  @scope (.component) to (.content) {
+    p {
+      color: red;
+    }
+  }
+</style>
+<div class="component">
+  <p>In scope.</p>
+  <div class="content">
+    <p>Out of scope.</p>
+  </div>
+</div>
 ```
 
-02. matches API
+2.  matches API
 
-Element接口的matches()方法测试指定的CSS选择器是否选择该元素。
+Element 接口的 matches()方法测试指定的 CSS 选择器是否选择该元素。
 
 比如 :active : link 或者其他属性选择器
 
-03. Dialog 
+3.  Dialog
 
-全局Dialog标签
+全局 Dialog 标签
 
 ```html
 <form method="dialog">
@@ -1265,150 +1261,139 @@ Element接口的matches()方法测试指定的CSS选择器是否选择该元素�
 
 ```
 
+4.  #top-layer 层级
 
-04. #top-layer层级
+JS 也无法模拟的系统级新特性
 
-JS 也无法模拟的系统级新特性 
+解决的问题 ->
+一些弹框写在了某些容器下 采用 fixed 定位 但是由于父容器使用了 transform 会导致失效 ,
 
-解决的问题 -> 
-一些弹框写在了某些容器下 采用fixed定位  但是由于父容器使用了 transform 会导致失效 , 
-
-在以前，或者说很多框架中，都会想办法把弹窗放到最外层的 body下，这样就不受影响了，比如下面是vue3中的处理方式
+在以前，或者说很多框架中，都会想办法把弹窗放到最外层的 body 下，这样就不受影响了，比如下面是 vue3 中的处理方式
 
 ```html
 <div>
-  <Teleport to="body"> <!--将子内容传送到body下-->
-  	<dialog></dialog>
+  <Teleport to="body">
+    <!--将子内容传送到body下-->
+    <dialog></dialog>
   </Teleport>
 </div>
-
 ```
 
+虽然 dialog 仍然在原来位置上，但真正渲染到了一个#top-layer 的层级上，这个层级非常特殊，已经超越了 html 文档流，可以说是独一档的存在，这样，无论的 dialog 在什么位置，最后渲染的地方其实都在#top-layer 层级上，自然也不会被父容器裁剪被隐藏了
 
-虽然dialog仍然在原来位置上，但真正渲染到了一个#top-layer的层级上，这个层级非常特殊，已经超越了html文档流，可以说是独一档的存在，这样，无论的dialog在什么位置，最后渲染的地方其实都在#top-layer层级上，自然也不会被父容器裁剪被隐藏了
+5.
 
+popover 是一个全局属性。给任意元素添加 popover 以后，它就变成了一个悬浮层。
+popover 属性有两个值，默认是 auto 自动模式，支持默认行为，比如点击空白关闭，键盘 Esc 关闭
+popover 属性还支持 manual 手动模式，也就是没有以上默认行为
+控制 popover 有两种方式，分别是声明式和命令式
+声明式是指通过 HTML 属性来实现点击交互
+可以通过 popovertarget 属性将悬浮层的 id 和按钮相关联，这样就能通过按钮打开悬浮层了
+还可以通过 popovertargetaction 属性来设置点击行为，有 show、hide、toggle3 种方式
+命令式是指通过 JS API 来实现对悬浮层的控制，相比声明式而言更加灵活
+控制悬浮层的方法有 showPopover、hidePopover、togglePopover
+CSS 伪类:open 可以区分悬浮层的打开状态
+JS 可以通过 matches(':open')来获取悬浮层的打开状态
+JS 还可以通过监听 toggle 事件来获取悬浮层的打开状态，方式是 event.newState
+相比传统实现，原生 popover 最大的优势是支持顶层特性
 
-05. 
+## 7.25
 
-popover是一个全局属性。给任意元素添加popover以后，它就变成了一个悬浮层。
-popover属性有两个值，默认是auto自动模式，支持默认行为，比如点击空白关闭，键盘Esc关闭
-popover属性还支持manual手动模式，也就是没有以上默认行为
-控制popover有两种方式，分别是声明式和命令式
-声明式是指通过HTML属性来实现点击交互
-可以通过popovertarget属性将悬浮层的id和按钮相关联，这样就能通过按钮打开悬浮层了
-还可以通过popovertargetaction属性来设置点击行为，有show、hide、toggle3种方式
-命令式是指通过 JS API来实现对悬浮层的控制，相比声明式而言更加灵活
-控制悬浮层的方法有showPopover、hidePopover、togglePopover
-CSS伪类:open可以区分悬浮层的打开状态
-JS 可以通过matches(':open')来获取悬浮层的打开状态
-JS 还可以通过监听toggle事件来获取悬浮层的打开状态，方式是event.newState
-相比传统实现，原生popover最大的优势是支持顶层特性
+终于不是很忙碌
 
-
-
-## 7.25 
-
-终于不是很忙碌 
-
-1. TS内置函数 Awaited
-
+1. TS 内置函数 Awaited
 
 正常我们定义一个函数接口，在`api.ts`定义如下
+
 ```ts
 // api.ts
 interface fetchDataReturn {
-    name:string,
-    age:number,
-    sex:boolean
+  name: string;
+  age: number;
+  sex: boolean;
 }
 
-function fetchData():Promise<fetchDataReturn> {
-    return new Promise((resolve)=>{
-        setTimeout(()=>{
-            resolve({
-                name:'1',
-                age:1,
-                sex:false
-            })
-        })
-    })
+function fetchData(): Promise<fetchDataReturn> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        name: "1",
+        age: 1,
+        sex: false,
+      });
+    });
+  });
 }
 ```
+
 在调用的地方
 
-``` ts
-import { fetchDataReturn, fetchData} from 'api'
+```ts
+import { fetchDataReturn, fetchData } from "api";
 
 async function process() {
   const result: fetchDataReturn = await fetchData();
-  console.log(result); 
+  console.log(result);
 }
 process();
 ```
 
-Awaited这个内置函数可以帮助我们不需要引入 `return` 类型就可以 获取到data
+Awaited 这个内置函数可以帮助我们不需要引入 `return` 类型就可以 获取到 data
 
-``` ts
+```ts
 async function process() {
   const result: Awaited<ReturnType<typeof fetchData>> = await fetchData();
   console.log(result); // Output: "Data fetched successfully!"
 }
 ```
 
-
-2. vite 4.4 更新 更快的css构建
+2. vite 4.4 更新 更快的 css 构建
 
 3. 2023 css state https://survey.devographics.com/en-US/survey/state-of-css/2023/outline/2 做个分享吧
 
+## 7.26
 
-
-## 7.26 
-
-1. 一个blend-mode 用的特别好的案例
+1. 一个 blend-mode 用的特别好的案例
 
 https://codepen.io/tommiehansen/pen/BaGyVVy
 
-
 ## 7.28
 
-1. code golf 
+1. code golf
 
-构造一个数组 3的倍数 值为 fizz  5的倍数 值为buzz 同时是 3和5 值为 fizzbuzz
+构造一个数组 3 的倍数 值为 fizz 5 的倍数 值为 buzz 同时是 3 和 5 值为 fizzbuzz
 
-``` js
-[...Array(100)].map((_,i)=>++i%3?i:'fizz'+(i%5?'':'buzz')||i)
-
-
+```js
+[...Array(100)].map((_, i) =>
+  ++i % 3 ? i : "fizz" + (i % 5 ? "" : "buzz") || i
+);
 ```
-
 
 2. code golf
 
 https://www.geeksforgeeks.org/code-golfing-in-javascript/?ref=ml_lbp
 
-
 3. grid + clip-path 实现 GTA5 头图
-
 
 ## 7.31
 
-1. http3 - 
+1. http3 -
 
-h3 是这几年才出来的，而且它本质是 HTTP，不一定适用于所有场景（比如推拉流  - 不是， 他握手还是http， 然后使用alt-svc替换到udp协议
+h3 是这几年才出来的，而且它本质是 HTTP，不一定适用于所有场景（比如推拉流 - 不是， 他握手还是 http， 然后使用 alt-svc 替换到 udp 协议
 
-那也可以直接用quic , 不就得了 , quic本身不就是仿的tcp，然后解决了tcp的问题的协议
+那也可以直接用 quic , 不就得了 , quic 本身不就是仿的 tcp，然后解决了 tcp 的问题的协议
 
-等于是个奇葩产品 
+等于是个奇葩产品
 
-quic 本身在某些地区可能被墙  因为之前墙都是基于 TCP 的阻断，后来就有人想出来用 quic 翻
+quic 本身在某些地区可能被墙 因为之前墙都是基于 TCP 的阻断，后来就有人想出来用 quic 翻
 
-udp国内qos严重
+udp 国内 qos 严重
 
-h3 = quic + http  quic里包含了tls  所有h3本身就是https的
+h3 = quic + http quic 里包含了 tls 所有 h3 本身就是 https 的
 
-那 h3 可以用来传输 rtmp 数据吗🤔
+那 h3 可以用来传输 rtmp 数据吗 🤔
 
-那有人还用 websocket 翻呢，websocket被禁了吗 - 对，百度云加速已经禁止转发 ws 协议了
+那有人还用 websocket 翻呢，websocket 被禁了吗 - 对，百度云加速已经禁止转发 ws 协议了
 
 不过 vless 的 ws 协议本身就容易被识别
 
@@ -1416,127 +1401,127 @@ h3 = quic + http  quic里包含了tls  所有h3本身就是https的
 
 之所以不直接暴露服务器，因为容易被直接禁
 
-quic是h3的底层协议
+quic 是 h3 的底层协议
 
 对，一些新技术国内部分地区用不了，例如 ESNI（因为这可以让运营商无法知道你要去哪儿；不过后来这协议也被 ECH 代替了
 
 quic 作为一个新协议，并且不容易被阻断，那直接一刀切
 
-一刀切那就都别用h3了呗
+一刀切那就都别用 h3 了呗
 
 除非哪天工信部大力推动 h3 标准落地
 
-我认为顶多阻断跨境h3流量
-
+我认为顶多阻断跨境 h3 流量
 
 ## 8.2
 
-1. 发现一个图片服务 
+1. 发现一个图片服务
 
 https://fastly.picsum.photos/id/1015/1920/1080.jpg
 
-2. 如果一个元素行内设置了`color：red !important`  
+2. 如果一个元素行内设置了`color：red !important`
 
 原本内容
 
-``` html
+```html
 <style>
-.wrap{
+  .wrap {
     display: block;
     position: absolute;
     width: fit-content;
     height: fit-content;
     inset: 0;
     margin: auto;
-}
+  }
 
-.wrap {
+  .wrap {
     /*  请开始你的表演 */
-}
+  }
 </style>
 
-<div class="wrap" style="color:red!important">
-    把我变成蓝色
-</div>
+<div class="wrap" style="color:red!important">把我变成蓝色</div>
 ```
 
-* 方案一
-``` css
-.wrap{
-    -webkit-text-fill-color: blue;
+- 方案一
+
+```css
+.wrap {
+  -webkit-text-fill-color: blue;
 }
 ```
 
-* 方案二
-``` css
-.wrap{
-    filter: hue-rotate(240deg)
+- 方案二
+
+```css
+.wrap {
+  filter: hue-rotate(240deg);
 }
 ```
 
-* 方案三
-``` css
-.wrap:first-line{
-    color:blue;
+- 方案三
+
+```css
+.wrap:first-line {
+  color: blue;
 }
 ```
 
-* 方案四
-  
-``` css
-.wrap{
-    background:#fff;
+- 方案四
+
+```css
+.wrap {
+  background: #fff;
 }
 
-.wrap::after{
-    content: '';
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    inset: 0;
-    background-color: blue;
-    mix-blend-mode: color;
-}
-```
-
-
-* 方案五
-``` css
-.wrap::after{
-    content: '';
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    inset: 0;
-    backdrop-filter: hue-rotate(240deg);
+.wrap::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  background-color: blue;
+  mix-blend-mode: color;
 }
 ```
 
-## 08.08 
+- 方案五
 
-1. 在看vue源码的时候注意到一个细节，就是初始化一个对象的时候常常用 `Object.create(null)` 。而不是一个空对象
-
-MDN对于其的定义是
-
-``` js
-Object.create(proto,[propertiesObject])
+```css
+.wrap::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  backdrop-filter: hue-rotate(240deg);
+}
 ```
+
+## 08.08
+
+1. 在看 vue 源码的时候注意到一个细节，就是初始化一个对象的时候常常用 `Object.create(null)` 。而不是一个空对象
+
+MDN 对于其的定义是
+
+```js
+Object.create(proto, [propertiesObject]);
+```
+
 proto:新创建对象的原型对象
 
 propertiesObject:可选。要添加到新对象的可枚举（新添加的属性是其自身的属性，而不是其原型链上的属性）的属性。
 
-
-看下Object.create(null) 的使用场景
+看下 Object.create(null) 的使用场景
 
 首先看下 Object.create(null) 和 {} 创建的对象的区别
 
 ![](https://pic.imgdb.cn/item/64d20dbe1ddac507cc00e686.jpg)
 
-从上图可以看到，使用create创建的对象，没有任何属性，显示No properties，我们可以把它当作一个非常纯净的map来使用，我们可以自己定义hasOwnProperty、toString方法，不管是有意还是不小心，我们完全不必担心会将原型链上的同名方法覆盖掉。
+从上图可以看到，使用 create 创建的对象，没有任何属性，显示 No properties，我们可以把它当作一个非常纯净的 map 来使用，我们可以自己定义 hasOwnProperty、toString 方法，不管是有意还是不小心，我们完全不必担心会将原型链上的同名方法覆盖掉。
 
-``` js
+```js
 //Demo1:
 var a= {...省略很多属性和方法...};
 //如果想要检查a是否存在一个名为toString的属性，你必须像下面这样进行检查：
@@ -1554,292 +1539,359 @@ if(a.toString){}
 
 ```
 
-另一个使用create(null)的理由是，在我们使用for..in循环的时候会遍历对象原型链上的属性，使用create(null)就不必再对属性进行检查了，当然，我们也可以直接使用Object.keys[]。
-
+另一个使用 create(null)的理由是，在我们使用 for..in 循环的时候会遍历对象原型链上的属性，使用 create(null)就不必再对属性进行检查了，当然，我们也可以直接使用 Object.keys[]。
 
 2. 微信小程序 如果用户点击了授权 不在询问 想要删除 可以扫开发工具 -> 多账户调试 -> 添加测试号 -> 清楚授权数据
 
+3. :is :where 其中 where 中有一个非法就导致全部失效。
 
-3. :is :where 其中where中有一个非法就导致全部失效。
+## 08.09
 
+1. 一个函数的 length 表示函数的入参长度
 
-## 08.09 
-
-1. 一个函数的length 表示函数的入参长度
-
-``` js
-const a = (m,n)=>{}
+```js
+const a = (m, n) => {};
 a.length = 2;
 
-const b = (x,y,z)=>{};
+const b = (x, y, z) => {};
 b.length = 3;
-
 ```
-
 
 ## 08.10
 
 疯狂星期四
 
-``` js
-
-add[1][2][3] + 4 //10
-add[1][-1][3] * 2 // 6
-+add[1][3] // 4
-
+```js
+add[1][2][3] + 4; //10
+add[1][-1][3] * 2 + // 6
+  add[1][3]; // 4
 ```
 
 ```js
-const makeProxy = (total = 0) => new Proxy([],{
-    get(_,prop){
-        if(prop=== Symbol.toPrimitive){
-            return ()=>total
-        }
+const makeProxy = (total = 0) =>
+  new Proxy([], {
+    get(_, prop) {
+      if (prop === Symbol.toPrimitive) {
+        return () => total;
+      }
 
-        return makeProxy(total+(+prop))
+      return makeProxy(total + +prop);
     },
-})
+  });
 
 const add = makeProxy();
 ```
-
 
 ## 08.15
 
 1. https://codepen.io/wheatup/pen/GRwVwdV/fce68f6eb87f3aefa5d6ff9886194529?editors=1100 蛇形增加减少
 2. https://codepen.io/wheatup/pen/poQMdKP/365119e821503f753fb778db16b54896?editors=0110 弹球
 
-
 ## 08.16
 
-1. vue v-model 使用中文输入法不触发 input事件
+1. vue v-model 使用中文输入法不触发 input 事件
 
 ## 08.17
 
-1. emoji在mac1080p13-18px都是18px
-
+1. emoji 在 mac1080p13-18px 都是 18px
 
 ## 08.23
 
 1. new Date('2023-08-25') 和 new Date('2023/08/25') 输出的结果不一致
 
-``` js
-new Date('2023/08/23')
+```js
+new Date("2023/08/23");
 // Wed Aug 23 2023 00:00:00 GMT+0800 (中国标准时间)
-new Date('2023-08-23')
+new Date("2023-08-23");
 // Wed Aug 23 2023 08:00:00 GMT+0800 (中国标准时间)
 ```
 
-这是因为在JavaScript中，`Date`构造函数接受不同格式的日期字符串，并且解析方式会有所不同。
+这是因为在 JavaScript 中，`Date`构造函数接受不同格式的日期字符串，并且解析方式会有所不同。
 
-当你使用`new Date("2023/08/22")`时，日期字符串中使用的是斜杠（`/`）作为日期分隔符。根据ECMAScript规范，这种格式被解释为使用本地时区的日期和时间。因此，`new Date("2023/08/22")`将返回一个表示本地时区中指定日期的`Date`对象。
+当你使用`new Date("2023/08/22")`时，日期字符串中使用的是斜杠（`/`）作为日期分隔符。根据 ECMAScript 规范，这种格式被解释为使用本地时区的日期和时间。因此，`new Date("2023/08/22")`将返回一个表示本地时区中指定日期的`Date`对象。
 
-而当你使用`new Date("2023-08-22")`时，日期字符串中使用的是连字符（`-`）作为日期分隔符。根据ECMAScript规范，这种格式被解释为使用协调世界时（UTC）的日期和时间。因此，`new Date("2023-08-22")`将返回一个表示UTC中指定日期的`Date`对象。
+而当你使用`new Date("2023-08-22")`时，日期字符串中使用的是连字符（`-`）作为日期分隔符。根据 ECMAScript 规范，这种格式被解释为使用协调世界时（UTC）的日期和时间。因此，`new Date("2023-08-22")`将返回一个表示 UTC 中指定日期的`Date`对象。
 
-由于本地时区和UTC之间存在时区偏移，因此当你使用不同的日期分隔符时，`Date`对象的返回值会有所不同。
+由于本地时区和 UTC 之间存在时区偏移，因此当你使用不同的日期分隔符时，`Date`对象的返回值会有所不同。
 
-如果你希望始终按照特定的时区解析日期，可以使用其他方式指定日期字符串，例如使用ISO 8601格式（例如："2023-08-22T00:00:00Z"表示UTC时间）或者使用特定时区的日期库。
-
+如果你希望始终按照特定的时区解析日期，可以使用其他方式指定日期字符串，例如使用 ISO 8601 格式（例如："2023-08-22T00:00:00Z"表示 UTC 时间）或者使用特定时区的日期库。
 
 然后 你在前面放个空格 又不一样了
 
 ```js
-
-new Date(' 2023-08-23')
+new Date(" 2023-08-23");
 // Wed Aug 23 2023 00:00:00 GMT+0800 (中国标准时间)
-new Date('2023-08-23')
+new Date("2023-08-23");
 // Wed Aug 23 2023 08:00:00 GMT+0800 (中国标准时间)
 ```
 
-
-
-## 08.24 
+## 08.24
 
 1. 疯狂星期四
 
+生成 1-100 的 FizzBuzz 数组
+条件 1：禁止出现字面量（直接定义[1, 2, "Fizz", ...]）
+条件 2：禁止出现任何值比较和条件语句（if、while、switch、三元表达式、==、!=、&&、||等）
+条件 3（可选）：一行代码
 
-生成1-100的FizzBuzz数组
-条件1：禁止出现字面量（直接定义[1, 2, "Fizz", ...]）
-条件2：禁止出现任何值比较和条件语句（if、while、switch、三元表达式、==、!=、&&、||等）
-条件3（可选）：一行代码
+这种无条件式一般在计算机图形学和 shader 里面比较常用，因为值判断比较耗性能 判断使用 object lookup 模拟
 
-这种无条件式一般在计算机图形学和shader里面比较常用，因为值判断比较耗性能 判断使用object lookup 模拟
-
-``` js
-Array.from({ length: 100 }, (_, i) => [++i, 'Fizz', 'Buzz', 'FizzBuzz'][!(i % 3) + !(i % 5) * 2])
+```js
+Array.from(
+  { length: 100 },
+  (_, i) => [++i, "Fizz", "Buzz", "FizzBuzz"][!(i % 3) + !(i % 5) * 2]
+);
 ```
-
 
 ## 08.30
 
-1. 为什么这段代码在chrome中不符合事件循环机制
+1. 为什么这段代码在 chrome 中不符合事件循环机制
 
-``` js
+```js
 console.log(1);
 
-setTimeout(()=>{
-    console.log(2);
-},0)
+setTimeout(() => {
+  console.log(2);
+}, 0);
 
-const intervalId = setInterval(()=>{
-    console.log(3)
-},0)
+const intervalId = setInterval(() => {
+  console.log(3);
+}, 0);
 
-setTimeout(()=>{
-    console.log(10);
-    clearInterval(intervalId)
-},0)
+setTimeout(() => {
+  console.log(10);
+  clearInterval(intervalId);
+}, 0);
 ```
 
-在Chrome浏览器中不会输出3；在Node环境或者火狐浏览器中可以输出3。
+在 Chrome 浏览器中不会输出 3；在 Node 环境或者火狐浏览器中可以输出 3。
 
-按照事件循环机制，应该是3个宏任务依次进入宏任务队列排队，那应该是先输出一次3再清除Interval才对，为什么Chrome环境输出结果是反常的？
-
+按照事件循环机制，应该是 3 个宏任务依次进入宏任务队列排队，那应该是先输出一次 3 再清除 Interval 才对，为什么 Chrome 环境输出结果是反常的？
 
 原因是在目前的 Chrome 里 setInterval 的最小延迟时间不是 0，而是 1，即便你写了 0，Chrome 也会改成 1，而 setTimeout 没有这个限制，
 
 所以 setTimeout 回调会先执行，也就执行了 clearInterval，所以不会打印 3。很久以前 setTimeout 和 setInterval 的 timeout 都有最小值 1ms 的限制，
 
-从 2014 年 Chrome 就想让 setTimeout 允许真正的  0ms，但失败了，因为测试代码改动太多。
+从 2014 年 Chrome 就想让 setTimeout 允许真正的 0ms，但失败了，因为测试代码改动太多。
 
 在命令行关掉这个特性 --disable-features=SetTimeoutWithoutClamp，setTimeout 就又延迟 1ms 执行了
 
-
-
 2. echarts 的截图测试
 
-echarts 的 visual test 还能录制 / 回放操作， 不是用的 rrweb 
-
+echarts 的 visual test 还能录制 / 回放操作， 不是用的 rrweb
 
 ## 08.31
 
 疯狂星期四
-``` js
+
+```js
 const getCurrentFunctionName = () => {
-    // 开始你的表演
+  // 开始你的表演
 };
 
 const foo = () => {
-    console.log(getCurrentFunctionName());
-}
+  console.log(getCurrentFunctionName());
+};
 
 function bar() {
-    console.log(getCurrentFunctionName());
+  console.log(getCurrentFunctionName());
 }
-
 
 foo(); // foo
 bar(); // bar
 ```
 
-
 答案：
 
-``` js
-
+```js
 const getCurrentFunctionName = () => {
-    const error = new Error();
-    const stackLines = error.stack.split('\n').slice(2);
-    const callerLine = stacklines[0].trim();
-    return callerLine.match(/at (\S+)/)[1]
-}
+  const error = new Error();
+  const stackLines = error.stack.split("\n").slice(2);
+  const callerLine = stacklines[0].trim();
+  return callerLine.match(/at (\S+)/)[1];
+};
 
-const getCurrentFunctionName = () => new Error().stack.split('\n')[2].match(/at(.*)\(/[1])
+const getCurrentFunctionName = () =>
+  new Error().stack.split("\n")[2].match(/at(.*)\(/[1]);
 ```
 
 ## 09.01
 
 1. C10K 问题 :
 
-Client 10000 问题 即 在同时连接到服务器的客户端数量超过10000个的环境中，即便硬件性能足够，依然无法正常提供服务，简而言之，就是单机1万个并发连接问题。
+Client 10000 问题 即 在同时连接到服务器的客户端数量超过 10000 个的环境中，即便硬件性能足够，依然无法正常提供服务，简而言之，就是单机 1 万个并发连接问题。
 
-2. Discord 为什么从 go 迁移到 rust 
+2. Discord 为什么从 go 迁移到 rust
 
 https://discord.com/blog/why-discord-is-switching-from-go-to-rust
 
-
 ## 09.05
 
-1. 手写call
+1. 手写 call
 
 ```js
-Function.prototype.myCall = function(context){
-    if(typeof this !== 'function'){
-        console.error('type error')
-    }
-    let args = [...arguments].slice(1);
-    let result = null;
-    context = context || window;
-    context.fn = this;
-    result = context.fn(...args)
-    delete context.fn
-    return result;
-}
+Function.prototype.myCall = function (context) {
+  if (typeof this !== "function") {
+    console.error("type error");
+  }
+  let args = [...arguments].slice(1);
+  let result = null;
+  context = context || window;
+  context.fn = this;
+  result = context.fn(...args);
+  delete context.fn;
+  return result;
+};
 ```
 
 疑问的点在于,为什么要对`this 做类型约束`
 
 答：
 
-首先ES规范的第二条 就是这个
+首先 ES 规范的第二条 就是这个
 
 > 1.Let func be the this value.
 > 2.If IsCallable(func) is false, throw a TypeError exception
 > 3.Perform PrepareForTailCall0.
 > 4.Return ? Call(func, thisArg, args).
 
-call 就是个普通函数，不管他写在哪里 , 只要this 可以被改变， 就不能依赖this 
+call 就是个普通函数，不管他写在哪里 , 只要 this 可以被改变， 就不能依赖 this
 
-因为js没有类型限制，所以肯定要做各种防御式编程， 规范那么做说明可以通过现有范式达到这个场景
+因为 js 没有类型限制，所以肯定要做各种防御式编程， 规范那么做说明可以通过现有范式达到这个场景
 
+1. canvas 相关库性能比较
 
+https://benchmarks.slaylines.io/webgl.html
 
-1. canvas相关库性能比较 
-
-https://benchmarks.slaylines.io/webgl.html  
-
-结论：在渲染32000个DOM的场景下 WebGL帧率最稳 其次都是
-
+结论：在渲染 32000 个 DOM 的场景下 WebGL 帧率最稳 其次都是
 
 ## 09.06
 
-1. web-worker 下载内容方案 
+1. web-worker 下载内容方案
 
 https://juejin.cn/post/7273803674789953575
-
-
 
 ## 09.07
 
 1. 疯狂星期四
 
-``` js
-let foo = // 
+```js
+let foo = //
 if(!foo){
-    console.log(foo + 1) //2 
+    console.log(foo + 1) //2
 }
 ```
 
 答案
-``` js
-let foo = document.all
+
+```js
+let foo = document.all;
 foo[Symbol.toPrimitive] = () => 1;
 ```
 
-
 2. 疯狂星期四
 
-``` js
+```js
 let foo = // 开始你的表演
-
-console.log(typeof foo);    // number
+  console.log(typeof foo); // number
 console.log(1 + foo === 1); // false
 console.log(2 + foo === 2); // true
 ```
+
 答案：Number.EPSILON
 
-解析： 
-1 的指数部分是 1023，尾数部分是 0，所以被解释为 2^(1023-1023) * (1+0) = 1；
-Number.EPSILON 的指数部分是 971，尾数部分是 0，所以被解释为 2^(971-1023) * (1+0) = 2^(-52)；
-在做加法的时候，1 的指数部分较大，所以先把 Number.EPSILON 转换成 2^(1023-1023) * 2^(-52)，这在二进制中刚好是 0.00...01（尾数部分最后一位是 1），所以加起来刚好是 1 + 0.00...01，值发生了变化；
-但如果第一个数字是 2，被解释为 2^(1024-1023) * (1+0)，在做加法时 Number.EPSILON 就会被转换为 2^(1024-1023) * 2^(-53)，但尾数一共就 52 位，所以最后一位 1 被丢弃了，结果就没有发生变化
+解析：
+1 的指数部分是 1023，尾数部分是 0，所以被解释为 2^(1023-1023) _ (1+0) = 1；
+Number.EPSILON 的指数部分是 971，尾数部分是 0，所以被解释为 2^(971-1023) _ (1+0) = 2^(-52)；
+在做加法的时候，1 的指数部分较大，所以先把 Number.EPSILON 转换成 2^(1023-1023) _ 2^(-52)，这在二进制中刚好是 0.00...01（尾数部分最后一位是 1），所以加起来刚好是 1 + 0.00...01，值发生了变化；
+但如果第一个数字是 2，被解释为 2^(1024-1023) _ (1+0)，在做加法时 Number.EPSILON 就会被转换为 2^(1024-1023) \* 2^(-53)，但尾数一共就 52 位，所以最后一位 1 被丢弃了，结果就没有发生变化
+
+## 09.10
+
+Google 开发者大会 2023 web 相关观后感
+
+1. WebAssembly 可以把其他语言编写的代码放到 web 平台来使用。
+2. Web 将成为重要的 AI 应用平台，而其根本是因为 GPU，我们所用的设备本身就携带了 GPU 相关能力，只是 Web 没有权限去使用。 所以 WebGPU 为此而生，可以充分发挥 GPU 能力，强化本地算力。借助 WebGPU 应用可以同时使用云端和本地的能力。性能上 tensorFlow 在 webGPU 上运行比之前快 100 倍
+   ![](https://pic.imgdb.cn/item/64fd98a9661c6c8e54361469.jpg)
+
+WebGPU 比 WebGL 快 3 倍，本身 WebGL 就是目前 web 端运行效率最高的方式了。 3. FID
+
+## 09.11
+
+1.
+
+
+## 09.14
+
+1. 获取伪类的宽高
+
+getComputedStyle('div',':before')
+
+
+## 09.21
+
+1. nest 的问题
+
+sql 的执行流程
+
+mysql 的索引优化
+
+TCP 的 timewait
+
+
+
+## 09.22
+
+
+## 09.23
+
+
+LCP：
+
+UV / PV  
+优化LCP资源加载延迟 1.资源预加载。 2. 服务端渲染。
+
+vscode 插件？ 分析火焰图/
+
+升级依赖带来的问题 测试需要覆盖？ 如果去评估升级带来的影响？
+
+setEffect false 没有引入webpack会删除
+
+拆的足够小 并行加载问题》
+
+
+clickhouse 打点自动清理
+
+
+
+### 内存泄漏
+
+## 09.25
+
+1. Chrome的自动播放政策很简单：
+
++ 静音自动播放总是允许的。
++ 在下列情况下允许使用声音自动播放：
+  -  用户已经与域进行了交互（点击，tap等）。
+  -  在桌面上，用户的媒体参与指数阈值(MEI)已被越过，这意味着用户以前播放带有声音的视频。
+  -  在移动设备上，用户已将该网站添加到主屏幕。
+  -  顶部框架可以将自动播放权限授予其iframe以允许自动播放声音。
+
+
+
+MEI衡量个人在网站上消费媒体的倾向。Chrome 目前的方法是访问每个来源的重要媒体播放事件的比率：
+
+媒体消耗（音频/视频）必须大于7秒。
+音频必须存在并取消静音。
+视频选项卡处于活动状态。
+视频大小（以像素为单位）必须大于200x140。
+因此，Chrome会计算媒体参与度分数，该分数在定期播放媒体的网站上最高。足够高时，媒体播放只允许在桌面上自动播放。MEI是谷歌自动播放策略的一部分。它是一个算法，参考了媒体内容的持续时间、浏览器标签页是否活动、活动标签页视频的大小这一系列元素。不过也正因此，开发者难以在所有的网页上都测试这一算法的效果。
+
+用户的MEI位于chrome://media-engagement/内部页面
+
+
+开发者开关
+作为开发者，您可能需要在本地更改Chrome浏览器自动播放政策行为，以根据用户的参与情况测试您的网站。
+
+您可以决定通过将Chrome标志“自动播放策略”设置为“无需用户手势”来完全禁用自动播放策略 chrome://flags/#autoplay-policy。这样您就可以测试您的网站，就好像用户与您的网站保持紧密联系一样，并且始终允许播放自动播放。
+您也可以决定禁止使用MEI以及默认情况下全新MEI获得播放自动播放的网站是否允许新用户使用，从而决定禁止播放自动播放。这可以用两个来完成 内部开关用chrome.exe --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio, MediaEngagementBypassAutoplayPolicies
