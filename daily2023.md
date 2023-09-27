@@ -1841,8 +1841,6 @@ TCP 的 timewait
 
 
 ## 09.22
-
-
 ## 09.23
 
 
@@ -1861,8 +1859,6 @@ setEffect false 没有引入webpack会删除
 
 
 clickhouse 打点自动清理
-
-
 
 ### 内存泄漏
 
@@ -1895,3 +1891,5 @@ MEI衡量个人在网站上消费媒体的倾向。Chrome 目前的方法是访�
 
 您可以决定通过将Chrome标志“自动播放策略”设置为“无需用户手势”来完全禁用自动播放策略 chrome://flags/#autoplay-policy。这样您就可以测试您的网站，就好像用户与您的网站保持紧密联系一样，并且始终允许播放自动播放。
 您也可以决定禁止使用MEI以及默认情况下全新MEI获得播放自动播放的网站是否允许新用户使用，从而决定禁止播放自动播放。这可以用两个来完成 内部开关用chrome.exe --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio, MediaEngagementBypassAutoplayPolicies
+
+
