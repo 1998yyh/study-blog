@@ -1893,3 +1893,17 @@ MEI衡量个人在网站上消费媒体的倾向。Chrome 目前的方法是访�
 您也可以决定禁止使用MEI以及默认情况下全新MEI获得播放自动播放的网站是否允许新用户使用，从而决定禁止播放自动播放。这可以用两个来完成 内部开关用chrome.exe --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio, MediaEngagementBypassAutoplayPolicies
 
 
+## 10.07
+
+1. 快速生成目录结构(mac)
+
+```
+brew install tree
+
+tree
+```
+
+相关参数说明:<https://www.runoob.com/linux/linux-comm-tree.html>
+
+
+## 10.08
