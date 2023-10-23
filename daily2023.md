@@ -1911,3 +1911,36 @@ tree
 1. git reabse 教程 
 
 https://medium.com/starbugs/use-git-interactive-rebase-to-organize-commits-85e692b46dd
+
+## 10.18
+
+1. ARIA
+
+
+https://developer.mozilla.org/zh-CN/docs/Web/Accessibility/ARIA
+
+
+## 10.23
+
+疯狂星期一？
+
+1. 正则题
+
+![](https://pic.imgdb.cn/item/65363ab7c458853aef3c4405.jpg)
+
+使用正则替换，将所有偶数位的大写字母替换为*：
+
+替换前：
+ABCDefghIJkLmnoPqrstUvwxYZ
+替换后：
+A*C*efghI*k*mno*qrstUvwxY*
+
+``` js
+'ABCDefghIJkLmnoPqrstUvwxYz'.replace(/(?<=^.(..)*)[A-Z]/g,'*')
+```
+
+``` js
+.[^A-Z](*SKIP)(*F)|.\K.
+```
+
+2. 
