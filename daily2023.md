@@ -1943,4 +1943,75 @@ A*C*efghI*k*mno*qrstUvwxY*
 .[^A-Z](*SKIP)(*F)|.\K.
 ```
 
-2. 
+2. 正则题
+
+``` html
+在一个以逗号分割的字符串中，替换每组字符串中偶数位的大写字母为*
+
+替换前：
+AB,CDefghI,JKLm,noPQRstU,vwxYZ
+
+替换后：
+A*,C*efghI,J*Lm,noP*Rst*,vwx*Z
+
+```
+
+
+``` js
+(?:,|.[^A-Z])(*SKIP)(*F)|.\K.
+```
+
+
+## 10.27
+
+1. 疯狂星期5
+
+``` js
+const data = [1, 'Hello', 2, NaN, 43.23, -0, undefined];
+
+function getIndex(array, element) {
+  return array.findIndex(e=>[e].includes(element))
+    // write your code here
+}
+
+console.log(getIndex(data, 1));          // 0
+console.log(getIndex(data, 'Hello'));    // 1
+console.log(getIndex(data, NaN));        // 3
+console.log(getIndex(data, 0));          // 5
+console.log(getIndex(data, undefined));  // 6
+```
+
+
+2. 如何判断 +0 与 -0
+
+通常情况下 `+0 === -0` 是true的
+
+``` js
+// 我们可以使用 Object.is(+0,-0)来操作
+Object.is(+0,-0) // false
+
+// 其次我们可以使用 1/0  1/-0
+function isNegativeZero(x){
+  return -Infinity === 1/x;
+}
+
+// 使用Math.sign
+function isNegativeZero(x){
+  return Math.sign(1/x) < 0;
+} 
+
+// 使用toLocalString()
+function isNegativeZero(x){
+  return '-0' === x.toLocaleString();
+}
+
+// 使用buffer？
+function doubleToLongBits(d){
+  let buffer = new ArrayBuffer(8);
+  let view = new DataView(Buffer);
+  view.setFloat64(0,d);
+  let hi = view.getUint32(0);
+  let lo = view.getUint32(4);
+  return BigInt(hi) << 32n | BigInt(lo);
+}
+```
