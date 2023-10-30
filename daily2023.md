@@ -2015,3 +2015,107 @@ function doubleToLongBits(d){
   return BigInt(hi) << 32n | BigInt(lo);
 }
 ```
+
+
+## 10.30
+
+1. Coco在做语雀插件的时候发现的，通过控制台DOM编辑语雀的元素内容，再次focus的时候会重制回去。
+
+``` js
+const targetElement = document.getElementById("g-container");
+// 记录初始数据
+let cacheInitData = '';
+// 数据复位标志位
+let data_fixed_flag = false; 
+// 复位缓存对象
+let cacheObservingObject = null;
+let cacheContainer = null;
+let cacheData = '';
+
+function eventBind() {
+    targetElement.addEventListener('focus', (e) => {
+        if (data_fixed_flag) {
+            cacheContainer.innerText = cacheData;
+            cacheObservingObject.disconnect();
+            observeElementChanges(targetElement);
+            data_fixed_flag = false;
+        }
+    });
+}
+
+function observeElementChanges(element) {
+    const changes = []; // 存储变化的数组
+    const targetElementCache = element.innerText;
+
+    // 缓存每次的初始数据
+    cacheInitData = targetElementCache
+    
+    // 创建 MutationObserver 实例
+    const observer = new MutationObserver((mutationsList, observer) => {
+        // 检查当前是否存在焦点
+        // const hasFocus = targetElement === document.activeElement;
+        mutationsList.forEach((mutation) => {
+            console.log('observer', observer);
+            const { type, target, addedNodes, removedNodes } = mutation;
+            let realtimeText = "";
+            
+            if (type === "characterData") {
+                realtimeText = target.data;
+            }
+            
+            const change = {
+                type,
+                target,
+                addedNodes: [...addedNodes],
+                removedNodes: [...removedNodes],
+                realtimeText,
+                activeElement: document.activeElement
+            };
+            changes.push(change);
+        });
+        console.log("changes", changes);
+        
+        let isFixed = false;
+        let container = null;
+        
+        for (let i = changes.length - 1; i >= 0; i--) {
+            const item = changes[i];
+            console.log('i', i);
+            if (item.activeElement === element) {
+                if (isFixed) {
+                    cacheData = item.realtimeText;
+                }
+                break;
+            } else {
+                if (!isFixed) {
+                    isFixed = true;
+                    container = item.target.nodeType === 3 ? item.target.parentElement : item.target;
+                    cacheContainer = container;
+                    data_fixed_flag = true;
+                }
+            }
+        }
+        
+        if (data_fixed_flag && cacheData === '') {
+            cacheData = cacheInitData;
+        }
+        
+        cacheObservingObject = observer;
+    });
+
+    // 配置 MutationObserver
+    const config = { childList: true, subtree: true, characterData: true };
+
+    // 开始观察元素的变化
+    observer.observe(element, config);
+    eventBind();
+    
+    // 返回停止观察并返回变化数组的函数
+    return () => {
+        observer.disconnect();
+        return changes;
+    };
+}
+
+observeElementChanges(targetElement);
+```
