@@ -2119,3 +2119,22 @@ function observeElementChanges(element) {
 
 observeElementChanges(targetElement);
 ```
+
+## 11.01 
+
+1. 冷知识：1. 不是所有元素都有伪元素，譬如 iframe、input、img 等替换元素是没有伪元素的 2. 当 img 触发了元素的 onerror 事件时（或者理解为 img src 内的资源替换失败），此状态下的 img 可以添加伪元素
+
+2. 通过零宽字符设置空title   
+
+
+我们如果设置`document.title = ''` 这样浏览器的title会显示当前页面地址，如果我们想设置空标题，需要设置`document.title = '\u200b'`，
+
+我们如果需要过滤可以使用
+``` js
+newStr = str.replace(/[\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
+```
+
+如果要提取可以使用
+``` js
+newStr = str.replace(/[^\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
+```
