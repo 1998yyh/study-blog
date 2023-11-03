@@ -2138,3 +2138,158 @@ newStr = str.replace(/[\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
 ``` js
 newStr = str.replace(/[^\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
 ```
+
+## 11.02
+
+
+1. prefers-reduced-transparency
+
+从chrome 118开始 此媒体查询可用。 例如透界面会导致头疼，或者各类视力缺陷导致视觉困难，各类操作系统也支持了降低UI透明度的选项
+
+![](https://pic.imgdb.cn/item/65434a31c458853aef282a0e.jpg)
+
+
+``` css
+.example {
+  --opacity: .5;
+
+  background: hsl(200 100% 50% / var(--opacity));
+
+  @media (prefers-reduced-transparency: reduce) {
+    --opacity: .95;
+  }
+}
+```
+
+在前面的代码示例中，CSS 变量保存一个不透明度值，然后50%与 HSL 一起使用该值来创建半透明的蓝色背景。嵌套媒体查询检查用户对降低透明度的偏好，如果为 true，则将不透明度变量调整为，95%一个几乎不透明的不透明度值。
+
+我们在开发过程中如果遇到相关需求 可以使用 
+
+![](https://pic.imgdb.cn/item/65434dfac458853aef32f061.jpg)
+
+
+
+2. 几个新增的 比较偏门的 CSS 函数
+
++  light-dark();
+比如我们背景颜色 希望在普通模式下是白色 暗黑模式下是黑
+
+我们需要这么写
+
+```css
+:root {
+  color-scheme: light dark;
+  --text-color: #333; /* Value for Light Mode */
+}
+
+@media (prefers-color-scheme: dark) {
+  --text-color: #ccc; /* Value for Dark Mode */
+}
+
+
+/* 
+  如果我们使用 light-dark();
+*/
+
+:root {
+  color-scheme: light dark;
+  --text-color: light-dark(#333, #ccc);
+}
+```
+
+
++ xywh()
+
+这将创建一个“基本形状”，该形状从 X、Y 坐标开始，然后具有指定的宽度和高度。有点酷。用于使用基本形状的地方：
+
+``` css
+.thing-that-is-clipped {
+  clip-path: xywh(0 0 100% 100% round 5px);
+
+  offset-path: xywh(0 20px 100% calc(100% - 20px));
+}
+```
+
+
++ round()
+
+
+默认情况下，它舍入到最接近的值，但可以是上或下，也可以是奇异的到零。但更重要的是，它有一个“舍入间隔”，不仅意味着最接近的整数，还意味着任何整数的间隔。
+
+``` css
+#drag{
+  left:round(1px,20px)
+}
+
+```
+
+
+
+
+3. 匹配HTML 里是否有某个属性 
+
+![](https://pic.imgdb.cn/item/6543560ec458853aef49d599.jpg)
+
+![](https://pic.imgdb.cn/item/65435716c458853aef4cc634.jpg)
+
+
+4. inputmode
+
+inputmode 全局属性 是一个枚举属性，它提供了用户在编辑元素或其内容时可能输入的数据类型的提示 
+
+比如我们使用`tpye=text` 却希望弹出的是数字键盘 就可以加一个`inputmode='number'` 来实现
+
+
+5. css函数 rem() 
+
+在css中我们使用 rem 计算余数 
+
+``` css
+line-height: rem(9, 4); /* 1 */
+line-height: rem(5, 4.1); /* 0.9 */
+line-height: rem(1003 % 5); /* 3 */
+```
+
+
+
+
+## 11.02 STATE of HTML 2023
+
+
+1. 我们可以通过input.showPicker 吊起原生的时间选择器 颜色选择器等等
+
+``` html
+<input id="dateInput" type="date">
+<button onclick="dateInput.showPicker()">Select date</button>
+```
+
+
+2. DOM HTML 处理的方法
+
++ Element.innerHTML
++ Element.innerTEXT
++ element.insertAdjacentHTML(position, text);
++ DOMParser
+
+
+insertAdjanceHTML position 位置具体
+``` 
+<!-- beforebegin -->
+<p>
+  <!-- afterbegin -->
+  foo
+  <!-- beforeend -->
+</p>
+<!-- afterend -->
+```
+
+
+``` js
+
+const string = `<div>lsdjalsdlj</div>`
+var doc = new DOMParser().parseFromString(string, 'text/xml');
+
+
+var d1 = document.getElementById("one");
+d1.insertAdjacentHTML("afterend", '<div id="two">two</div>');
+```
