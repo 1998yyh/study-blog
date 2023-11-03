@@ -2293,3 +2293,173 @@ var doc = new DOMParser().parseFromString(string, 'text/xml');
 var d1 = document.getElementById("one");
 d1.insertAdjacentHTML("afterend", '<div id="two">two</div>');
 ```
+
+
+
+## 11.03 继续 STATE of HTML 2023
+
+1. inert 惰性的
+
+防止click用户单击元素时触发该事件。（可以完美替换pointer-event:none）
+focus通过阻止元素获得焦点来阻止引发事件。（之前是通过tabIndex 来避免的）
+通过将元素及其内容从辅助功能树中排除来隐藏辅助技术。
+
+
+**思考**： 可以进来默认设置inert然后，接口请求成功后再置为false
+
+2. loading="lazy"
+ 
+loading元素上的属性（`<img>`或loading上的属性`<iframe>`）可用于指示浏览器推迟加载屏幕外的图像/iframe，直到用户滚动到它们附近。
+
+你可以检查元素上`complete`属性来判断是否加载成功
+
+
+3. scrset 和 sizes属性
+
+``` html
+<img
+  srcset="fairy-med.jpg 480w, fairy-large.jpg 800w"
+  sizes="(max-width: 600px) 480px, 800px"
+  src="fairy-large.jpg"
+  alt="Elva dressed as a fairy" />
+```
+
+设置不同分辨率的图片展示 
+
+4. dns-prefetch
+
+仅对跨源dns-prefetch域的 DNS 查找有效，因此请避免使用它来指向您的站点或域。这是因为当浏览器看到提示时，您网站域背后的 IP 已经被解析。
+
+其次，还可以使用HTTP 链接字段dns-prefetch将（和其他资源提示）指定为HTTP 标头：
+
+```
+Link: <https://fonts.googleapis.com/>; rel=dns-prefetch
+```
+第三，考虑dns-prefetch与preconnect提示配对。虽然dns-prefetch仅执行 DNS 查找，但preconnect建立与服务器的连接。此过程包括 DNS 解析、建立 TCP 连接以及执行TLS握手（如果站点通过 HTTPS 提供服务）。将两者结合起来可以进一步减少跨源请求的感知延迟。您可以像这样安全地一起使用它们：
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin />
+<link rel="dns-prefetch" href="https://fonts.googleapis.com/" />
+```
+
+
+
+5. fetchpriority 优先级
+
+设置 `fetchpriority='high'` 相比于其他图像优先获取， `fetchpriority='low'` 以较低优先级获取图像
+
+6. Web组件 / ShadowDom
+
+Web组件的关键功能是能够创建自定义元素
+
+自定义的内置元素继承自标准 HTML 元素，例如HTMLImageElement或HTMLParagraphElement。它们的实现定制了标准元素的行为。
+
+比如P元素
+
+``` js
+class WordCount extends HTMLParagraphElement {
+  constructor() {
+    super();
+  }
+  // Element functionality written in here
+}
+```
+它可以定义以下的声明周期
+connectedCallback()：每次将元素添加到文档时调用。规范建议，开发人员应尽可能在此回调中而不是构造函数中实现自定义元素设置。
+disconnectedCallback()：每次从文档中删除元素时调用。
+adoptedCallback()：每次将元素移动到新文档时调用。
+attributeChangedCallback()：在更改、添加、删除或替换属性时调用。有关此回调的更多详细信息，请参阅响应属性更改。
+
+
+MDN官方的例子：
+``` js
+class PopupInfo extends HTMLElement {
+  constructor() {
+    // Always call super first in constructor
+    super();
+  }
+
+  connectedCallback() {
+    // Create a shadow root
+    const shadow = this.attachShadow({ mode: "open" });
+
+    // Create spans
+    const wrapper = document.createElement("span");
+    wrapper.setAttribute("class", "wrapper");
+
+    const icon = document.createElement("span");
+    icon.setAttribute("class", "icon");
+    icon.setAttribute("tabindex", 0);
+
+    const info = document.createElement("span");
+    info.setAttribute("class", "info");
+
+    // Take attribute content and put it inside the info span
+    const text = this.getAttribute("data-text");
+    info.textContent = text;
+
+    // Insert icon
+    let imgUrl;
+    if (this.hasAttribute("img")) {
+      imgUrl = this.getAttribute("img");
+    } else {
+      imgUrl = "img/default.png";
+    }
+
+    const img = document.createElement("img");
+    img.src = imgUrl;
+    icon.appendChild(img);
+
+    // Create some CSS to apply to the shadow dom
+    const style = document.createElement("style");
+    console.log(style.isConnected);
+
+    style.textContent = `
+      .wrapper {
+        position: relative;
+      }
+
+      .info {
+        font-size: 0.8rem;
+        width: 200px;
+        display: inline-block;
+        border: 1px solid black;
+        padding: 10px;
+        background: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: 0.6s all;
+        position: absolute;
+        bottom: 20px;
+        left: 10px;
+        z-index: 3;
+      }
+
+      img {
+        width: 1.2rem;
+      }
+
+      .icon:hover + .info, .icon:focus + .info {
+        opacity: 1;
+      }
+    `;
+
+    // Attach the created elements to the shadow dom
+    shadow.appendChild(style);
+    console.log(style.isConnected);
+    shadow.appendChild(wrapper);
+    wrapper.appendChild(icon);
+    wrapper.appendChild(info);
+  }
+}
+
+customElements.define("popup-info", PopupInfo);
+```
+
+7. 无障碍
+
+语义化标签：main nav aside header footer section 
+可聚焦属性:  tabindex
+聚焦小组: focusgroup 可以把一组元素放到单个焦点下
+制作网站时考虑: 低视力 色觉异常 行动障碍 前庭失调 学习障碍 认知障碍 听力障碍
+常规无障碍策略：描述性alt文本 / 跳转到内容的链接 / 信息层次结构 / 有意义的文本链接 / 表单控制标签 / 可视焦点环 /  不只依赖指针 / 足够对比度 / prefers-reduce-motion / prefers-contrast 
