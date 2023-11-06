@@ -2463,3 +2463,4 @@ customElements.define("popup-info", PopupInfo);
 聚焦小组: focusgroup 可以把一组元素放到单个焦点下
 制作网站时考虑: 低视力 色觉异常 行动障碍 前庭失调 学习障碍 认知障碍 听力障碍
 常规无障碍策略：描述性alt文本 / 跳转到内容的链接 / 信息层次结构 / 有意义的文本链接 / 表单控制标签 / 可视焦点环 /  不只依赖指针 / 足够对比度 / prefers-reduce-motion / prefers-contrast 
+
