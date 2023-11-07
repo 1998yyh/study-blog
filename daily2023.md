@@ -2464,3 +2464,15 @@ customElements.define("popup-info", PopupInfo);
 制作网站时考虑: 低视力 色觉异常 行动障碍 前庭失调 学习障碍 认知障碍 听力障碍
 常规无障碍策略：描述性alt文本 / 跳转到内容的链接 / 信息层次结构 / 有意义的文本链接 / 表单控制标签 / 可视焦点环 /  不只依赖指针 / 足够对比度 / prefers-reduce-motion / prefers-contrast 
 
+
+
+## 11.06 
+
+1. 输入框效果 限制输入数字且小数点后两位
+https://codepen.io/wheatup/pen/bGzgdqP/86e3dd8c2abeb1ed288b0062135202ca
+
+
+
+## 11.07
+
+1.  chrome 115 全量了 UA reduction 功能，判断机型不能再用 UA 了
