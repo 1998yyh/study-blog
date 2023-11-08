@@ -2476,3 +2476,10 @@ https://codepen.io/wheatup/pen/bGzgdqP/86e3dd8c2abeb1ed288b0062135202ca
 ## 11.07
 
 1.  chrome 115 全量了 UA reduction 功能，判断机型不能再用 UA 了
+
+
+## 11.08
+
+1. chrome 120 bug 
+
+filter: drop-shadow 叠加transform 算出来的布局不太对，表现上就是这样；原因等有空再看
