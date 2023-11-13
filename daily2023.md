@@ -2483,3 +2483,50 @@ https://codepen.io/wheatup/pen/bGzgdqP/86e3dd8c2abeb1ed288b0062135202ca
 1. chrome 120 bug 
 
 filter: drop-shadow 叠加transform 算出来的布局不太对，表现上就是这样；原因等有空再看
+
+2. 一行css 使chrome 崩溃 
+
+width: atan2(calc(100cqw - 0px), 1px)
+
+主要是atan2 calc cqw 同时存在 就会崩溃
+
+REX大佬: 
+出问题的 CSS，atan2 的两个参数分别是 calc(100cqw - 0px) 和 1px，它俩分别是 kUnknown 和 kPixels 类型；在执行 ComputeValueInCanonicalUnit 之后，1px 被转换成 1，但那个 calc 还是一个脏值，于是在获取它的 .value() 时 abseil 库挂掉了
+
+
+![](https://pic.imgdb.cn/item/654b71a6c458853aefeb9250.jpg)
+
+
+## 11.13
+
+
+git 操作
+
+
+1. HEAD^1 返回上一级 HEAD~num 返回多级
+
+我使用相对引用最多的就是移动分支。可以直接使用 -f 选项让分支指向另一个提交。例如:
+
+git branch -f main HEAD~3
+
+上面的命令会将 main 分支强制指向 HEAD 的第 3 级 parent 提交。
+
+
+2. 撤销
+
+在 Git 里撤销变更的方法很多。和提交一样，撤销变更由底层部分（暂存区的独立文件或者片段）和上层部分（变更到底是通过哪种方式被撤销的）组成。我们这个应用主要关注的是后者。
+
+主要有两种方法用来撤销变更 —— 一是 git reset，还有就是 git revert。接下来咱们逐个进行讲解。
+
+
+3. cherry-pick 
+
+git cherry-pick <提交号>...
+如果你想将一些提交复制到当前所在的位置（HEAD）下面的话， Cherry-pick 是最直接的方式了。我个人非常喜欢 cherry-pick，因为它特别简单。
+
+
+4. rebase -i
+
+如果你在命令后增加了这个选项, Git 会打开一个 UI 界面并列出将要被复制到目标分支的备选提交记录，它还会显示每个提交记录的哈希值和提交说明，提交说明有助于你理解这个提交进行了哪些更改。
+
+在实际使用时，所谓的 UI 窗口一般会在文本编辑器 —— 如 Vim —— 中打开一个文件。 考虑到课程的初衷，我弄了一个对话框来模拟这些操作。
