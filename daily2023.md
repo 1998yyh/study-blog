@@ -2632,3 +2632,35 @@ textarea:not([rows]) {
 
 
 6. 创建chrome 插件工具  https://github.com/guocaoyi/create-chrome-ext
+
+
+
+## 11.20
+
+1. 正则题目
+
+补齐0
+
+``` js
+// 1
+// 123
+// 99
+// 1234
+
+
+// 00001
+// 00123
+// 00099
+// 01234
+
+str.replace(/^(\d)?(\d)?(\d)?(\d)?\d$/,'${1:+:0}${2:+:0}${3:+:0}${4:+:0}$0')
+```
+
+
+
+
+## 11.22 
+
+1. 调研Sentry-uniapp 的时候发现 sentry 依赖的 repay 功能是基于rrweb来做的，而rrweb使用了
+
+![](https://pic.imgdb.cn/item/655ddfd2c458853aef9ad936.jpg)
