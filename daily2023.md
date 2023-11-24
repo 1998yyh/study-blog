@@ -2664,3 +2664,25 @@ str.replace(/^(\d)?(\d)?(\d)?(\d)?\d$/,'${1:+:0}${2:+:0}${3:+:0}${4:+:0}$0')
 1. 调研Sentry-uniapp 的时候发现 sentry 依赖的 repay 功能是基于rrweb来做的，而rrweb使用了
 
 ![](https://pic.imgdb.cn/item/655ddfd2c458853aef9ad936.jpg)
+
+
+## 11.23
+
+我在想 BroadcastChannel 是不是也可以。
+BroadcastChannel() 接口代理了一个命名频道，可以让指定 origin 下的任意 browsing context 来订阅它。它允许同源的不同浏览器窗口，Tab 页，frame 或者 iframe 下的不同文档之间相互通信。
+
+
+盗了几张sentry-javascript的图
+
+![](https://pic.imgdb.cn/item/655f017ec458853aef0b4f52.jpg)
+
+![](https://pic.imgdb.cn/item/655f01ebc458853aef0c87a5.jpg)
+
+这个是sentry-uniapp的。
+
+![](https://pic.imgdb.cn/item/655f0228c458853aef0d30b4.png)
+
+
+## 12.24
+
+1. Nest 
