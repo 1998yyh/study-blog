@@ -1820,13 +1820,11 @@ WebGPU 比 WebGL 快 3 倍，本身 WebGL 就是目前 web 端运行效率最高
 
 1.
 
-
 ## 09.14
 
 1. 获取伪类的宽高
 
 getComputedStyle('div',':before')
-
 
 ## 09.21
 
@@ -1838,25 +1836,22 @@ mysql 的索引优化
 
 TCP 的 timewait
 
-
-
 ## 09.22
-## 09.23
 
+## 09.23
 
 LCP：
 
 UV / PV  
-优化LCP资源加载延迟 1.资源预加载。 2. 服务端渲染。
+优化 LCP 资源加载延迟 1.资源预加载。 2. 服务端渲染。
 
 vscode 插件？ 分析火焰图/
 
 升级依赖带来的问题 测试需要覆盖？ 如果去评估升级带来的影响？
 
-setEffect false 没有引入webpack会删除
+setEffect false 没有引入 webpack 会删除
 
 拆的足够小 并行加载问题》
-
 
 clickhouse 打点自动清理
 
@@ -1864,34 +1859,30 @@ clickhouse 打点自动清理
 
 ## 09.25
 
-1. Chrome的自动播放政策很简单：
+1. Chrome 的自动播放政策很简单：
 
-+ 静音自动播放总是允许的。
-+ 在下列情况下允许使用声音自动播放：
-  -  用户已经与域进行了交互（点击，tap等）。
-  -  在桌面上，用户的媒体参与指数阈值(MEI)已被越过，这意味着用户以前播放带有声音的视频。
-  -  在移动设备上，用户已将该网站添加到主屏幕。
-  -  顶部框架可以将自动播放权限授予其iframe以允许自动播放声音。
+- 静音自动播放总是允许的。
+- 在下列情况下允许使用声音自动播放：
+  - 用户已经与域进行了交互（点击，tap 等）。
+  - 在桌面上，用户的媒体参与指数阈值(MEI)已被越过，这意味着用户以前播放带有声音的视频。
+  - 在移动设备上，用户已将该网站添加到主屏幕。
+  - 顶部框架可以将自动播放权限授予其 iframe 以允许自动播放声音。
 
+MEI 衡量个人在网站上消费媒体的倾向。Chrome 目前的方法是访问每个来源的重要媒体播放事件的比率：
 
-
-MEI衡量个人在网站上消费媒体的倾向。Chrome 目前的方法是访问每个来源的重要媒体播放事件的比率：
-
-媒体消耗（音频/视频）必须大于7秒。
+媒体消耗（音频/视频）必须大于 7 秒。
 音频必须存在并取消静音。
 视频选项卡处于活动状态。
-视频大小（以像素为单位）必须大于200x140。
-因此，Chrome会计算媒体参与度分数，该分数在定期播放媒体的网站上最高。足够高时，媒体播放只允许在桌面上自动播放。MEI是谷歌自动播放策略的一部分。它是一个算法，参考了媒体内容的持续时间、浏览器标签页是否活动、活动标签页视频的大小这一系列元素。不过也正因此，开发者难以在所有的网页上都测试这一算法的效果。
+视频大小（以像素为单位）必须大于 200x140。
+因此，Chrome 会计算媒体参与度分数，该分数在定期播放媒体的网站上最高。足够高时，媒体播放只允许在桌面上自动播放。MEI 是谷歌自动播放策略的一部分。它是一个算法，参考了媒体内容的持续时间、浏览器标签页是否活动、活动标签页视频的大小这一系列元素。不过也正因此，开发者难以在所有的网页上都测试这一算法的效果。
 
-用户的MEI位于chrome://media-engagement/内部页面
-
+用户的 MEI 位于 chrome://media-engagement/内部页面
 
 开发者开关
-作为开发者，您可能需要在本地更改Chrome浏览器自动播放政策行为，以根据用户的参与情况测试您的网站。
+作为开发者，您可能需要在本地更改 Chrome 浏览器自动播放政策行为，以根据用户的参与情况测试您的网站。
 
-您可以决定通过将Chrome标志“自动播放策略”设置为“无需用户手势”来完全禁用自动播放策略 chrome://flags/#autoplay-policy。这样您就可以测试您的网站，就好像用户与您的网站保持紧密联系一样，并且始终允许播放自动播放。
-您也可以决定禁止使用MEI以及默认情况下全新MEI获得播放自动播放的网站是否允许新用户使用，从而决定禁止播放自动播放。这可以用两个来完成 内部开关用chrome.exe --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio, MediaEngagementBypassAutoplayPolicies
-
+您可以决定通过将 Chrome 标志“自动播放策略”设置为“无需用户手势”来完全禁用自动播放策略 chrome://flags/#autoplay-policy。这样您就可以测试您的网站，就好像用户与您的网站保持紧密联系一样，并且始终允许播放自动播放。
+您也可以决定禁止使用 MEI 以及默认情况下全新 MEI 获得播放自动播放的网站是否允许新用户使用，从而决定禁止播放自动播放。这可以用两个来完成 内部开关用 chrome.exe --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio, MediaEngagementBypassAutoplayPolicies
 
 ## 10.07
 
@@ -1905,10 +1896,9 @@ tree
 
 相关参数说明:<https://www.runoob.com/linux/linux-comm-tree.html>
 
-
 ## 10.08
 
-1. git reabse 教程 
+1. git reabse 教程
 
 https://medium.com/starbugs/use-git-interactive-rebase-to-organize-commits-85e692b46dd
 
@@ -1916,9 +1906,7 @@ https://medium.com/starbugs/use-git-interactive-rebase-to-organize-commits-85e69
 
 1. ARIA
 
-
 https://developer.mozilla.org/zh-CN/docs/Web/Accessibility/ARIA
-
 
 ## 10.23
 
@@ -1928,251 +1916,241 @@ https://developer.mozilla.org/zh-CN/docs/Web/Accessibility/ARIA
 
 ![](https://pic.imgdb.cn/item/65363ab7c458853aef3c4405.jpg)
 
-使用正则替换，将所有偶数位的大写字母替换为*：
+使用正则替换，将所有偶数位的大写字母替换为\*：
 
 替换前：
 ABCDefghIJkLmnoPqrstUvwxYZ
 替换后：
 A*C*efghI*k*mno*qrstUvwxY*
 
-``` js
-'ABCDefghIJkLmnoPqrstUvwxYz'.replace(/(?<=^.(..)*)[A-Z]/g,'*')
+```js
+"ABCDefghIJkLmnoPqrstUvwxYz".replace(/(?<=^.(..)*)[A-Z]/g, "*");
 ```
 
-``` js
+```js
 .[^A-Z](*SKIP)(*F)|.\K.
 ```
 
 2. 正则题
 
-``` html
-在一个以逗号分割的字符串中，替换每组字符串中偶数位的大写字母为*
-
-替换前：
-AB,CDefghI,JKLm,noPQRstU,vwxYZ
-
-替换后：
-A*,C*efghI,J*Lm,noP*Rst*,vwx*Z
-
+```html
+在一个以逗号分割的字符串中，替换每组字符串中偶数位的大写字母为* 替换前：
+AB,CDefghI,JKLm,noPQRstU,vwxYZ 替换后： A*,C*efghI,J*Lm,noP*Rst*,vwx*Z
 ```
 
-
-``` js
+```js
 (?:,|.[^A-Z])(*SKIP)(*F)|.\K.
 ```
 
-
 ## 10.27
 
-1. 疯狂星期5
+1. 疯狂星期 5
 
-``` js
-const data = [1, 'Hello', 2, NaN, 43.23, -0, undefined];
+```js
+const data = [1, "Hello", 2, NaN, 43.23, -0, undefined];
 
 function getIndex(array, element) {
-  return array.findIndex(e=>[e].includes(element))
-    // write your code here
+  return array.findIndex((e) => [e].includes(element));
+  // write your code here
 }
 
-console.log(getIndex(data, 1));          // 0
-console.log(getIndex(data, 'Hello'));    // 1
-console.log(getIndex(data, NaN));        // 3
-console.log(getIndex(data, 0));          // 5
-console.log(getIndex(data, undefined));  // 6
+console.log(getIndex(data, 1)); // 0
+console.log(getIndex(data, "Hello")); // 1
+console.log(getIndex(data, NaN)); // 3
+console.log(getIndex(data, 0)); // 5
+console.log(getIndex(data, undefined)); // 6
 ```
-
 
 2. 如何判断 +0 与 -0
 
-通常情况下 `+0 === -0` 是true的
+通常情况下 `+0 === -0` 是 true 的
 
-``` js
+```js
 // 我们可以使用 Object.is(+0,-0)来操作
-Object.is(+0,-0) // false
+Object.is(+0, -0); // false
 
 // 其次我们可以使用 1/0  1/-0
-function isNegativeZero(x){
-  return -Infinity === 1/x;
+function isNegativeZero(x) {
+  return -Infinity === 1 / x;
 }
 
 // 使用Math.sign
-function isNegativeZero(x){
-  return Math.sign(1/x) < 0;
-} 
+function isNegativeZero(x) {
+  return Math.sign(1 / x) < 0;
+}
 
 // 使用toLocalString()
-function isNegativeZero(x){
-  return '-0' === x.toLocaleString();
+function isNegativeZero(x) {
+  return "-0" === x.toLocaleString();
 }
 
 // 使用buffer？
-function doubleToLongBits(d){
+function doubleToLongBits(d) {
   let buffer = new ArrayBuffer(8);
   let view = new DataView(Buffer);
-  view.setFloat64(0,d);
+  view.setFloat64(0, d);
   let hi = view.getUint32(0);
   let lo = view.getUint32(4);
-  return BigInt(hi) << 32n | BigInt(lo);
+  return (BigInt(hi) << 32n) | BigInt(lo);
 }
 ```
 
-
 ## 10.30
 
-1. Coco在做语雀插件的时候发现的，通过控制台DOM编辑语雀的元素内容，再次focus的时候会重制回去。
+1. Coco 在做语雀插件的时候发现的，通过控制台 DOM 编辑语雀的元素内容，再次 focus 的时候会重制回去。
 
-``` js
+```js
 const targetElement = document.getElementById("g-container");
 // 记录初始数据
-let cacheInitData = '';
+let cacheInitData = "";
 // 数据复位标志位
-let data_fixed_flag = false; 
+let data_fixed_flag = false;
 // 复位缓存对象
 let cacheObservingObject = null;
 let cacheContainer = null;
-let cacheData = '';
+let cacheData = "";
 
 function eventBind() {
-    targetElement.addEventListener('focus', (e) => {
-        if (data_fixed_flag) {
-            cacheContainer.innerText = cacheData;
-            cacheObservingObject.disconnect();
-            observeElementChanges(targetElement);
-            data_fixed_flag = false;
-        }
-    });
+  targetElement.addEventListener("focus", (e) => {
+    if (data_fixed_flag) {
+      cacheContainer.innerText = cacheData;
+      cacheObservingObject.disconnect();
+      observeElementChanges(targetElement);
+      data_fixed_flag = false;
+    }
+  });
 }
 
 function observeElementChanges(element) {
-    const changes = []; // 存储变化的数组
-    const targetElementCache = element.innerText;
+  const changes = []; // 存储变化的数组
+  const targetElementCache = element.innerText;
 
-    // 缓存每次的初始数据
-    cacheInitData = targetElementCache
-    
-    // 创建 MutationObserver 实例
-    const observer = new MutationObserver((mutationsList, observer) => {
-        // 检查当前是否存在焦点
-        // const hasFocus = targetElement === document.activeElement;
-        mutationsList.forEach((mutation) => {
-            console.log('observer', observer);
-            const { type, target, addedNodes, removedNodes } = mutation;
-            let realtimeText = "";
-            
-            if (type === "characterData") {
-                realtimeText = target.data;
-            }
-            
-            const change = {
-                type,
-                target,
-                addedNodes: [...addedNodes],
-                removedNodes: [...removedNodes],
-                realtimeText,
-                activeElement: document.activeElement
-            };
-            changes.push(change);
-        });
-        console.log("changes", changes);
-        
-        let isFixed = false;
-        let container = null;
-        
-        for (let i = changes.length - 1; i >= 0; i--) {
-            const item = changes[i];
-            console.log('i', i);
-            if (item.activeElement === element) {
-                if (isFixed) {
-                    cacheData = item.realtimeText;
-                }
-                break;
-            } else {
-                if (!isFixed) {
-                    isFixed = true;
-                    container = item.target.nodeType === 3 ? item.target.parentElement : item.target;
-                    cacheContainer = container;
-                    data_fixed_flag = true;
-                }
-            }
-        }
-        
-        if (data_fixed_flag && cacheData === '') {
-            cacheData = cacheInitData;
-        }
-        
-        cacheObservingObject = observer;
+  // 缓存每次的初始数据
+  cacheInitData = targetElementCache;
+
+  // 创建 MutationObserver 实例
+  const observer = new MutationObserver((mutationsList, observer) => {
+    // 检查当前是否存在焦点
+    // const hasFocus = targetElement === document.activeElement;
+    mutationsList.forEach((mutation) => {
+      console.log("observer", observer);
+      const { type, target, addedNodes, removedNodes } = mutation;
+      let realtimeText = "";
+
+      if (type === "characterData") {
+        realtimeText = target.data;
+      }
+
+      const change = {
+        type,
+        target,
+        addedNodes: [...addedNodes],
+        removedNodes: [...removedNodes],
+        realtimeText,
+        activeElement: document.activeElement,
+      };
+      changes.push(change);
     });
+    console.log("changes", changes);
 
-    // 配置 MutationObserver
-    const config = { childList: true, subtree: true, characterData: true };
+    let isFixed = false;
+    let container = null;
 
-    // 开始观察元素的变化
-    observer.observe(element, config);
-    eventBind();
-    
-    // 返回停止观察并返回变化数组的函数
-    return () => {
-        observer.disconnect();
-        return changes;
-    };
+    for (let i = changes.length - 1; i >= 0; i--) {
+      const item = changes[i];
+      console.log("i", i);
+      if (item.activeElement === element) {
+        if (isFixed) {
+          cacheData = item.realtimeText;
+        }
+        break;
+      } else {
+        if (!isFixed) {
+          isFixed = true;
+          container =
+            item.target.nodeType === 3
+              ? item.target.parentElement
+              : item.target;
+          cacheContainer = container;
+          data_fixed_flag = true;
+        }
+      }
+    }
+
+    if (data_fixed_flag && cacheData === "") {
+      cacheData = cacheInitData;
+    }
+
+    cacheObservingObject = observer;
+  });
+
+  // 配置 MutationObserver
+  const config = { childList: true, subtree: true, characterData: true };
+
+  // 开始观察元素的变化
+  observer.observe(element, config);
+  eventBind();
+
+  // 返回停止观察并返回变化数组的函数
+  return () => {
+    observer.disconnect();
+    return changes;
+  };
 }
 
 observeElementChanges(targetElement);
 ```
 
-## 11.01 
+## 11.01
 
 1. 冷知识：1. 不是所有元素都有伪元素，譬如 iframe、input、img 等替换元素是没有伪元素的 2. 当 img 触发了元素的 onerror 事件时（或者理解为 img src 内的资源替换失败），此状态下的 img 可以添加伪元素
 
-2. 通过零宽字符设置空title   
+2. 通过零宽字符设置空 title
 
-
-我们如果设置`document.title = ''` 这样浏览器的title会显示当前页面地址，如果我们想设置空标题，需要设置`document.title = '\u200b'`，
+我们如果设置`document.title = ''` 这样浏览器的 title 会显示当前页面地址，如果我们想设置空标题，需要设置`document.title = '\u200b'`，
 
 我们如果需要过滤可以使用
-``` js
+
+```js
 newStr = str.replace(/[\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
 ```
 
 如果要提取可以使用
-``` js
+
+```js
 newStr = str.replace(/[^\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
 ```
 
 ## 11.02
 
-
 1. prefers-reduced-transparency
 
-从chrome 118开始 此媒体查询可用。 例如透界面会导致头疼，或者各类视力缺陷导致视觉困难，各类操作系统也支持了降低UI透明度的选项
+从 chrome 118 开始 此媒体查询可用。 例如透界面会导致头疼，或者各类视力缺陷导致视觉困难，各类操作系统也支持了降低 UI 透明度的选项
 
 ![](https://pic.imgdb.cn/item/65434a31c458853aef282a0e.jpg)
 
-
-``` css
+```css
 .example {
-  --opacity: .5;
+  --opacity: 0.5;
 
   background: hsl(200 100% 50% / var(--opacity));
 
   @media (prefers-reduced-transparency: reduce) {
-    --opacity: .95;
+    --opacity: 0.95;
   }
 }
 ```
 
-在前面的代码示例中，CSS 变量保存一个不透明度值，然后50%与 HSL 一起使用该值来创建半透明的蓝色背景。嵌套媒体查询检查用户对降低透明度的偏好，如果为 true，则将不透明度变量调整为，95%一个几乎不透明的不透明度值。
+在前面的代码示例中，CSS 变量保存一个不透明度值，然后 50%与 HSL 一起使用该值来创建半透明的蓝色背景。嵌套媒体查询检查用户对降低透明度的偏好，如果为 true，则将不透明度变量调整为，95%一个几乎不透明的不透明度值。
 
-我们在开发过程中如果遇到相关需求 可以使用 
+我们在开发过程中如果遇到相关需求 可以使用
 
 ![](https://pic.imgdb.cn/item/65434dfac458853aef32f061.jpg)
 
-
-
 2. 几个新增的 比较偏门的 CSS 函数
 
-+  light-dark();
-比如我们背景颜色 希望在普通模式下是白色 暗黑模式下是黑
+- light-dark();
+  比如我们背景颜色 希望在普通模式下是白色 暗黑模式下是黑
 
 我们需要这么写
 
@@ -2186,7 +2164,6 @@ newStr = str.replace(/[^\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
   --text-color: #ccc; /* Value for Dark Mode */
 }
 
-
 /* 
   如果我们使用 light-dark();
 */
@@ -2197,12 +2174,11 @@ newStr = str.replace(/[^\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
 }
 ```
 
-
-+ xywh()
+- xywh()
 
 这将创建一个“基本形状”，该形状从 X、Y 坐标开始，然后具有指定的宽度和高度。有点酷。用于使用基本形状的地方：
 
-``` css
+```css
 .thing-that-is-clipped {
   clip-path: xywh(0 0 100% 100% round 5px);
 
@@ -2210,70 +2186,57 @@ newStr = str.replace(/[^\u200b-\u200f\uFEFF\u202a-\u202e]/g, "");
 }
 ```
 
-
-+ round()
-
+- round()
 
 默认情况下，它舍入到最接近的值，但可以是上或下，也可以是奇异的到零。但更重要的是，它有一个“舍入间隔”，不仅意味着最接近的整数，还意味着任何整数的间隔。
 
-``` css
-#drag{
-  left:round(1px,20px)
+```css
+#drag {
+  left: round(1px, 20px);
 }
-
 ```
 
-
-
-
-3. 匹配HTML 里是否有某个属性 
+3. 匹配 HTML 里是否有某个属性
 
 ![](https://pic.imgdb.cn/item/6543560ec458853aef49d599.jpg)
 
 ![](https://pic.imgdb.cn/item/65435716c458853aef4cc634.jpg)
 
-
 4. inputmode
 
-inputmode 全局属性 是一个枚举属性，它提供了用户在编辑元素或其内容时可能输入的数据类型的提示 
+inputmode 全局属性 是一个枚举属性，它提供了用户在编辑元素或其内容时可能输入的数据类型的提示
 
 比如我们使用`tpye=text` 却希望弹出的是数字键盘 就可以加一个`inputmode='number'` 来实现
 
+5. css 函数 rem()
 
-5. css函数 rem() 
+在 css 中我们使用 rem 计算余数
 
-在css中我们使用 rem 计算余数 
-
-``` css
+```css
 line-height: rem(9, 4); /* 1 */
 line-height: rem(5, 4.1); /* 0.9 */
 line-height: rem(1003 % 5); /* 3 */
 ```
 
-
-
-
 ## 11.02 STATE of HTML 2023
 
+1. 我们可以通过 input.showPicker 吊起原生的时间选择器 颜色选择器等等
 
-1. 我们可以通过input.showPicker 吊起原生的时间选择器 颜色选择器等等
-
-``` html
-<input id="dateInput" type="date">
+```html
+<input id="dateInput" type="date" />
 <button onclick="dateInput.showPicker()">Select date</button>
 ```
 
-
 2. DOM HTML 处理的方法
 
-+ Element.innerHTML
-+ Element.innerTEXT
-+ element.insertAdjacentHTML(position, text);
-+ DOMParser
-
+- Element.innerHTML
+- Element.innerTEXT
+- element.insertAdjacentHTML(position, text);
+- DOMParser
 
 insertAdjanceHTML position 位置具体
-``` 
+
+```
 <!-- beforebegin -->
 <p>
   <!-- afterbegin -->
@@ -2283,80 +2246,73 @@ insertAdjanceHTML position 位置具体
 <!-- afterend -->
 ```
 
-
-``` js
-
-const string = `<div>lsdjalsdlj</div>`
-var doc = new DOMParser().parseFromString(string, 'text/xml');
-
+```js
+const string = `<div>lsdjalsdlj</div>`;
+var doc = new DOMParser().parseFromString(string, "text/xml");
 
 var d1 = document.getElementById("one");
 d1.insertAdjacentHTML("afterend", '<div id="two">two</div>');
 ```
 
-
-
 ## 11.03 继续 STATE of HTML 2023
 
 1. inert 惰性的
 
-防止click用户单击元素时触发该事件。（可以完美替换pointer-event:none）
-focus通过阻止元素获得焦点来阻止引发事件。（之前是通过tabIndex 来避免的）
+防止 click 用户单击元素时触发该事件。（可以完美替换 pointer-event:none）
+focus 通过阻止元素获得焦点来阻止引发事件。（之前是通过 tabIndex 来避免的）
 通过将元素及其内容从辅助功能树中排除来隐藏辅助技术。
 
-
-**思考**： 可以进来默认设置inert然后，接口请求成功后再置为false
+**思考**： 可以进来默认设置 inert 然后，接口请求成功后再置为 false
 
 2. loading="lazy"
- 
-loading元素上的属性（`<img>`或loading上的属性`<iframe>`）可用于指示浏览器推迟加载屏幕外的图像/iframe，直到用户滚动到它们附近。
+
+loading 元素上的属性（`<img>`或 loading 上的属性`<iframe>`）可用于指示浏览器推迟加载屏幕外的图像/iframe，直到用户滚动到它们附近。
 
 你可以检查元素上`complete`属性来判断是否加载成功
 
+3. scrset 和 sizes 属性
 
-3. scrset 和 sizes属性
-
-``` html
+```html
 <img
   srcset="fairy-med.jpg 480w, fairy-large.jpg 800w"
   sizes="(max-width: 600px) 480px, 800px"
   src="fairy-large.jpg"
-  alt="Elva dressed as a fairy" />
+  alt="Elva dressed as a fairy"
+/>
 ```
 
-设置不同分辨率的图片展示 
+设置不同分辨率的图片展示
 
 4. dns-prefetch
 
-仅对跨源dns-prefetch域的 DNS 查找有效，因此请避免使用它来指向您的站点或域。这是因为当浏览器看到提示时，您网站域背后的 IP 已经被解析。
+仅对跨源 dns-prefetch 域的 DNS 查找有效，因此请避免使用它来指向您的站点或域。这是因为当浏览器看到提示时，您网站域背后的 IP 已经被解析。
 
-其次，还可以使用HTTP 链接字段dns-prefetch将（和其他资源提示）指定为HTTP 标头：
+其次，还可以使用 HTTP 链接字段 dns-prefetch 将（和其他资源提示）指定为 HTTP 标头：
 
 ```
 Link: <https://fonts.googleapis.com/>; rel=dns-prefetch
 ```
-第三，考虑dns-prefetch与preconnect提示配对。虽然dns-prefetch仅执行 DNS 查找，但preconnect建立与服务器的连接。此过程包括 DNS 解析、建立 TCP 连接以及执行TLS握手（如果站点通过 HTTPS 提供服务）。将两者结合起来可以进一步减少跨源请求的感知延迟。您可以像这样安全地一起使用它们：
+
+第三，考虑 dns-prefetch 与 preconnect 提示配对。虽然 dns-prefetch 仅执行 DNS 查找，但 preconnect 建立与服务器的连接。此过程包括 DNS 解析、建立 TCP 连接以及执行 TLS 握手（如果站点通过 HTTPS 提供服务）。将两者结合起来可以进一步减少跨源请求的感知延迟。您可以像这样安全地一起使用它们：
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin />
 <link rel="dns-prefetch" href="https://fonts.googleapis.com/" />
 ```
 
-
-
 5. fetchpriority 优先级
 
 设置 `fetchpriority='high'` 相比于其他图像优先获取， `fetchpriority='low'` 以较低优先级获取图像
 
-6. Web组件 / ShadowDom
+6. Web 组件 / ShadowDom
 
-Web组件的关键功能是能够创建自定义元素
+Web 组件的关键功能是能够创建自定义元素
 
-自定义的内置元素继承自标准 HTML 元素，例如HTMLImageElement或HTMLParagraphElement。它们的实现定制了标准元素的行为。
+自定义的内置元素继承自标准 HTML 元素，例如 HTMLImageElement 或 HTMLParagraphElement。它们的实现定制了标准元素的行为。
 
-比如P元素
+比如 P 元素
 
-``` js
+```js
 class WordCount extends HTMLParagraphElement {
   constructor() {
     super();
@@ -2364,15 +2320,16 @@ class WordCount extends HTMLParagraphElement {
   // Element functionality written in here
 }
 ```
+
 它可以定义以下的声明周期
 connectedCallback()：每次将元素添加到文档时调用。规范建议，开发人员应尽可能在此回调中而不是构造函数中实现自定义元素设置。
 disconnectedCallback()：每次从文档中删除元素时调用。
 adoptedCallback()：每次将元素移动到新文档时调用。
 attributeChangedCallback()：在更改、添加、删除或替换属性时调用。有关此回调的更多详细信息，请参阅响应属性更改。
 
+MDN 官方的例子：
 
-MDN官方的例子：
-``` js
+```js
 class PopupInfo extends HTMLElement {
   constructor() {
     // Always call super first in constructor
@@ -2458,50 +2415,41 @@ customElements.define("popup-info", PopupInfo);
 
 7. 无障碍
 
-语义化标签：main nav aside header footer section 
-可聚焦属性:  tabindex
+语义化标签：main nav aside header footer section
+可聚焦属性: tabindex
 聚焦小组: focusgroup 可以把一组元素放到单个焦点下
 制作网站时考虑: 低视力 色觉异常 行动障碍 前庭失调 学习障碍 认知障碍 听力障碍
-常规无障碍策略：描述性alt文本 / 跳转到内容的链接 / 信息层次结构 / 有意义的文本链接 / 表单控制标签 / 可视焦点环 /  不只依赖指针 / 足够对比度 / prefers-reduce-motion / prefers-contrast 
+常规无障碍策略：描述性 alt 文本 / 跳转到内容的链接 / 信息层次结构 / 有意义的文本链接 / 表单控制标签 / 可视焦点环 / 不只依赖指针 / 足够对比度 / prefers-reduce-motion / prefers-contrast
 
-
-
-## 11.06 
+## 11.06
 
 1. 输入框效果 限制输入数字且小数点后两位
-https://codepen.io/wheatup/pen/bGzgdqP/86e3dd8c2abeb1ed288b0062135202ca
-
-
+   https://codepen.io/wheatup/pen/bGzgdqP/86e3dd8c2abeb1ed288b0062135202ca
 
 ## 11.07
 
 1.  chrome 115 全量了 UA reduction 功能，判断机型不能再用 UA 了
 
-
 ## 11.08
 
-1. chrome 120 bug 
+1. chrome 120 bug
 
-filter: drop-shadow 叠加transform 算出来的布局不太对，表现上就是这样；原因等有空再看
+filter: drop-shadow 叠加 transform 算出来的布局不太对，表现上就是这样；原因等有空再看
 
-2. 一行css 使chrome 崩溃 
+2. 一行 css 使 chrome 崩溃
 
 width: atan2(calc(100cqw - 0px), 1px)
 
-主要是atan2 calc cqw 同时存在 就会崩溃
+主要是 atan2 calc cqw 同时存在 就会崩溃
 
-REX大佬: 
+REX 大佬:
 出问题的 CSS，atan2 的两个参数分别是 calc(100cqw - 0px) 和 1px，它俩分别是 kUnknown 和 kPixels 类型；在执行 ComputeValueInCanonicalUnit 之后，1px 被转换成 1，但那个 calc 还是一个脏值，于是在获取它的 .value() 时 abseil 库挂掉了
-
 
 ![](https://pic.imgdb.cn/item/654b71a6c458853aefeb9250.jpg)
 
-
 ## 11.13
 
-
 git 操作
-
 
 1. HEAD^1 返回上一级 HEAD~num 返回多级
 
@@ -2511,19 +2459,16 @@ git branch -f main HEAD~3
 
 上面的命令会将 main 分支强制指向 HEAD 的第 3 级 parent 提交。
 
-
 2. 撤销
 
 在 Git 里撤销变更的方法很多。和提交一样，撤销变更由底层部分（暂存区的独立文件或者片段）和上层部分（变更到底是通过哪种方式被撤销的）组成。我们这个应用主要关注的是后者。
 
 主要有两种方法用来撤销变更 —— 一是 git reset，还有就是 git revert。接下来咱们逐个进行讲解。
 
-
-3. cherry-pick 
+3. cherry-pick
 
 git cherry-pick <提交号>...
 如果你想将一些提交复制到当前所在的位置（HEAD）下面的话， Cherry-pick 是最直接的方式了。我个人非常喜欢 cherry-pick，因为它特别简单。
-
 
 4. rebase -i
 
@@ -2531,29 +2476,26 @@ git cherry-pick <提交号>...
 
 在实际使用时，所谓的 UI 窗口一般会在文本编辑器 —— 如 Vim —— 中打开一个文件。 考虑到课程的初衷，我弄了一个对话框来模拟这些操作。
 
-
 我们可以使用 rebase -i 对提交记录进行重新排序。只要把我们想要的提交记录挪到最前端，我们就可以很轻松的用 --amend 修改它，然后把它们重新排成我们想要的顺序。
-
 
 5. git tag tagName commitNam
 
-
 ## 11.14
 
-1. B站纪录片 TS的诞生
-2. Electron的替代品 Neutralinojs ，优势是使用了用户本身的 chromium
-3. Safari发布17.0版本 新特性
-成为首个支持 <search> 元素的浏览器
-支持 Storage API
-正则表达式支持 v flag 和重复命名分组捕获
-Set 新增 7 种新的集合方法
+1. B 站纪录片 TS 的诞生
+2. Electron 的替代品 Neutralinojs ，优势是使用了用户本身的 chromium
+3. Safari 发布 17.0 版本 新特性
+   成为首个支持 <search> 元素的浏览器
+   支持 Storage API
+   正则表达式支持 v flag 和重复命名分组捕获
+   Set 新增 7 种新的集合方法
 
 4. reset.css
-修改 新增了一些属性
+   修改 新增了一些属性
 
 具体原因 :<https://andy-bell.co.uk/a-more-modern-css-reset/>
 
-``` css
+```css
 /* Box sizing rules */
 *,
 *::before,
@@ -2569,14 +2511,22 @@ html {
 }
 
 /* Remove default margin in favour of better control in authored CSS */
-body, h1, h2, h3, h4, p,
-figure, blockquote, dl, dd {
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
   margin-block-end: 0;
 }
 
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
-ul[role='list'],
-ol[role='list'] {
+ul[role="list"],
+ol[role="list"] {
   list-style: none;
 }
 
@@ -2587,14 +2537,21 @@ body {
 }
 
 /* Set shorter line heights on headings and interactive elements */
-h1, h2, h3, h4,
-button, input, label {
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+label {
   line-height: 1.1;
 }
 
 /* Balance text wrapping on headings */
-h1, h2,
-h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   text-wrap: balance;
 }
 
@@ -2612,8 +2569,10 @@ picture {
 }
 
 /* Inherit fonts for inputs and buttons */
-input, button,
-textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
@@ -2630,59 +2589,254 @@ textarea:not([rows]) {
 
 5. Theatre.js 是一个具有专业动作设计工具集的 JS 动画库。它可以帮助你创建任何动画，包括从 THREE.js 中的电影场景到令人愉悦的 UI 交互。 暂时用不到它
 
-
-6. 创建chrome 插件工具  https://github.com/guocaoyi/create-chrome-ext
-
-
+6. 创建 chrome 插件工具 https://github.com/guocaoyi/create-chrome-ext
 
 ## 11.20
 
 1. 正则题目
 
-补齐0
+补齐 0
 
-``` js
+```js
 // 1
 // 123
 // 99
 // 1234
-
 
 // 00001
 // 00123
 // 00099
 // 01234
 
-str.replace(/^(\d)?(\d)?(\d)?(\d)?\d$/,'${1:+:0}${2:+:0}${3:+:0}${4:+:0}$0')
+str.replace(/^(\d)?(\d)?(\d)?(\d)?\d$/, "${1:+:0}${2:+:0}${3:+:0}${4:+:0}$0");
 ```
 
+## 11.22
 
-
-
-## 11.22 
-
-1. 调研Sentry-uniapp 的时候发现 sentry 依赖的 repay 功能是基于rrweb来做的，而rrweb使用了
+1. 调研 Sentry-uniapp 的时候发现 sentry 依赖的 repay 功能是基于 rrweb 来做的，而 rrweb 使用了
 
 ![](https://pic.imgdb.cn/item/655ddfd2c458853aef9ad936.jpg)
-
 
 ## 11.23
 
 我在想 BroadcastChannel 是不是也可以。
 BroadcastChannel() 接口代理了一个命名频道，可以让指定 origin 下的任意 browsing context 来订阅它。它允许同源的不同浏览器窗口，Tab 页，frame 或者 iframe 下的不同文档之间相互通信。
 
-
-盗了几张sentry-javascript的图
+盗了几张 sentry-javascript 的图
 
 ![](https://pic.imgdb.cn/item/655f017ec458853aef0b4f52.jpg)
 
 ![](https://pic.imgdb.cn/item/655f01ebc458853aef0c87a5.jpg)
 
-这个是sentry-uniapp的。
+这个是 sentry-uniapp 的。
 
 ![](https://pic.imgdb.cn/item/655f0228c458853aef0d30b4.png)
 
-
 ## 12.24
 
-1. Nest 
+1. Nest
+
+## 12.27
+
+1. 疯狂星期四（一）题目
+
+```js
+console.log(one().plus().two().equalTo()); // 3
+console.log(one().plus().two().plus().two().equalTo()); // 5
+
+const numbering = (fn, n) => () => fn?.(n) ?? n;
+
+function one() {
+  this._fn = numbering(this._fn, 1);
+  return this;
+}
+
+function two() {
+  this._fn = numbering(this._fn, 2);
+  return this;
+}
+
+function plus() {
+  const fn = this._fn;
+  this._fn = (n) => (fn?.() ?? 0) + n;
+  return this;
+}
+
+function equalTo() {
+  const fn = this._fn;
+  delete this._fn;
+  return fn?.() ?? 0;
+}
+```
+
+## 11.29 state of js
+
+1. 新语法功能
+
+- 动态引入
+- 空值合并
+- class 私有属性
+- error.cause
+
+```js
+try {
+  connectToDatabase();
+} catch (err) {
+  throw new Error("Connecting to database failed.", { cause: err });
+}
+```
+
+- Hashbang Grammar
+此提案是为了匹配某些允许Shebangs / Hashbang的 CLI JS 主机中的实际用法。目前，此类主机会剥离 hashbang，以便在传递给 JS 引擎之前生成有效的 JS 源文本。这会将剥离转移到发动机上，它确实统一并标准化了剥离的方式。
+
+``` js
+#!/usr/bin/env node
+// in the Script Goal
+'use strict';
+console.log(1);
+
+```
+
+2. 字符串功能
+
++ string.replaceAll()
++ string.matchAll()
++ Regexp match indices
+
+``` js
+const str = "foo bar foo";
+const regex1 = /foo/dg;
+regex1.exec(str).indices[0] // [0,3]
+``` 
+
+3. 数组功能
+
++ array.findLast()
++ array.toSorted()
+是Sort的复制方法版本
+``` js
+const bArray = aArray.toSorted(function compareFn(a, b) { /* … */ })
+``` 
++ array.toReversed() 同理
++ array.with() 替换某个index的数字 返回新数组
+``` js
+const arr = [1,2,3,4,5]
+arr.
+```
++ array.toSpliced();
+
+4. 异步功能
+
++ 顶层await
++ Promise.allSettled()
+``` js
+const promise1 = Promise.resolve(3);
+const promise2 = new Promise((resolve, reject) =>
+  setTimeout(reject, 100, 'foo'),
+);
+const promises = [promise1, promise2];
+
+Promise.allSettled(promises).then((results) =>
+  results.forEach((result) => console.log(result.status)),
+  // result.reason  result.value
+);
+// Expected output:
+// "fulfilled"
+// "rejected"
+```
++ Promise.any();
+
+5. 浏览器API
+
++ WebGl
++ Web Animations
++ WebRTC
++ Web Speech API 语音识别与合成
++ WebSocket
++ Page visibility API
++ Broadcast Channel API 跨页面通信
++ Geolocation API 地理位置
++ WebXR Device API  虚拟现实
++ Temporal 处理日期和时间的对象和函数
+修复javascript 日期，<https://maggiepint.com/2017/04/09/fixing-javascript-date-getting-started>
++ Progressive Web Apps (PWA)
++ WebAssembly (WASM)
+
+
+6. 框架
++ React
++ Vue
++ Angular
++ Preact
++ Svelte
++ Alpine.js
++ LT
++ Solid
++ Qwik
++ Stencil
++ HTMX
+
+7. Meta-Frameworks
++ Next.js
++ Nuxt
++ Gatsby
++ Remix
++ Astro
++ Eleventy
++ SveleKit
++ Docusaurus
++ SolidStart
++ Deno Fresh
+
+8. 测试工具
+
++ Jest
++ Mocha
++ Storybook
++ Cypress
++ Puppeteer
++ Testing Library
++ PlayWright
++ WebDriverIO
++ Vitest
++ Selenium
++ TestCafe
++ Mock Service Worker
+
+9. 移动端和客户端
+
++ Electron
++ React Native
++ Native Apps 
++ Cordova
++ Ionic
++ Capacitor
++ NW.js
++ Expo
++ Quasar
++ Tauri
++ NativeScript
+
+10. 构建工具
+
++ Webpack
++ Parcel
++ Rollup
++ tsc Cli
++ SWC
++ esbuild
++ vite
++ turbopack
++ tsup
++ Bimoe
+
+11. Monorepo 工具
+
++ Rush
++ Turborepo
++ Yarn Workspaces
++ Yalc
++ Lerna
++ npm workspaces
++ pnpm
++ Nx
