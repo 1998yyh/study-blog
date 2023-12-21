@@ -96,3 +96,11 @@ export default class EntryAbility extends UIAbility {
 对于文档应用，用户从文档应用中打开一个文档内容，回到文档应用，继续打开同一个文档，希望打开的还是同一个文档内容。
 
 基于以上场景的考虑，UIAbility当前支持singleton（单实例模式）、multiton（多实例模式）和specified（指定实例模式）3种启动模式。
+
+
+## 运行Emulator
+
+
+在模拟器上运行代码
+
+https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/ohos-running-app-0000001494848238-V3

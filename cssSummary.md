@@ -91,6 +91,28 @@ Chrome 118 增加了对 @scope 的支持，即作用域
 ```
 
 
+也可以设置边界
+
+第二个选择器设置一个下边界——即从这一点停止样式。
+
+```html
+<style>
+  @scope (.component) to (.content) {
+    p {
+      color: red;
+    }
+  }
+</style>
+<div class="component">
+  <p>In scope.</p>
+  <div class="content">
+    <p>Out of scope.</p>
+  </div>
+</div>
+```
+
+
+
 ### 4.嵌套
 
 ``` css
@@ -432,6 +454,27 @@ View Transitions API 的核心是 document.startViewTranstion 函数。传入将
 
 ### 22. popover dialog #top-laryer
 
+#top-layer 层级
+
+JS 也无法模拟的系统级新特性
+
+解决的问题 ->
+一些弹框写在了某些容器下 采用 fixed 定位 但是由于父容器使用了 transform 会导致失效 ,
+
+在以前，或者说很多框架中，都会想办法把弹窗放到最外层的 body 下，这样就不受影响了，比如下面是 vue3 中的处理方式
+
+```html
+<div>
+  <Teleport to="body">
+    <!--将子内容传送到body下-->
+    <dialog></dialog>
+  </Teleport>
+</div>
+```
+
+虽然 dialog 仍然在原来位置上，但真正渲染到了一个#top-layer 的层级上，这个层级非常特殊，已经超越了 html 文档流，可以说是独一档的存在，这样，无论的 dialog 在什么位置，最后渲染的地方其实都在#top-layer 层级上，自然也不会被父容器裁剪被隐藏了
+
+
 ### 23. Select hr分割规则
 
 Chrome 和 Safari 对 HTML 做出了另一项细微更改，即能够在 `<select>` 元素中添加水平规则元素（`<hr>` 标记），从而在视觉上拆分您的内容。
@@ -444,4 +487,380 @@ Chrome 和 Safari 对 HTML 做出了另一项细微更改，即能够在 `<selec
 
 ### 25. details 增加name属性
 
-Chrome 120 中新增了对 <details> 元素的 name 属性的支持。使用此属性时，具有相同 name 值的多个 <details> 元素会形成语义组。组内最多只能有一个元素同时打开
+Chrome 120 中新增了对` <details> `元素的 name 属性的支持。使用此属性时，具有相同 name 值的多个 `<details> `元素会形成语义组。组内最多只能有一个元素同时打开
+
+
+## 新用法
+
+1. 安全距离
+
+``` css
+padding-bottom: calc(constant(safe-area-inset-bottom) / 2) !important;
+padding-bottom: calc(env(safe-area-inset-bottom) / 2) !important;
+
+```
+
+可以配合上max函数 
+```css
+@supports (padding: max(0px)) {
+  .post {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+}
+```
+
+
+2. 抗锯齿
+
+```css
+div {
+    width: 500px;
+    height: 100px;
+    background: linear-gradient(37deg), #000 50%, #f00 50%, #f00 0);
+}
+```
+
+解决失真的问题有很多。这里最简单的方式就是不要直接过渡，保留一个极小的渐变过渡空间。
+``` css
+div {
+    width: 500px;
+    height: 100px;
+  - background: linear-gradient(37deg), #000 50%, #f00 50%, #f00);
+  + background: linear-gradient(37deg), #000 49.5%, #f00 50.5%, #f00);
+}
+```
+
+更深层次的原理 可以参考文章:<https://juejin.cn/post/6844904180776173581>
+
+
+3. 单字动画:<https://codepen.io/wheatup/pen/OJoazBO>
+
+用图的缺陷比较明显 换个文案加个字就要出图,不过可以以字的维度出图
+
+如果是纯英文的话 可以考虑 bitMap 字体 (字蛛也可以) 字蛛构建流程地址 https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fyangchuansheng%2Ffont-spider-plus
+
+https://www.midjourney.com/home/?callbackUrl=%2Fapp%2F
+
+
+4. @layer
+
+如果我们的页面上存在非常多的样式，譬如有我们开发页面的时候的自定义样式，也有引入的组件库样式。这时候样式将会非常混乱难以管理。
+
+当我们想覆盖一些本身非我们书写的样式时候，往往不得不通过使用优先级权重更高的样式名，去覆盖那些样式。
+
+同时，当样式优先级感到难以控制时，开发者习惯滥用 !important 去解决，这又循环导致了后续更混乱的样式结构。
+
+基于让 CSS 得到更好的控制和管理的背景，CSS @layer 应运而生。
+
+
+@layer声明了一个 级联层， 同一层内的规则将级联在一起， 这给予了开发者对层叠机制的更多控制。
+
+``` css
+@layer B, C, A;
+div {
+    width: 200px;
+    height: 200px;
+}
+@layer A {
+    div {
+        background: blue;
+    }
+}
+@layer B {
+    div {
+        background: green;
+    }
+}
+@layer C {
+    div {
+        background: orange;
+    }
+}
+```
+
+比如上述代码的权重就是 A>C>B; 
+
+除了在页面内定义的方式 我们还可以通过引入
+
+``` css
+@import(utilities.css) layer(utilities);
+```
+
+
+5. codepen片段
+Switch
+<https://codepen.io/jkantner/pen/eYPYppR>
+Button
+<https://codepen.io/jh3y/pen/LYJMPBL>
+Page change(页面切换)
+<https://codepen.io/konstantindenerz/pen/abaXabq>
+Blend-mode
+<https://codepen.io/tommiehansen/pen/BaGyVVy>
+
+6. 如果一个元素行内设置了`color：red !important`
+
+
+原本内容
+
+```html
+<style>
+  .wrap {
+    display: block;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    inset: 0;
+    margin: auto;
+  }
+
+  .wrap {
+    /*  请开始你的表演 */
+  }
+</style>
+
+<div class="wrap" style="color:red!important">把我变成蓝色</div>
+```
+
+- 方案一
+
+```css
+.wrap {
+  -webkit-text-fill-color: blue;
+}
+```
+
+- 方案二
+
+```css
+.wrap {
+  filter: hue-rotate(240deg);
+}
+```
+
+- 方案三
+
+```css
+.wrap:first-line {
+  color: blue;
+}
+```
+
+- 方案四
+
+```css
+.wrap {
+  background: #fff;
+}
+
+.wrap::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  background-color: blue;
+  mix-blend-mode: color;
+}
+```
+
+- 方案五
+
+```css
+.wrap::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  backdrop-filter: hue-rotate(240deg);
+}
+```
+
+
+7. :is :where
+
+数以选择器列表作为参数，并选择该列表中任意一个选择器可以选择的元素。
+
+两者之间的区别在于，:is() 会计入整个选择器的优先级（它采用其最具体参数的优先级），而 :where() 的优先级为 0
+``` css
+/* 0 级 */
+h1 {
+  font-size: 30px;
+}
+
+/* 1 级 */
+section h1,
+article h1,
+aside h1,
+nav h1 {
+  font-size: 25px;
+}
+
+/* 2 级 */
+section section h1,
+section article h1,
+section aside h1,
+section nav h1,
+article section h1,
+article article h1,
+article aside h1,
+article nav h1,
+aside section h1,
+aside article h1,
+aside aside h1,
+aside nav h1,
+nav section h1,
+nav article h1,
+nav aside h1,
+nav nav h1 {
+  font-size: 20px;
+}
+
+
+/* 0 级 */
+h1 {
+  font-size: 30px;
+}
+/* 1 级 */
+:is(section, article, aside, nav) h1 {
+  font-size: 25px;
+}
+/* 2 级 */
+:is(section, article, aside, nav) :is(section, article, aside, nav) h1 {
+  font-size: 20px;
+}
+/* 3 级 */
+:is(section, article, aside, nav)
+  :is(section, article, aside, nav)
+  :is(section, article, aside, nav)
+  h1 {
+  font-size: 15px;
+}
+```
+
+
+8. 渲染性能比较：https://benchmarks.slaylines.io/webgl.html
+9. 获取伪类的宽高`getComputedStyle('div',':before')`
+10. 不是所有元素都有伪元素，譬如 iframe、input、img 等替换元素是没有伪元素的 2. 当 img 触发了元素的 onerror 事件时（或者理解为 img src 内的资源替换失败），此状态下的 img 可以添加伪元素
+11. 新增的css函数
+
+
+- light-dark();
+  比如我们背景颜色 希望在普通模式下是白色 暗黑模式下是黑
+
+我们需要这么写
+
+```css
+:root {
+  color-scheme: light dark;
+  --text-color: #333; /* Value for Light Mode */
+}
+
+@media (prefers-color-scheme: dark) {
+  --text-color: #ccc; /* Value for Dark Mode */
+}
+
+/* 
+  如果我们使用 light-dark();
+*/
+
+:root {
+  color-scheme: light dark;
+  --text-color: light-dark(#333, #ccc);
+}
+```
+
+
+- xywh()
+
+这将创建一个“基本形状”，该形状从 X、Y 坐标开始，然后具有指定的宽度和高度。有点酷。用于使用基本形状的地方：
+
+```css
+.thing-that-is-clipped {
+  clip-path: xywh(0 0 100% 100% round 5px);
+
+  offset-path: xywh(0 20px 100% calc(100% - 20px));
+}
+```
+
+- round()
+
+默认情况下，它舍入到最接近的值，但可以是上或下，也可以是奇异的到零。但更重要的是，它有一个“舍入间隔”，不仅意味着最接近的整数，还意味着任何整数的间隔。
+
+```css
+#drag {
+  margin: round(to-zero, -105px, 10px);
+}
+```
+
+- rem()
+
+在 css 中我们使用 rem 计算余数
+
+```css
+line-height: rem(9, 4); /* 1 */
+line-height: rem(5, 4.1); /* 0.9 */
+line-height: rem(1003 % 5); /* 3 */
+```
+
+12. inert
+
+防止 click 用户单击元素时触发该事件。（可以完美替换 pointer-event:none）
+focus 通过阻止元素获得焦点来阻止引发事件。（之前是通过 tabIndex 来避免的）
+通过将元素及其内容从辅助功能树中排除来隐藏辅助技术。
+
+13. 一行css使chrome崩溃
+
+width: atan2(calc(100cqw - 0px), 1px);
+
+14. height:0 -> height:auto;
+
+``` css
+div{
+  height: 0;
+  transition: 1s
+}
+.wrap:hover div{
+  height: auto
+}
+```
+
+``` css
+.trigger {
+  border: 0;
+  background-color: royalblue;
+  color: #fff;
+  outline: 0;
+  font-size: 16px;
+  padding: 0.4em 1em;
+  border-radius: 0.2em;
+  cursor: pointer;
+}
+.grid {
+  position: absolute;
+  margin-top: 10px;
+  max-width: 250px;
+  border-radius: 5px;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: 0.3s;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.65);
+  color: #fff;
+}
+.grid > * {
+  min-height: 0;
+  padding: 0 10px;
+}
+.wrap:hover .grid {
+  grid-template-rows: 1fr;
+}
+span {
+  padding: 10px;
+}
+```
+
+进阶->

@@ -30,6 +30,7 @@ const p = new Promise((resolve) => {
 const p1 = new Promise((resolve) => {
   resolve(p);
 });
+
 p1.then((d) => console.log(d)); // 1
 
 // p1 接收的成功值 value 为 Promise p，p 状态为 fulfilled ，这种情况下 ES6 中会采取 p 的状态及 value，因此最终打印 1。
