@@ -359,3 +359,14 @@ array.forEach((it, i) => {
   }
 })
 ```
+
+
+## 1.24
+
+1. puppeteer 相关操作 <https://proxiesapi.com/articles/the-complete-puppeteer-cheatsheet>
+2. codepen Top100 2023 <https://codepen.io/2023/popular>
+3. React 相关的 可能会用到吧
+7个顶级学习平台  <https://javascript.plainenglish.io/7-top-platforms-to-learn-react-for-free-f91a14b23ba7>  
+一步一步学习react <https://www.freecodecamp.org/news/how-to-learn-react-step-by-step/>
+
+
