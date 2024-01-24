@@ -2,8 +2,6 @@
 
 包括一些新的特性以及旧的属性的新用法
 
-
-
 ## 新特性
 
 ### 1. 三角函数
@@ -31,9 +29,9 @@ Chrome 111 增加了对三角函数 sin()、cos()、tan()、asin()、acos()、at
 .dot {
   --angle: 30deg;
   translate: /* Translation on X-axis */
-             calc(cos(var(--angle)) * var(--radius))
-             /* Translation on Y-axis */
-             calc(sin(var(--angle)) * var(--radius) * -1)
+  calc(cos(var(--angle)) * var(--radius))
+  /* Translation on Y-axis */
+  calc(sin(var(--angle)) * var(--radius) * -1)
   ;
 }
 ```
