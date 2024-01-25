@@ -370,3 +370,19 @@ array.forEach((it, i) => {
 一步一步学习react <https://www.freecodecamp.org/news/how-to-learn-react-step-by-step/>
 
 
+
+
+## 1.25
+
+1. 如何在vue.config.js 引入 自定义loader
+
+``` js
+chainWebpack: config => {
+// my-loader为loader的别名，./src/myLoader.js是loader的位置
+config.resolveLoader.alias.set('my-loader', path.resolve(__dirname, './src/myLoader.js'))
+// 修改vue文件Loader的选项，增加新的处理loader
+const vueRule = config.module.rule('vue')
+vueRule.use('my-loader').loader('my-loader').end()
+}
+
+```
