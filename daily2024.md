@@ -386,3 +386,176 @@ vueRule.use('my-loader').loader('my-loader').end()
 }
 
 ```
+
+## 1.26
+
+1. 多行文本圆角背景 <https://codepen.io/ines/pen/NXbmRO>
+
+
+## 1.29
+
+## 1.30
+
+1. 嵌套使用的ref会自动解包
+
+``` js
+const a = ref(1)
+const b = ref({
+  a
+})
+
+const c = ref({
+  b
+})
+
+const d = ref({
+  c
+})
+
+console.log(d.value.c.b.a);
+
+console.log(c.value.b.a);
+
+console.log(b.value.a);
+```
+   
+2. 多个watchEffect 的执行顺序是 书写顺序
+3. vue3 中 readonly的使用场景？
+
+## 1.31
+
+1. 今日问题
+
+``` js
+// 实现数字格式化，以万、亿为单位，最多展示4位有效数字
+function formatNumber(num) {
+    // your code
+}
+
+console.log(formatNumber(0));           // 0
+console.log(formatNumber(1));           // 1
+console.log(formatNumber(123));         // 123
+console.log(formatNumber(1234));        // 1234
+console.log(formatNumber(12345));       // 1.23万
+console.log(formatNumber(123450));      // 12.35万
+console.log(formatNumber(1234567));     // 123.5万
+console.log(formatNumber(12345678));    // 1235万
+console.log(formatNumber(123456789));   // 1.235亿
+
+
+function formatNumber(num) {
+  return new Intl.NumberFormat('zh',{maximumSignificantDigits: 4, notation: 'compact'}).format(num);
+}
+```
+
+
+## 2.2
+
+1. 水文发现的一个Array.map 比 Array.foreach 在gzip压缩的场景下 会笑3kb
+``` js
+
+if (handlers) {
+  (handlers as EventHandlerList<Events[keyof Events]>)
+    .slice()
+    .map((handler) => {
+      handler(evt!);
+    });
+}
+
+if (handlers) {
+  (handlers as EventHandlerList<Events[keyof Events]>)
+    .slice()
+    .forEach((handler) => {
+      handler(evt!);
+    });
+}
+
+```
+
+
+## 2.4service
+
+1. eslint的 extends 可以简写 比如`eslint-config-xxx` 可以简写为`xxx`
+2. 
+SaaS：一般用户使用你的在线服务
+PaaS：技术用户用你的平台来托管服务，但基建在你这儿
+IaaS：技术用户可以自己搞基建
+
+
+
+## 2.5 
+
+1. a为什么时 `(a== 1 && a==2 && a==3)` 为真
+
+``` js
+const a = {
+  i: 1,
+  toString: function () {
+    return a.i++;
+  }
+}
+
+if(a == 1 && a == 2 && a == 3) {
+  console.log('Hello World!');
+}
+```
+
+
+``` js
+const a = [1,2,3];
+a.join = a.shift;
+console.log(a == 1 && a == 2 && a == 3);
+
+```
+
+
+``` js
+let i = 0;
+let a = { [Symbol.toPrimitive]: () => ++i };
+
+console.log(a == 1 && a == 2 && a == 3);
+```
+
+这个可能有点不合适
+
+``` js
+var i = 0;
+
+with({
+  get a() {
+    return ++i;
+  }
+}) {
+  if (a == 1 && a == 2 && a == 3)
+    console.log("wohoo");
+}
+```
+
+2. 图像相关的一个库 <https://js.cytoscape.org/> 
+3. typescript 5.4 更新 <https://devblogs.microsoft.com/typescript/announcing-typescript-5-4-beta/>
+
+保留类型收缩的范围
+
+``` ts
+function getUrls(url: string | URL, names: string[]) {
+    if (typeof url === "string") {
+        url = new URL(url);
+    }
+
+    return names.map(name => {
+        url.searchParams.set("name", name)
+        //  ~~~~~~~~~~~~
+        // error!
+        // Property 'searchParams' does not exist on type 'string | URL'.
+
+        return url.toString();
+    });
+}
+```
+
+TypeScript 5.4 利用这一点使缩小变得更加智能。当参数和变量在非提升let函数中使用时，类型检查器将查找最后一个赋值点。如果找到，TypeScript 可以安全地从包含函数的外部缩小范围。这意味着上面的例子现在可以工作了。
+
+
+
+
+4. 小球下落 <https://sparkbox.github.io/bouncy-ball/#web-animations-api> 各种各样的API
