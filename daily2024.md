@@ -559,3 +559,13 @@ TypeScript 5.4 利用这一点使缩小变得更加智能。当参数和变量�
 
 
 4. 小球下落 <https://sparkbox.github.io/bouncy-ball/#web-animations-api> 各种各样的API
+
+
+## 2.6
+
+1. codepen 滚动相关 scroll-timeline `https://codepen.io/giana/pen/BabdgjB`
+2. scroll-timeline的用处介绍文章 `https://frontendmasters.com/blog/highlight-text-when-a-user-scrolls-down-to-that-piece-of-text/` 它是通过scroll-timeline 当用户向下滚动到该文本时突出显示该文本
+3. `text-wrap:balance`已经很熟悉不说了 ,`text-wrap:pretty` 它告诉浏览器使用更好但更慢的算法来流动文本。这旨在用于正文以提高可读性。 它提供的最受欢迎的好处可能是防止孤儿（孤儿是段落末尾的一个单词，它自己换成一行，这看起来有点尴尬）![](https://pic.imgdb.cn/item/65c1a0609f345e8d039e1567.jpg)
+4. 可变字体 <https://v-fonts.com/> 我们通常设置字体字重的时候 很多间隔是没有效果的，这是因为字体不支持。
+5. text-area 正常情况下是不会根据输入内容高度变化的。提供一个库<https://github.com/andrico1234/autosize-textarea> 一个css解决方案: <https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/>
+6. WebGPU的库 感觉永远用不到了 <https://jmberesford.github.io/webgpu-kit/>
