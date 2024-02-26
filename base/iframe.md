@@ -1,7 +1,7 @@
 # iframe
 
 
-## 五个有用的iframe踩坑问题
+## 踩坑
 
 ### X-Frame-Options响应限制
 
