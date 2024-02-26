@@ -687,3 +687,83 @@ Mutation Record 提供具体的 DOM 变更记录,可以支持白屏问题的回�
 </html>
 
 ```
+
+
+3. toggle 最常见的是`DOMTokenlist.toggle` 方法，这里的`DOMTokenList` 表示一组空格分割的标记，最常见的就是`Element.classList`
+
+``` html
+<div class="a b c"></div>
+
+```
+
+通过`el.classList` 可以获取到class的详细信息
+
+``` js
+el.classList.toggle('a'); // 移除 a
+el.classList.toggle('a'); // 添加 a
+```
+
+通过上面这个，浏览器会动态判断，如果存在就移除，如果不存在就添加。
+
+toggle还支持第二个参数，表示强制，是一个布尔值，为 true表示添加，反之为移除，而不管当前是什么状态
+
+4. toggleAttribute 是用来切换属性的
+
+比如控制一个输入框的禁用和开启。
+
+``` js
+input.toggleAttribute('disable');
+
+input.disabled = !input.disabled;
+
+document.body.toggleAttribute('dark');
+
+// 第二个参数表示强制
+document.body.toggleAttribute('dark', ture); //添加dark属性
+document.body.toggleAttribute('dark', false);//移除dark属性
+
+// 也可以使用常规手段
+document.body.setAttribute('dark', ''); //添加dark属性
+document.body.removeAttribute('dark');//移除dark属性
+```
+
+
+5. togglePopover 是新出来的，是针对popover元素推出的打开与关闭的方法。
+
+``` js
+
+popoverEl.togglePopover(); //切换 popover
+popoverEl.togglePopover(true); //打开 popover
+popoverEl.togglePopover(false); //关闭 popover
+
+// 打开
+popoverEl.togglePopover(true)
+// 等同于
+popoverEl.showPopover()
+
+// 关闭
+popoverEl.togglePopover(false)
+// 等同于
+popoverEl.hidePopover()
+```
+
+6. toggle event
+这个也是跟随poperver推出的，可以通过event对象获取当前的新状态和旧状态，如下
+
+``` js
+popover.addEventListener("toggle", (event) => {
+  if (event.newState === "open") {
+    console.log("Popover has been shown");
+  } else {
+    console.log("Popover has been hidden");
+  }
+});
+
+// 有意思的是，这个事件同时也支持details元素
+details.addEventListener("toggle", (event) => {
+  
+});
+```
+
+
+7. 
