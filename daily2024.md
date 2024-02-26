@@ -569,3 +569,121 @@ TypeScript 5.4 利用这一点使缩小变得更加智能。当参数和变量�
 4. 可变字体 <https://v-fonts.com/> 我们通常设置字体字重的时候 很多间隔是没有效果的，这是因为字体不支持。
 5. text-area 正常情况下是不会根据输入内容高度变化的。提供一个库<https://github.com/andrico1234/autosize-textarea> 一个css解决方案: <https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/>
 6. WebGPU的库 感觉永远用不到了 <https://jmberesford.github.io/webgpu-kit/>
+
+
+7. javascript 中的 AO 
+
+
+在 JavaScript 中，AO 代表激活对象（Activation Object），是函数执行时创建的一个隐藏的数据结构。它包含了函数执行时所需的信息，包括：函数的参数，函数的局部变量，函数的执行上下文，函数的返回值
+AO 是 JavaScript 函数执行机制的重要组成部分。它可以确保函数在执行时拥有独立的执行环境，并且不会相互影响。
+
+
+
+## 2.7
+
+1. 2023年遇到的兼容性问题 https://juejin.cn/post/7309040097936343103
+
+## 2.26 
+
+春节休假20天 摆大烂
+
+1. 白屏检测(Mutation Observer)：
+
+使用 Mutation Observer 来监听 DOM 变化，从而判断页面是否白屏。需要注意的是，判断页面是否白屏的阈值时间应该根据页面的实际情况来确定，如果设置时间太短可能会误判，设置时间太长可能会影响页面性能。
+
+同时如果用户长时间未操作DOM，Mutation Observer 监听到一定时间内没有 DOM 变化，就可能会误判为页面白屏。
+
+
+Mutation Record 提供具体的 DOM 变更记录,可以支持白屏问题的回溯与定位。而检测根节点渲染无法提供问题的详细诊断信息。例如,如果一段时间内 DOM 变化只有删除元素操作,几乎没有新增或更新操作,可以判断可能存在删除逻辑错误导致白屏,这可以作为问题回溯的参考信息。
+那如何利用Mutation Observe进行问题回溯呢？
+
+
+
+2. 白屏检测(document.elementsFromPoint):
+
+
+在我们的屏幕中，随机取几个固定的点，利用document.elementsFromPoint（x,y）该函数返还在特定坐标点下的 HTML 元素数组。
+
+``` html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="main"></div>
+  <script>
+    function onload() {
+      if (document.readyState === 'complete') {
+        whiteScreen()
+      } else {
+        window.addEventListener('load', whiteScreen)
+      }
+    }
+    let wrapperElements = ['html', 'body', '.content'] //首先定义容器列表
+    let emptyPoints = 0 //空白点数量
+    function getSelector(element) { //获取节点的容器
+      if (element.id) {
+        return '#' + element.id
+      } else if (element.className) {  //content main==> .content.main  主要为了处理类名是多个的情况
+        return '.' + element.className.split(' ').filter(item => !!item).join('.')
+      } else {
+        return element.nodeName.toLowerCase()
+      }
+    }
+
+    function isWrapper(element) { //判断关键点是否在wrapperElements定义的容器内
+      let selector = getSelector(element)
+      if (wrapperElements.indexOf(selector) != -1) {
+        emptyPoints++ //如果采样的关键点是在wrapperElements容器内，则说明此关键点是空白点，则数量加1
+      }
+    }
+
+    function whiteScreen() {
+      for (let i = 1; i <= 9; i++) {
+        let xElement = document.elementsFromPoint(window.innerWidth * i / 10, window.innerHeight / 2)//在x轴方向上，取10个点
+        let yElement = document.elementsFromPoint(window.innerWidth / 2, window.innerHeight * i / 10)//在y轴方向上，取10个点
+        isWrapper(xElement[0])
+        isWrapper(yElement[0])
+      }
+      if (emptyPoints != 18) {//如果18个点不都是空白点，则说明页面正常显示
+        clearInterval(window.loopFun)
+        window.loopFun = null
+      } else {
+         console.log('页面白屏了');
+        if (!window.loopFun) {
+          loop()
+        }
+      }
+    }
+
+    window.loopFun = null
+
+    function loop() {
+      if (window.loopFun) return;
+      window.loopFun = setInterval(() => {
+        emptyPoints=0
+        whiteScreen()
+      }, 2000)
+    }
+    
+    onload()
+  </script>
+    <script>
+      let content = document.querySelector('.main')
+      setTimeout(() => {
+        content.style.width = '500px'
+        content.style.height = '500px'
+        content.style.backgroundColor = 'red'
+      }, 4000);
+    </script>
+</body>
+
+</html>
+
+```
