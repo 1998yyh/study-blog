@@ -766,4 +766,53 @@ details.addEventListener("toggle", (event) => {
 ```
 
 
-7. 
+7. 字节题
+
+希望可以解构出来
+
+``` js
+let [a,b]={a:1,b:2}
+
+console.log(a,b);//TypeError: {(intermediate value)(intermediate value)} is not iterable
+```
+
+我们知道第一行等号左边的数组[a,b]是可迭代的，右边的对象{a:1,b:2}不可迭代的。那么我们应该‘使’命的想办法让右边的对象变成是可迭代的。既然对象身上没有迭代器属性，那我们就给它加一个！
+
+
+``` js
+Object.prototype[Symbol.iterator] = function(){//Symbol.iterator属性返回的是函数
+  return []  //此处应该返回的是一个迭代器对象，不是[]，直接{}也不可行
+}
+let [a,b]={a:1,b:2}
+
+console.log(a,b); //TypeError: undefined is not a function
+```
+
+
+我们可以看到报的错不再是not iterable,而是undefined is not a function！这是因为Symbol.iteratorreturn出来的一个迭代器对象，所以这样也是不可行的。
+
+再来，我们想数组的解构只能往数组解构，那么我们把对象转成数组，就是硬生生的把对象的值转为[1,2],也就是把值抠出来不要key,那么此时才能解构成立。
+
+
+``` js
+Object.prototype[Symbol.iterator] = function(){//Symbol.iterator属性返回的是函数
+  //返回一个Array类型的可迭代对象
+  return Object.values(this)[Symbol.iterator]() //this指向实例对象,Object.values(this)得到的是数组
+}
+let [a,b]={a:1,b:2} //实例对象 相当于获得[1,2]
+
+console.log(a,b); //1 2
+```
+
+
+## 2.27
+
+1. 冬令时 / 夏令时 问题 
+
+比如德国在`2023-10-29`凌晨3点 会进入冬令时，即当我们时间到了2:59即将走完时，会自动跳转到2:00, 此时当天就是25小时，如果我们计算第二天日期是选择当前时间+24h的时间戳去做的话，会有问题。
+
+所以需要我们去设置时间，setDate这样。
+
+另外`Date.getTimezoneOffset` 回在 UTC 时区中计算的此日期与在本地时区中计算的同一日期之间的差异（以分钟为单位）。 它是会自动考虑令时的。
+
+<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset>
