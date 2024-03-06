@@ -365,7 +365,43 @@ window.addEventListener('mouseover', (e: MouseEvent) => {});
 
 Window的listener函数要求参数是Event，但是日常使用时更多时候传入的是Event子类型。但是这里可以正常使用，正是其默认行为是双向协变的原因。
 
-### 同态与非同态
+
+***补充*** 2024-02-29
+
+如果我们采用简写，会触发双向协变。
+
+```ts
+interface Dog {
+  // 这么写会有双向协变
+  barkAt(dog: Dog): void;
+  // 这么写没有
+  barkAt: (dog: Dog) => void;
+}
+
+interface SmallDog extends Dog {
+  whimper: () => void;
+}
+
+
+const brian: Dog = {
+  // 如果是写法1 这里不会报错。
+  // 原因如上。
+  barkAt(smallDog: SmallDog) {
+    smallDog.whimper();
+  },
+};
+
+const normalDog: Dog = {
+  barkAt() {},
+};
+
+brian.barkAt(normalDog); // runtime error here!
+```
+
+
+
+
+### 同态与非同态（映射类型）
 
 Partial Readonly Pick 都属于同态的， 即其实现需要输入类型 T 来拷贝属性 因此属性修饰符 都会被拷贝
 Record是非同态的 不需要拷贝属性 因此不会拷贝属性修饰符

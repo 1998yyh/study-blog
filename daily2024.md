@@ -816,3 +816,31 @@ console.log(a,b); //1 2
 另外`Date.getTimezoneOffset` 回在 UTC 时区中计算的此日期与在本地时区中计算的同一日期之间的差异（以分钟为单位）。 它是会自动考虑令时的。
 
 <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset>
+
+
+## 2.29
+
+1. https://nextjs-book.innei.in/ 
+2. 闰年怎么算 正则`/^((\d?\d?((0|^)[48]|[2468][048]|[13579][26])(00)?)|0+)$/`
+
+
+## 3.05
+
+1. 获取数字长度 `Math.ceil(Math.log10(number))` 或者 `String(number).length`
+
+
+## 2.06
+
+1. Rex 对于eventLoop的理解: 
+
+不同的异步操作属于不同的任务集合，例如 setTimeout 属于 callbacks ，fetch 属于 networking，addEventListener 属于 user interaction，insertBefore（如果没有强制重排）则属于 DOM manipulation
+
+然后某个时刻某个 task source 里面有任务可以被执行了，运行环境就会生成一个叫 event loop 的东西（对，这是一个名称，不是动作），这个 event loop 有几个属性：当前运行的任务（就是那个 task）、一个或多个微任务队列（在这个 task 中产生的微任务会加入此队列）
+
+所谓的微任务，大概有这么几类：events（如 MutationObserver，Promise.then 理论上也应该在这儿但我刚搜了一下 chromium 走了单独的逻辑）、parsing（底层的 HTML parser 做的一些工作）、reacting to DOM manipulation（insertBefore 等操作如果没触发强制重排，则会在这里做重排）
+
+所以并不是说宏任务“优先级低”，而是微任务队列本身就是某个 event loop 中的一个属性，会在最后执行
+
+标准就是在不断变化的，为了适应更多的环境相关的 API
+
+整个 event loop 的机制都是运行环境决定的，不属于 JS 的标准
