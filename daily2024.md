@@ -829,7 +829,7 @@ console.log(a,b); //1 2
 1. 获取数字长度 `Math.ceil(Math.log10(number))` 或者 `String(number).length`
 
 
-## 2.06
+## 3.06
 
 1. Rex 对于eventLoop的理解: 
 
@@ -844,3 +844,110 @@ console.log(a,b); //1 2
 标准就是在不断变化的，为了适应更多的环境相关的 API
 
 整个 event loop 的机制都是运行环境决定的，不属于 JS 的标准
+
+
+## 3.07
+
+1. 获取Web 性能标准代码片段 <https://webperf-snippets.nucliweb.net/>
+
+您可以复制任何代码片段，然后粘贴到浏览器控制台中并运行它以获取结果
+
+核心：CLS LCP
+相互作用: 
+加载事件等等相关的指标。
+   
+2. 点击页面元素 打开IDE源码的工具 插件 <https://juejin.cn/post/7326002010084311079>  有点厉害（考虑看一下源码）
+
+通过AST 在元素上添加行列属性，  通过某些按键组合， 鼠标移动到DOM上显示遮罩信息，然后点击遮罩，请求接口，然后起node服务， 打开IDE的 通过终端code launching-from-thecommand-line 
+
+3. 从业务开发中学习和理解架构设计 <https://mp.weixin.qq.com/s/1LF0qdfvBooV7S-CNAjnow>
+
+代码目录调整实际上是一个对业务场景、工程结构理解和设计的问题。
+
+代码目录的结构代表了我们的工程结构，也是业务场景划分的抽象描述，更是模块定义以及模块依赖关系的展现。
+
+架构设计一定要从业务场景出发，架构设计一定要落到业务场景中去验证
+
+我们不能只从基础能力、安全性或者性能方面去评判一个架构的好坏。架构对业务开发的支持能力，面向业务变化时的灵活度以及持续演进能力等都是评判的因素。
+此外，我们要求软件架构必须是灵活的，能够满足未来业务持续发展的要求。
+
+业务场景是不断变化的，架构也要具有跟随业务形态不断演进的能力。架构设计的核心是保证面向业务变化时有足够灵活的响应力，这要求架构设计能够识别到业务的核心领域。所以，无论是面向当前还是面向未来，架构设计都需要真正地识别和理解业务问题。
+
+
+4. 如何实现一个Canvas渲染引擎 <https://juejin.cn/post/7323382193640423451> 也有点猛 先记录一下。
+
+5. css 中 `Infinity` 
+
+我们可以通过设置`infinity`来 层级,这样可以保证层级最高，同样高的层级 按照渲染顺序后面的在上
+
+``` css
+.model{
+  position: fixed;
+  z-index: calc(infinity);
+}
+
+``` 
+
+或者我们可以给宽高设置最大像素
+
+``` css
+.big{
+  width: calc(infinity * 1px);
+  height: calc(infinity * 1px);
+}
+```
+
+这个时候我们可以通过`getComputedStyle` 和`getBoundingRect` 来获取真实的宽高
+``` js
+// getComputedStyle()
+const computed = window.getComputedStyle(bigEl);
+const computedWidth = computed.getPropertyValue('width');
+const computedHeight = computed.getPropertyValue('height');
+
+// getBoundingRect()
+const rect = bigEl.getBoundingClientRect();
+const rectWidth = rect.width + 'px';
+const rectHeight = rect.height + 'px';
+```
+
+
+6. input-file的点击 也必须在用户交互之后才可以通过js调用，和视频自动播放同理
+
+
+## 3.12
+
+1. 提案 css 变量组 :
+
+在 UI 中使用时，颜色被赋予语义：品牌颜色、主色（或强调色）、辅助色、成功、危险等。
+
+``` css
+:root{
+  --color-primary-10: var(--color-blue-10);
+  --color-primary-20: var(--color-blue-20);
+  /* ... */
+  --color-primary-100: var(--color-blue-100);
+}
+/* 
+  该提案允许作者使用大括号定义具有相同前缀的变量组，然后将整个组传递给其他变量：
+  那么这相当于创建--color-green-100, --color-green-200, 等等变量。
+ */
+:root{
+  --color-green: {
+    100: oklch(95% 13% 135);
+    200: oklch(95% 15% 135);
+    /* ... */
+    900: oklch(25% 20% 135);
+  };
+}
+
+```
+<https://lea.verou.me/docs/var-groups/?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-581-march-08-2024>
+
+
+2. 几个`:has` 的使用场景<https://piccalil.li/blog/some-little-ways-im-using-css-has-in-the-real-world/?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-581-march-08-2024>
+
+<https://codepen.io/jlengstorf/pen/YzMwNrp>
+
+
+3. 多行溢出隐藏的方案<https://ant-design.antgroup.com/docs/blog/line-ellipsis-cn#js-%E5%AE%9E%E7%8E%B0> antd的
+4. 自动添加changelog插件 `conventional-changelog`
