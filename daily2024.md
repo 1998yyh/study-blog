@@ -951,3 +951,19 @@ const rectHeight = rect.height + 'px';
 
 3. 多行溢出隐藏的方案<https://ant-design.antgroup.com/docs/blog/line-ellipsis-cn#js-%E5%AE%9E%E7%8E%B0> antd的
 4. 自动添加changelog插件 `conventional-changelog`
+
+
+## 3.14
+
+1. vscode setting 配置
+
+``` json
+{
+    "editor.wordSeparators": "`~#!@$%^&*()-=+[{]}\\|;:'\",<>/?."
+}
+```
+
+vscode 相关配置文章 `https://juejin.cn/post/7344573753538789430`
+
+
+2. beforeRouterEnter 在 script setup 中无法直接使用 必须通过optons API 
