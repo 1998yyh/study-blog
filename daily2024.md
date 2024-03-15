@@ -967,3 +967,85 @@ vscode 相关配置文章 `https://juejin.cn/post/7344573753538789430`
 
 
 2. beforeRouterEnter 在 script setup 中无法直接使用 必须通过optons API 
+
+## 3.15
+
+1. watchEffect 是浅层监听， 如果监听的是对象，对象其中的值修改 ， 不会触发watchEffect
+
+2. 通过js挂载body上vue组件
+
+``` js
+import {createApp} from 'vue'
+
+export function mountComponent(RootComponent: Component) {
+  const app = createApp(RootComponent);
+  const root = document.createElement('div');
+
+  document.body.appendChild(root);
+
+  return {
+    instance: app.mount(root),
+    unmount() {
+      app.unmount();
+      document.body.removeChild(root);
+    },
+  };
+}
+
+```
+
+
+3. typescript 泛型 
+
+```ts
+async function retry(
+  fn: () => Promise<any>,
+  retries: number = 5
+): Promise<any> {
+  try {
+    return await fn();
+  } catch (err) {
+    if (retries > 0) {
+      console.log("Retrying...");
+      return await retry(fn, retries - 1);
+    }
+    throw err;
+  }
+}
+
+const getString = () => Promise.resolve("hello");
+const getNumber = () => Promise.resolve(42);
+
+retry(getString).then((str) => {
+  // str should be string, not any!
+  console.log(str);
+});
+
+retry(getNumber).then((num) => {
+  // num should be number, not any!
+  console.log(num);
+});
+```
+
+我们希望  getString 返回的时候 获取到的是 `string`类型 ， getNumber 函数执行获取到的是`number`
+
+
+``` ts
+async function retry<T>(
+  fn: () => Promise<T>,
+  retries: number = 5
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    if (retries > 0) {
+      console.log("Retrying...");
+      return await retry(fn, retries - 1);
+    }
+    throw err;
+  }
+}
+
+```
+
+我们只需要 使用泛型 即可
