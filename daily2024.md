@@ -1049,3 +1049,9 @@ async function retry<T>(
 ```
 
 我们只需要 使用泛型 即可
+
+
+## 3.18
+
+1. vite构建的项目 process.env.MODE 是生效的 process.env?.MODE 是失效的 猜测是define 转化的时候把'process.env?.MODE' 转化成了别的
+2. 思考🤔，sdk底层封装了一个`useRequest` 该方法处理判断request 如果存在返回，如果不存在则初始化。 组件库和项目都同时需要使用`useRequest` 组件库如果直接使用的话，就会导致初始化有问题。
