@@ -1055,3 +1055,30 @@ async function retry<T>(
 
 1. vite构建的项目 process.env.MODE 是生效的 process.env?.MODE 是失效的 猜测是define 转化的时候把'process.env?.MODE' 转化成了别的
 2. 思考🤔，sdk底层封装了一个`useRequest` 该方法处理判断request 如果存在返回，如果不存在则初始化。 组件库和项目都同时需要使用`useRequest` 组件库如果直接使用的话，就会导致初始化有问题。
+
+## 3.19
+
+1. 佐题 
+
+解释 下面现象
+
+``` js
+const items = {
+  "000": "000",
+  "001": "001",
+  "002": "002",
+  "003": "003",
+  "107": "107",
+  "108": "108"
+}
+for (const key in items) {
+  if (key) {
+    console.log("The Item Yahh", items[key]);
+  }
+}
+```
+
+
+C: 107 108 是被当成数字存在 JSObject elements 的 FixedArray 下的,'000' '001' 是直接放在 JSObject 下的
+R: 总的来说，只要语言没有明确保证 key 有顺序，就按照无序处理
+WU: Not counting symbols, object keys are just strings, but "000" and "0" are not the same thing. Only "0" is considered a "number-like" which comes first, same thing happens to "107". Here's is an article that demonstrate this behavior better –  <https://dev.to/frehner/the-order-of-js-object-keys-458d>
