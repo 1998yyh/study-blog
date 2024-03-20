@@ -1,5 +1,74 @@
 # 新语法
 
+
+## 5.4 
+
+1. 保留类型收缩的范围
+
+``` ts
+function getUrls(url: string | URL, names: string[]) {
+    if (typeof url === "string") {
+        url = new URL(url);
+    }
+
+    return names.map(name => {
+        url.searchParams.set("name", name)
+        //  ~~~~~~~~~~~~
+        // error!
+        // Property 'searchParams' does not exist on type 'string | URL'.
+
+        return url.toString();
+    });
+}
+```
+
+利用这一点使缩小变得更加智能。当参数和变量在非提升let函数中使用时，类型检查器将查找最后一个赋值点。如果找到，TypeScript 可以安全地从包含函数的外部缩小范围。这意味着上面的例子现在可以工作了。
+
+2. NoInfer
+
+NoInfer是一种实用程序类型，可用于防止 TypeScript 从泛型函数内部推断类型。
+
+举个例子, 我们有一个状态机, 有两个字段 initial 与 states，我们希望initial 是 states 中的一个字段。
+
+``` ts
+declare function createFSM<TState extends string>(config: {
+  initial: TState;
+  states: TState[];
+}): TState;
+
+
+const example = createFSM({
+  initial: "not-allowed",
+  states: ["open", "closed"],
+});
+ 
+console.log(example);
+// const example: "not-allowed" | "open" | "closed"
+
+```
+
+如果我们使用 NoInfer
+
+``` ts
+declare function createFSM<TState extends string>(config: {
+  initial: NoInfer<TState>;
+  states: TState[];
+}): TState;
+
+
+const example = createFSM({
+  initial: "not-allowed",
+  // Type '"not-allowed"' is not assignable to type '"open" | "closed"'.
+  states: ["open", "closed"],
+});
+ 
+```
+
+
+我们可以用来NoInfer控制 TypeScript 从泛型函数内部推断类型的位置。当您有多个运行时参数，每个参数都引用相同的类型参数时，这会很有用。
+
+
+
 ## 5.0.2 
 
 vscode 自身的ts版本 4.9.5 需要选择一下 node_modules 下的包版本
