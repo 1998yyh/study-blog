@@ -1082,3 +1082,19 @@ for (const key in items) {
 C: 107 108 是被当成数字存在 JSObject elements 的 FixedArray 下的,'000' '001' 是直接放在 JSObject 下的
 R: 总的来说，只要语言没有明确保证 key 有顺序，就按照无序处理
 WU: Not counting symbols, object keys are just strings, but "000" and "0" are not the same thing. Only "0" is considered a "number-like" which comes first, same thing happens to "107". Here's is an article that demonstrate this behavior better –  <https://dev.to/frehner/the-order-of-js-object-keys-458d>
+
+
+
+## 3.20
+1. DOMMatrixReadOnly
+
+``` js
+const a = 'translate(2px,3px)'
+const b = 'rotate(5deg)'
+const c=  `${a} ${b}`
+const ma = new DOMMatrixReadOnly(a)
+const mb = new DOMMatrixReadOnly(b)
+const mc = new DOMMatrixReadOnly(c)
+
+ma.multiply(mb).toString() === mc.toString()
+```
