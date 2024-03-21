@@ -1,5 +1,12 @@
 # mysql
 
+```sql
+UPDATE `hello-mysql`.`student` SET `email` = 'xxx@qq.com' WHERE (`id` = '10');
+UPDATE `hello-mysql`.`student` SET `email` = 'xxx@qq.com' WHERE (`id` = '2');
+
+DELETE FROM `hello-mysql`.`student` WHERE (`id` = '2');
+```
+
 ## 基础操作
 
 以学生表为例子
@@ -170,3 +177,109 @@ select name, if(score >=60, '及格', '不及格') from student;
 SELECT name, score, CASE WHEN score >=90 THEN '优秀' WHEN score >=60 THEN '良好'ELSE '差' END AS '档次' FROM student;
 
 ```
+
+
+## 一对一查询 ，JOIN查询，
+
+
+创建一个USER表
+``` sql
+CREATE TABLE `hello-mysql`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` VARCHAR(45) NOT NULL COMMENT '名字',
+  PRIMARY KEY (`id`)
+);
+```
+
+创建一个ID_CARD表
+``` sql
+CREATE TABLE `id_card` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `card_name` varchar(45) NOT NULL COMMENT '身份证号',
+  `user_id` int DEFAULT NULL COMMENT '用户 id',
+  PRIMARY KEY (`id`),
+  INDEX `card_id_idx` (`user_id`),
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+)  CHARSET=utf8mb4
+```
+
+
+
+向USER表插入数据
+``` sql
+INSERT INTO `user` (`name`)
+	VALUES
+		('张三'),
+		('李四'),
+		('王五'),
+		('赵六'),
+		('孙七'),
+		('周八'),
+		('吴九'),
+		('郑十'),
+		('钱十一'),
+		('陈十二'); 
+
+```
+
+向ID_CARD表插入数据
+``` sql
+INSERT INTO id_card (card_name, user_id) 
+    VALUES
+  ('110101199001011234',1),
+	('310101199002022345',2),
+	('440101199003033456',3),
+	('440301199004044567',4),
+	('510101199005055678',5),
+	('330101199006066789',6),
+	('320101199007077890',7),
+	('500101199008088901',8),
+	('420101199009099012',9),
+	('610101199010101023',10);
+```
+
+
+连表查询
+``` sql
+SELECT * FROM user JOIN id_card ON user.id = id_card.user_id;
+
+
+SELECT user.id, name, id_card.id as card_id, card_name 
+    FROM user
+    JOIN id_card ON user.id = id_card.user_id;
+
+-- JOIN ON 相当于 INNER JOIN ON
+SELECT user.id, name, id_card.id as card_id, card_name 
+    FROM user
+    INNER JOIN id_card ON user.id = id_card.user_id;
+
+-- 左连 id_card 没有的数据 显示NULL
+SELECT user.id, name, id_card.id as card_id, card_name 
+    FROM user
+    LEFT JOIN id_card ON user.id = id_card.user_id;
+
+-- 右连 user 里没有的数据 显示NULL
+SELECT user.id, name, id_card.id as card_id, card_name 
+    FROM user
+    RIGHT JOIN id_card ON user.id = id_card.user_id;
+```
+INNER:
+![](https://pic.imgdb.cn/item/65fc03c59f345e8d03098fe9.png)
+
+LEFT：
+![](https://pic.imgdb.cn/item/65fc038f9f345e8d03089bd3.png)
+
+RIGHT：
+![](https://pic.imgdb.cn/item/65fc03a49f345e8d0308fed8.png)
+
+
+
+更新时有几种策略：
+
+CASCADE： 主表主键更新，从表关联记录的外键跟着更新，主表记录删除，从表关联记录删除
+
+SET NULL：主表主键更新或者主表记录删除，从表关联记录的外键设置为 null
+
+RESTRICT：只有没有从表的关联记录时，才允许删除主表记录或者更新主表记录的主键 id
+
+NO ACTION： 同 RESTRICT，只是 sql 标准里分了 4 种，但 mysql 里 NO ACTION 等同于 RESTRICT。
