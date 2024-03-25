@@ -274,7 +274,7 @@ RIGHT：
 
 
 
-更新时有几种策略：
+更新时有几种策略（外建的级连方式）：
 
 CASCADE： 主表主键更新，从表关联记录的外键跟着更新，主表记录删除，从表关联记录删除
 
@@ -283,3 +283,233 @@ SET NULL：主表主键更新或者主表记录删除，从表关联记录的外
 RESTRICT：只有没有从表的关联记录时，才允许删除主表记录或者更新主表记录的主键 id
 
 NO ACTION： 同 RESTRICT，只是 sql 标准里分了 4 种，但 mysql 里 NO ACTION 等同于 RESTRICT。
+
+RESTIRCT 和 NO ACTION 的处理逻辑：只要从表有关联记录，就不能更新 id 或者删除记录。
+
+CASCADE 的处理逻辑：主表删除，从表关联记录也级联删除，主表 id 更新，从表关联记录也跟着更新。
+
+set null 的处理逻辑：主表记录删除或者修改 id，从表关联记录外键置为 null。
+
+
+
+## 一对多
+
+
+我们创建一个部门表 
+
+
+``` sql
+CREATE TABLE `hello-mysql`.`department` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+```
+
+
+同样的方式创建 employee 表：
+
+``` sql
+CREATE TABLE `hello-mysql`.`employee` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `department_id` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `department_id_idx` (`department_id` ASC) VISIBLE,
+  CONSTRAINT `department_id`
+    FOREIGN KEY (`department_id`)
+    REFERENCES `hello-mysql`.`department` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL);
+```
+
+
+我们往部门表里放几个数据
+
+``` sql
+INSERT INTO `department` (`id`, `name`) 
+    VALUES 
+        (1, '人事部'),
+        (2, '财务部'),
+        (3, '市场部'),
+        (4, '技术部'),
+        (5, '销售部'),
+        (6, '客服部'),
+        (7, '采购部'),
+        (8, '行政部'),
+        (9, '品控部'),
+        (10, '研发部');
+
+```
+
+
+往员工表里放几个数据
+
+```sql
+INSERT INTO `employee` (`id`, `name`, `department_id`)
+    VALUES 
+        (1, '张三', 1),
+        (2, '李四', 2), 
+        (3, '王五', 3),
+        (4, '赵六', 4),
+        (5, '钱七', 5),
+        (6, '孙八', 5),
+        (7, '周九', 5),
+        (8, '吴十', 8),
+        (9, '郑十一', 9),
+        (10, '王十二', 10);
+
+```
+
+
+查询部门ID为5的 员工
+
+``` sql
+select * from department
+    join employee on department.id = employee.department_id
+    where department.id = 5
+
+```
+
+
+试试左连 
+
+```sql
+select * from department
+    left join employee on department.id = employee.department_id
+
+```
+
+![](https://pic.imgdb.cn/item/65fd52ac9f345e8d031364f7.png)
+
+department 没有员工的显示null
+
+
+右连类似
+
+当我们删除 部门表中一个，去查询员工表
+
+![](https://pic.imgdb.cn/item/65fd53669f345e8d0317269b.png)
+
+对应该部门的员工部门ID 变成了NULL
+
+
+## 多对多
+
+比如文章与标签的关系，一个文章可能有多个标签，一个标签也可能被多个文章所有。
+
+现在是多对多了，每一方都是多的一方。这时候是不是双方都要添加外键呢？
+
+一般我们是这样设计：
+
+![](https://pic.imgdb.cn/item/65fd54689f345e8d031cc434.png)
+
+
+我们开始创建表
+
+``` sql
+-- 创建文章表
+CREATE TABLE `article` (
+ `id` INT NOT NULL AUTO_INCREMENT,
+ `title` VARCHAR(50) NOT NULL,
+ `content` TEXT NOT NULL,
+ PRIMARY KEY (`id`)
+) CHARSET=utf8mb4;
+
+-- 插入数据
+INSERT INTO `article` (`title`, `content`)
+    VALUES
+            ('文章1', '这是文章1的内容。'),
+            ('文章2', '这是文章2的内容。'),
+            ('文章3', '这是文章3的内容。'),
+            ('文章4', '这是文章4的内容。'),
+            ('文章5', '这是文章5的内容。');
+
+-- 创建TAG表
+CREATE TABLE `tag` (
+ `id` INT NOT NULL AUTO_INCREMENT,
+ `name` VARCHAR(50) NOT NULL,
+ PRIMARY KEY (`id`)
+);
+
+-- 插入数据
+INSERT INTO `tag` (`name`)
+    VALUES
+            ('标签1'),
+            ('标签2'),
+            ('标签3'),
+            ('标签4'),
+            ('标签5');
+```
+
+
+然后我们创建中间表 中间表的级联方式要设置为 CASCADE，这个是固定的。
+
+``` sql
+CREATE TABLE `hello-mysql`.`article_tag` (
+  `article_id` INT NOT NULL,
+  `tag_id` INT NOT NULL,
+  PRIMARY KEY (`article_id`, `tag_id`),
+  INDEX `tag_id_idx` (`tag_id` ASC) VISIBLE,
+  CONSTRAINT `article_id`
+    FOREIGN KEY (`article_id`)
+    REFERENCES `hello-mysql`.`article` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `tag_id`
+    FOREIGN KEY (`tag_id`)
+    REFERENCES `hello-mysql`.`tag` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+```
+
+primary key (article_id, tag_id) 是指定复合主键。
+
+后面分别是添加两个外键约束。
+
+我们插入几条数据
+```sql
+INSERT INTO `article_tag` (`article_id`, `tag_id`)
+    VALUES
+    (1,1), (1,2), (1,3),
+    (2,2), (2,3), (2,4),
+    (3,3), (3,4), (3,5),
+    (4,4), (4,5), (4,1),
+    (5,5), (5,1), (5,2);
+
+```
+
+
+进行三个表的关联查询
+
+
+```sql
+SELECT * FROM article a 
+    JOIN article_tag at ON a.id = at.article_id
+    JOIN tag t ON t.id = at.tag_id
+    WHERE a.id = 1
+
+```
+
+当然我们也可以指定返回的列
+
+``` sql
+SELECT t.name AS 标签名, a.title AS 文章标题
+    FROM article a 
+    JOIN article_tag at ON a.id = at.article_id
+    JOIN tag t ON t.id = at.tag_id
+    WHERE a.id = 1
+
+```
+
+当我们删除文章1时
+
+```sql
+delete from article where id = 1;
+```
+
+会发现article_tag表的关系也被删除了 ,这就是 CASCADE 的作用。
+
+当然，删除的只是关系，并不影响 id=1 的标签：
