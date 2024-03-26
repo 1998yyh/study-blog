@@ -513,3 +513,45 @@ delete from article where id = 1;
 会发现article_tag表的关系也被删除了 ,这就是 CASCADE 的作用。
 
 当然，删除的只是关系，并不影响 id=1 的标签：
+
+
+### 子查询
+
+当我们想查询分数最高的同学的信息时，我们首先需要查询到最高分,然后再去查询用户信息。
+
+
+``` sql
+SELECT MAX(score) from student
+
+SELECT * FROM student WHERE score = max_score
+```
+
+或者使用子查询
+
+``` sql
+SELECT name, class FROM student WHERE score = (SELECT MAX(score) FROM student);
+```
+
+
+或者查询高于平均分的学生
+
+``` sql
+SELECT * FROM student WHERE score > (SELECT AVG(SCORE) FROM student)
+```
+
+
+子查询还有个特有的语法 EXISTS、NOT EXISTS。
+
+比如要 查询 所有员工的部门
+
+``` sql
+SELECT name FROM department WHERE EXISTS (SELECT * FROM employee WHERE department.id = employee.department_id)
+```
+
+查询没有员工的部门
+
+``` sql
+SELECT name FROM department WHERE NOT EXISTS (SELECT * FROM employee WHERE department.id = employee.department_id)
+```
+
+
