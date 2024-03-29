@@ -1133,3 +1133,66 @@ function 有时候是必要的，“提前定义”在 C 语言里面都要用�
 
 而且这个话题可以继续顺着问下去，例如 cjs 的循环引用问题、如何破除循环引用
 
+
+
+## 3.28
+
+1. js runtime 的比较 https://runtime-compat.unjs.io/
+2. nodejs 记录片 https://www.youtube.com/watch?v=LB8KwiiUGy0
+3. js 代码运行优化 https://romgrk.com/posts/optimizing-javascript#3-avoid-arrayobject-methods 看着很高端 下面是个例子
+4. js优化操作 - 避免缓存未命中
+
+从CPU的角度来看，从RAM中检索内存的速度很慢，为了加快速度，它主要使用两种优化 (预取， L1/2/3缓存) 
+
+第一个是预取：它提前获取更多内存。它总是猜测，如果您请求一个内存地址，您会对随后出现的内存区域感兴趣。就在那之后。所以顺序访问数据是关键。在下面的示例中，我们可以观察以随机顺序访问内存的影响。
+
+```js
+// setup:
+const K = 1024
+const length = 1 * K * K
+ 
+// Theses points are created one after the other, so they are allocated
+// sequentially in memory.
+const points = new Array(length)
+for (let i = 0; i < points.length; i++) {
+  points[i] = { x: 42, y: 0 }
+}
+ 
+// This array contains the *same data* as above, but shuffled randomly.
+const shuffledPoints = shuffle(points.slice())
+
+// 1. sequential
+let _ = 0
+for (let i = 0; i < points.length; i++) { _ += points[i].x }
+
+// 2. random
+let _ = 0
+for (let i = 0; i < shuffledPoints.length; i++) { _ += shuffledPoints[i].x }
+```
+
+CPU 使用的第二个优化是 L1/L2/L3 缓存：它们就像更快的 RAM，但它们也更昂贵，因此它们要小得多。它们包含 RAM 数据，但充当 LRU 缓存。数据在“热”（正在处理）时进入，并在新的工作数据需要空间时写回主 RAM。因此，这里的关键是使用尽可能少的数据，以使您的工作数据集保持在快速缓存中。在下面的示例中，我们可以观察破坏每个连续缓存的影响。
+
+## 3.29
+
+1. 正则题 将string 分为左边和右边各一组
+``` js
+12
+1234
+123456
+12345678
+abcdefghijklmn
+```
+
+![alt text](image.png)
+
+
+```js
+/^(?>.(?*.*((?(-1).\g{-1}|.))))+/
+```
+
+核心就是 (?(1).\1|.)
+意思是如果组1匹配到了，就匹配左边的.\1 ，否则匹配右边的.
+比如匹配12345678的时候
+递归时第一次匹配肯定组1是没有值的，所以匹配 . ，因为前面的.*是贪婪模式，所以.匹配到了最末尾的字符8
+第二次组1有值了（8），所以匹配 .\1，也就是说8和任意字符，所以匹配到了最末尾两位 78
+以此类推，匹配四次之后，前瞻的组1匹配到了5678，第五次匹配前瞻失败，匹配结束，返回1234
