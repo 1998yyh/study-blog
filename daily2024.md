@@ -1252,3 +1252,11 @@ a = (a ? 任意字符 + a : 任意字符)
 ## 04.02
 
 1. chrome 浏览器限制最大同时请求数 6 是因为怕太大了家用路由器受不了
+
+
+## 04.03
+
+1. 迭代器助手 V8官博 <https://v8.dev/features/iterator-helpers>
+2. 应该会的css <https://frontendmasters.com/blog/what-you-need-to-know-about-modern-css-spring-2024-edition/>
+3. vscode技巧 修复html / css 多行注释 问题 <https://www.youtube.com/watch?v=Z1x2BgH0Ptc>
+4. js库： 打字动画<https://mattboldt.com/demos/typed-js/>
