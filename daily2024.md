@@ -29,7 +29,7 @@
 > 从一些合理的默认值开始，然后根据您的需要自定义组件。
 > 将组件打包在 npm 包中的缺点之一是样式与实现耦合。组件的设计应该与其实现分开。
 
-+ 手绘的虚拟白板，项目地址 <https://excalidraw.com> <https://www.tldraw.com>
++ 手绘的虚拟白板（画板，canvas），项目地址 <https://excalidraw.com> <https://www.tldraw.com>
 + Tarui 移动端构建
 
 > vue生态
@@ -1260,3 +1260,9 @@ a = (a ? 任意字符 + a : 任意字符)
 2. 应该会的css <https://frontendmasters.com/blog/what-you-need-to-know-about-modern-css-spring-2024-edition/>
 3. vscode技巧 修复html / css 多行注释 问题 <https://www.youtube.com/watch?v=Z1x2BgH0Ptc>
 4. js库： 打字动画<https://mattboldt.com/demos/typed-js/>
+
+
+## 04.08
+1. Capo.js是一个性能工具，旨在帮助您按顺序获取元素，希望能带来性能提升。<https://rviscomi.github.io/capo.js/>
+2. Trix 2.1 版本——来自 Basecamp 背后的人员的所见即所得编辑器现已发布。<https://trix-editor.org/>
+3. BFcache 往返缓存 <https://web.dev/articles/bfcache?ref=sabatino.dev&hl=zh-cn>
