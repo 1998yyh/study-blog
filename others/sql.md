@@ -542,6 +542,8 @@ SELECT * FROM student WHERE score > (SELECT AVG(SCORE) FROM student)
 
 子查询还有个特有的语法 EXISTS、NOT EXISTS。
 
+可以理解为将主查询的数据，放到子查询中做条件验证，根据验证结果（TRUE 或 FALSE）来决定主查询的数据结果是否得以保留。
+
 比如要 查询 所有员工的部门
 
 ``` sql
@@ -555,3 +557,185 @@ SELECT name FROM department WHERE NOT EXISTS (SELECT * FROM employee WHERE depar
 ```
 
 
+除了`SELECT`外，增删改也可以用子查询的, 比如我们把每个产品分类的分类名、平均价格查出来放入另一个 avg_price_by_category 表。
+
+``` sql
+CREATE TABLE avg_price_by_category (
+ id INT AUTO_INCREMENT,
+ category VARCHAR(50) NOT NULL,
+ avg_price DECIMAL(10,2) NOT NULL,
+ PRIMARY KEY (id)
+);
+```
+
+然后把 product 产品表里的分类和平均价格查出来插入这个表：
+
+``` sql
+INSERT INTO avg_price_by_category (category, avg_price)  SELECT category, AVG(price) FROM product GROUP BY category;
+```
+
+比如我们想把技术部的有所人的name前面加上‘技术-’，就可以这么写。
+
+``` sql
+UPDATE employee SET name = CONCAT('技术-', name)  WHERE department_id = (SELECT id FROM department WHERE name = '技术部');
+```
+
+或者删除所有技术部员工
+
+```sql
+DELETE FROM employee WHERE department_id = ( SELECT id FROM department WHERE name = '技术部');
+```
+
+
+## 事务
+
+START TRANSACTION 开启事务后所有的 sql 语句都可以 ROLLBACK，除非执行了 COMMIT 完成这段事务。
+
+还可以设置几个 SAVEPOINT，这样可以 ROLLBACK TO 任何一个 SAVEPOINT 的位置。
+
+
+``` sql
+START TRANSACTION;
+
+SAVEPOINT aaa;
+
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+
+SAVEPOINT bbb;
+
+UPDATE orders SET total_amount=200 WHERE id=3;
+
+SAVEPOINT ccc;
+
+
+-- ROLLBACK TO SAVEPOINT bbb;
+-- 回退
+```
+
+
+MYSQL 有 4 种事务隔离级别：
+
+1. READ UNCOMMITTED：可以读到别的事务尚未提交的数据。
+这就有个问题，你这个事务内第一次读的数据是 aaa，下次读可能就是 bbb 了，这个问题叫做不可重复读。
+
+而且，万一你读到的数据人家又回滚了，那你读到的就是临时数据，这个问题叫做脏读。
+
+2. READ COMMITTED：只读取别的事务已提交的数据。
+这样是没有脏读问题了，读到的不会是临时数据。
+
+但是还是有可能你这个事务内第一次读的数据是 aaa，下次读可能是 bbb ，也就是不可重复读的问题依然存在。
+
+不只是数据不一样，可能你两次读取到的记录行数也不一样，这叫做幻读。
+
+3. REPEATABLE READ：在同一事务内，多次读取数据将保证结果相同。
+这个级别保证了读取到的数据一样，但是不保证行数一样，也就是说解决了不可重复读的问题，但仍然存在幻读的问题。
+
+4. SERIALIZABLE：在同一时间只允许一个事务修改数据。
+事务一个个执行，各种问题都没有了。
+
+但是负面影响就是性能很差，只能一个个的事务执行。
+
+这 4 种级别主要是数据一致性和性能的差别，一致性越好，并发性能就越差。
+
+需要根据实际情况来权衡。
+
+我们可以这样查询事务隔离的级别
+
+```sql
+select @@transaction_isolation
+
+``` 
+
+
+## 视图
+
+用之前的 customers、orders 表来建立视图：
+
+``` sql
+CREATE VIEW customer_orders AS 
+    SELECT 
+        c.name AS customer_name, 
+        o.id AS order_id, 
+        o.order_date, 
+        o.total_amount
+    FROM customers c
+    JOIN orders o ON c.id = o.customer_id;
+
+```
+
+下面的 select 语句我们很熟悉，就是关联 customers、orders 表，查出一些字段。
+
+然后加上 CREATE VIEW ... AS 就是把这个查询的结果建立一个视图。
+
+然后我们可以查询一下刚才创建的视图
+
+``` sql
+select * from customer_orders
+```
+
+明显感受到的就是能简化查询，之前要写一堆 sql，现在只要查这个视图就好了。
+
+再就是还可以控制权限，让开发者只能看到需要的字段，其余的给隐藏掉。
+
+视图一般只用来做查询，因为它增删改的限制比较多，比如只有单表的视图可以增删改，并且要求不在视图里的字段都有默认值等。
+
+
+## 存储过程
+
+创建
+``` sql
+DELIMITER $$
+CREATE PROCEDURE get_customer_orders(IN customer_id INT)
+BEGIN
+        SELECT o.id AS order_id, o.order_date, o.total_amount
+        FROM orders o
+		WHERE o.customer_id = customer_id;
+END $$
+DELIMITER ;
+```
+
+首先 DELIMITER $$ 定义分隔符为 $$，因为默认是 ;
+
+这样中间就可以写 ; 了，不会中止存储过程的 sql。
+
+最后再恢复为之前的分隔符：DELIMITER ;
+
+调用
+```sql
+CALL get_customer_orders(5);
+```
+存储过程内部执行了一个查询，用到的 customer_id 是参数传入的。
+
+## 函数
+
+如果你想调用的时候返回值，可以使用函数：
+
+一个求平方的函数：
+
+```sql
+DELIMITER $$
+CREATE FUNCTION square(x INT)
+RETURNS INT
+BEGIN
+    DECLARE result INT;
+    SET result = x * x;
+    RETURN result;
+END $$
+DELIMITER ;
+```
+
+还是先通过 DELIMITER 指定分隔符为 $$。
+
+CREATE FUNCTION 声明函数的名字和参数 x，并且通过 RETURNS 声明返回值类型。
+
+BEGIN、END 中间的是函数体。
+
+先 DECLARE 一个 INT 类型的变量，然后 SET 它的值为 x * x，之后通过 RETURN 返回这个结果。
+
+但默认 mysql 是不允许创建函数的。
+
+需要先设置下这个变量：
+
+```sql
+SET GLOBAL log_bin_trust_function_creators = 1;
+```
