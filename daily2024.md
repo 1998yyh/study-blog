@@ -1266,3 +1266,24 @@ a = (a ? 任意字符 + a : 任意字符)
 1. Capo.js是一个性能工具，旨在帮助您按顺序获取元素，希望能带来性能提升。<https://rviscomi.github.io/capo.js/>
 2. Trix 2.1 版本——来自 Basecamp 背后的人员的所见即所得编辑器现已发布。<https://trix-editor.org/>
 3. BFcache 往返缓存 <https://web.dev/articles/bfcache?ref=sabatino.dev&hl=zh-cn>
+
+
+## 04.11
+
+1. 业务前端如何提高业务价值。<https://mp.weixin.qq.com/s/v8izxLOQ4ZSEMuaXO1FC8w> 这个比较不错
+2. v8的快属性 <https://v8.js.cn/blog/fast-properties/> 没太看懂 ，包括它底部的那个 What's up with monomorphism? 单态是怎么回事。
+
+
+## 04.12
+1. overflow-anchor 溢出锚点 <https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/>
+
+大概原理就是在滚动元素的底部放一个元素 设置overflow-anchor auto 然后每次添加元素 在底部的时候 就会自动滚到下面
+
+
+2.  Python 的PyTorch是机器学习库的黄金标准之一，但该项目将其一些功能直接引入 JavaScript 世界。虽然还处于早期阶段，但这对于 JS 中的 ML 来说可能会变得很重要？ <https://github.com/eduardoleao052/js-pytorch>
+3.  Flyweight：专门针对 SQLite 的 ORM — 这里有一些有趣的想法，与典型的 ORM 略有不同。<https://github.com/thebinarysearchtree/flyweight>
+4.  折叠div 效果 <https://www.joshwcomeau.com/react/folding-the-dom/>
+5.  下次绘制交互 (INP) 取代首次输入延迟 (FID) 作为核心 Web 重要指标。从eventloop的角度来讲解的 <https://frontendmasters.com/blog/understanding-inp/>
+6.  生产卡通头像的js库 <https://zengm.com/facesjs/>
+7.  chrome devtools 技巧 <https://frontendmasters.com/blog/devtools-tips-tricks/>
+8.  生成模块依赖的 图表 <https://github.com/pahen/madge?tab=readme-ov-file#configuration>
