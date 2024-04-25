@@ -14,7 +14,7 @@ access_token 设置 30 分钟过期，而 refresh_token 设置 7 天过期。这
 
 ## axios
 
-使用axios 拦截器，请求的时候自动带上 accesstoken
+使用axios 拦截器，请求的时候自动带上 accesstoken·
 
 ``` js
 axios.interceptors.request.use(function (config) {
