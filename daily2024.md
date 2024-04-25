@@ -1276,7 +1276,7 @@ a = (a ? 任意字符 + a : 任意字符)
 
 ## 04.12
 1. overflow-anchor 溢出锚点 <https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/>
-
+J
 大概原理就是在滚动元素的底部放一个元素 设置overflow-anchor auto 然后每次添加元素 在底部的时候 就会自动滚到下面
 
 
@@ -1287,3 +1287,13 @@ a = (a ? 任意字符 + a : 任意字符)
 6.  生产卡通头像的js库 <https://zengm.com/facesjs/>
 7.  chrome devtools 技巧 <https://frontendmasters.com/blog/devtools-tips-tricks/>
 8.  生成模块依赖的 图表 <https://github.com/pahen/madge?tab=readme-ov-file#configuration>
+9.  
+
+## 04.18
+
+1. ios 404 https://ios404.com/
+
+
+## 04.23
+
+1. CSS 中可能破坏宽高比的因素 <https://frontendmasters.com/blog/things-that-can-break-aspect-ratio-in-css/>
