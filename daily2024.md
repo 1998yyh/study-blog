@@ -1276,7 +1276,6 @@ a = (a ? 任意字符 + a : 任意字符)
 
 ## 04.12
 1. overflow-anchor 溢出锚点 <https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/>
-J
 大概原理就是在滚动元素的底部放一个元素 设置overflow-anchor auto 然后每次添加元素 在底部的时候 就会自动滚到下面
 
 
@@ -1297,3 +1296,113 @@ J
 ## 04.23
 
 1. CSS 中可能破坏宽高比的因素 <https://frontendmasters.com/blog/things-that-can-break-aspect-ratio-in-css/>
+
+## 04.26 
+
+1. 算法可视化  https://bost.ocks.org/mike/algorithms/
+2. 不要使用maxLength 属性来阻止用户超出限制， 
+
+存在的问题：
++ 采用`maxLength【自营单笔产品再借流程优化-小程序】
+https://www.tapd.cn/53189314/prong/stories/view/1153189314001157091` 属性一位置会忽略超过x个字符之后的内容
++ 用户可能没有意识到他们的输入被忽略（并且可能保存了不正确的信息）
++ 问题#3：粘贴超过限制的值会被截断
++ 问题#4：不灵活
++ 问题#5：自动填充的值超过限制会被截断
+
+
+2. URL.canParse() 判断是否可以被解析。
+
+
+## 05.08
+
+1. reflow问题
+
+``` js
+dom.innerText = 'a' + '1'.repeat(1e3) // a
+dom.innerText = 'b' + '1'.repeat(1e3) // b
+dom.innerText = 'b' + '2'.repeat(1e3) // c
+```
+
+浏览器从状态a到b 和从状态a到c 的时间性能消耗是一样的
+是不是说明set innerText/HTML 的过程中没有"dom diff"的概念
+
+如果浏览器本身有dom diff的概念
+岂不是我们直接dom.innerText = template(state)一把梭就行了
+
+
+同一个运行栈没有reflow，消耗肯定是一样的
+
+在两次赋值之间 getBoundingClientRect 一下强制 reflow 就能感受到差异了
+
+而且 dom diff 的消耗其实是超级大的，原生 dom api 只是调用了一个后端接口，更新了链树中的一个节点的信息
+
+
+修改 innerHTML 的话，后端需要执行创建 dom 的操作，创建完直接改链表的指向就行了，何必再搞 diff
+
+1. 在node 18.11+ 版本中 可以使用 `node --watch server.js` 当特定文件更改了 
+2. 图片diff库 找不同 <https://github.com/dmtrKovalenko/odiff>
+
+
+## 05.11
+
+1. 23需要知道的css特性 <https://www.youtube.com/watch?v=opHu7HvFM60>
+
+:focus-visible https://codepen.io/argyleink/pen/YzMjmjR
+:focus-within - https://codepen.io/kevinpowell/pen/ab... & https://codepen.io/kevinpowell/pen/jO...
+@media (hover) https://codepen.io/argyleink/pen/oNOPvbm
+fit-content() - https://codepen.io/kevinpowell/pen/xx...
+object-fit https://codepen.io/argyleink/pen/JjVaPrx
+aspect-ratio https://codepen.io/argyleink/pen/OJGoLBW
+accent-color - (I’m cheating here) https://codepen.io/web-dot-dev/pen/Po...
+caret-color - https://codepen.io/kevinpowell/pen/ab...
+border-image https://codepen.io/t_afif/pen/vYbdVjb and https://www.smashingmagazine.com/2024...
+scroll-padding & scroll-margin: https://codepen.io/kevinpowell/pen/eY...
+scroll-snap https://codepen.io/collection/KpqBGW
+overscroll-behavior https://codepen.io/argyleink/pen/ExEwMYY
+gap - https://codepen.io/kevinpowell/pen/md...
+columns - https://codepen.io/kevinpowell/pen/rN...
+drop-shadow() https://codepen.io/argyleink/pen/RwOYbXG
+matrix3d() https://codepen.io/argyleink/pen/ExJexZY and https://codepen.io/fta/pen/rNZrXp
+backdrop-filter - https://codepen.io/kevinpowell/pen/Rw...
+:any-link https://codepen.io/argyleink/pen/vYMzYxx
+:empty - https://codepen.io/kevinpowell/pen/md...
+:first-child & :last-child - https://codepen.io/kevinpowell/pen/Po...
+list-style https://codepen.io/argyleink/pen/rNmzGzW
+inset - https://codepen.io/kevinpowell/pen/qB...
+
+
+2. 滚动动画 scroll scrolltimeline animation <https://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=https://frontendfoc.us/link/154809/cd4889d94c&mailid=HAcPYnAHAgkLZ1NYdnlZZ2B/SGBtREhlbnljSV4MUF0E&spam=0>
+
+3. 性能优化的问题 一律看sentry 的blog 模块
+
+
+## 05.14
+
+1. MFSU <https://juejin.cn/post/7172109203526385694>
+
+借助模块联邦 讲第三方模块提前打包 感觉和webpack dll 差不多
+
+2. npm/yarn 默认都是扁平化 node_modules，之所以偶尔会出现一个依赖在另一个的node modules里，原因是没法 hoist 了
+
+之前有群友遇到过，例如a依赖 c@1，b 依赖 c@2，如果一个项目同时装了 a和 b.那其中一个c会被 hoist，另一个会呆在内部的 node_modules 里;至于是 c@1 还是c@2 被提升，那就看运气了
+
+当时群友遇到的问题好像是若干 @pro-components/xxx 都依赖 antd，但是是不同版本;这就导致其中一个 antd 被 hoist，剩下的十几个 antd 都在二级 node_modules里，就出现了多实例问题
+
+
+hoist 是提升特定的包 
+nohoist 
+
+
+3. 文件解析功能 `enhanced-resolve`
+
+<https://github.com/webpack/enhanced-resolve>
+<https://juejin.cn/post/7367722307203448870>
+
+
+
+
+## 05.21
+
+1. vue2024生态 https://frontendmasters.com/blog/the-vue-ecosystem-in-2024/
+2. 包管理工具 nvm n 等等 https://pavel-romanov.com/5-node-version-managers-compared-which-is-right-for-you
