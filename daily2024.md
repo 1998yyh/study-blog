@@ -1406,3 +1406,138 @@ nohoist
 
 1. vue2024生态 https://frontendmasters.com/blog/the-vue-ecosystem-in-2024/
 2. 包管理工具 nvm n 等等 https://pavel-romanov.com/5-node-version-managers-compared-which-is-right-for-you
+
+## 05.22
+
+1. 鸭子类型： 
+
+> 如果它走路像鸭子，叫起来像鸭子，那么它就是鸭子。
+
+运行时检查，程序只是尝试调用的方法，甚至不知道对象是否具有这些方法，而不是先检查对象的类型作为了解对象是否具有这些方法的手段
+
+
+2. sentry 的一个新指标文章 CLS 您的背景图片可能会导致CLS <https://blog.sentry.io/your-background-images-might-be-causing-cls/?utm_medium=paid-community&utm_source=javascriptweekly&utm_campaign=fy25q2-jtbd-cls&utm_content=newsletter-jtbd-cls-learnmore>
+
+累积布局转变 (CLS) 是指在初始内容加载和新内容弹出后网页布局意外发生变化。最糟糕的是，在广告加载后，意外点击鼠标光标下突然出现的“立即购买”按钮，导致不必要的购买。
+
+
+
+## 5.23
+
+面试题
+
+1. 
+
+``` js
+Promise.resolve(Promise.reject())
+.then(console.log(1))
+.catch(console.log(2))
+
+
+console.log(this) // common.js 打印什么
+
+console.log(this) // esm 打印什么
+
+(0,React.useEffet)() 这是什么意思？为啥这样写？
+
+// babel-plugin-import 原理
+```
+
+
+2. jq(jquery) 转 js 应该没啥用 <https://www.lightgalleryjs.com/jquery-to-js-converter/>
+3. text-emphasis 文本装饰工具 
+4. vue的 一个拖动库 <https://vue-fluid-dnd.netlify.app/>
+5. socket.io 配合 github  实现 github提交的时候 给自己的服务发条消息 然后服务器通过socket 同步给 客户端<https://knock.app/blog/building-a-github-activity-feed-with-nodejs-and-socket-io>
+6. crawlee 是一个网页抓取和自动化的库 <https://crawlee.dev/>
+
+
+
+## 5.24
+
+1. 
+
+要在 24 小时内鉴别出哪瓶水有毒，至少需要 10 只小白鼠。下面是原因：
+
+这个问题可以转换为二进制编码的问题。因为一瓶水有毒，我们需要找到这瓶水的唯一标识。对于 1000 瓶水，可以用二进制编码表示这些瓶子的编号。1000 瓶水的编号从 0 到 999，需要 \( \lceil \log_2(1000) \rceil \) 位二进制数来唯一表示。
+
+\[
+\log_2(1000) \approx 9.97
+\]
+
+因此，需要 10 位二进制数来表示 1000 瓶水的编号。每只小白鼠可以代表二进制数中的一位，即每只小白鼠的生死状态（0 或 1）可以用来确定一位二进制数。
+
+具体操作如下：
+1. 给每一瓶水编号，使用二进制表示。例如：
+   - 瓶 0: 0000000000
+   - 瓶 1: 0000000001
+   - 瓶 2: 0000000010
+   - 瓶 3: 0000000011
+   - ... 
+   - 瓶 999: 1111100111
+
+2. 每只小白鼠负责一个二进制位的位置。例如，第1只小白鼠负责最高位（2^9），第2只小白鼠负责次高位（2^8），依此类推，第10只小白鼠负责最低位（2^0）。
+
+3. 让对应二进制位是1的小白鼠尝试相应编号的水。例如：
+   - 瓶 999 (1111100111) 的水会给所有小白鼠喝，因为其二进制表示中的每一位都是1。
+   - 瓶 1 (0000000001) 的水只会给第10只小白鼠喝。
+
+4. 24小时后，通过检查哪些小白鼠死亡，可以得到一个二进制数，这个二进制数正好对应有毒的那瓶水的编号。例如，如果第1、3和4只小白鼠死亡（其他都存活），那么毒水的编号就是二进制数 1011 (对应的十进制数是11)。
+
+通过这种方法，使用 10 只小白鼠就可以在 24 小时内唯一确定哪瓶水有毒。
+
+
+
+2. 抽象代码
+
+<https://frankforce.com/city-in-a-bottle-a-256-byte-raycasting-system/>
+``` html
+<canvas style=width:99% id=c onclick=setInterval('for(c.width=w=99,++t,i=6e3;i--;c.getContext`2d`.fillRect(i%w,i/w|0,1-d*Z/w+s,1))for(a=i%w/50-1,s=b=1-i/4e3,X=t,Y=Z=d=1;++Z<w&(Y<6-(32<Z&27<X%w&&X/9^Z/8)*8%46||d|(s=(X&Y&Z)%3/Z,a=b=1,d=Z/w));Y-=b)X+=a',t=9)>
+
+```
+
+
+## 05.28
+
+1. Symbol.replace可以通过正则替换字符串，所以对于本身不是字符串的替换比较安全
+
+![](https://pic.imgdb.cn/item/665593ddd9c307b7e9a7b4b0.jpg)
+
+
+## 06.05
+
+1. 创建热图的两个库 `heat.js` `heatmap.js`
+
+> 如何在 JavaScript 中创建热图：Heat.js 库 <https://blog.logrocket.com/create-heatmaps-javascript/?utm_source=newsletter&utm_medium=em&utm_campaign=24Q2_EM_TheReplay_240528&mkt_tok=NzQwLUxLTS0yNjMAAAGTXrVC-0jc8mxb05pJU3sMq_8ufpxPdN548wTSOBXwUCAdQ6mpAPlu2FyTnPZQ8Ru2vfayuws-OHEbqwFidu6tURC_bAo7wk2OLPv9H7zTzLQ#utm_source%3Dnewsletter%26utm_medium%3Dem%26utm_campaign%3D24Q2_EM_TheReplay_240528%26mkt_tok%3DNzQwLUxLTS0yNjMAAAGTXrVC-0jc8mxb05pJU3sMq_8ufpxPdN548wTSOBXwUCAdQ6mpAPlu2FyTnPZQ8Ru2vfayuws-OHEbqwFidu6tURC_bAo7wk2OLPv9H7zTzLQ>
+
+
+2. 优化长任务的手段 <https://web.dev/articles/optimize-long-tasks?utm_source=devtools&hl=zh-cn>
+
+ scheduler.postTask()
+
+
+1. 使用chrome devtools 对项目进行分析 <https://blog.jiayihu.net/comprenhensive-guide-chrome-performance/>
+2. devtools 片段 来获取失效的链接 <https://www.amitmerchant.com/little-devtools-snippet-to-check-broken-links-on-a-webpage/>
+``` js
+$$('[href]:not([href=""])').forEach(anchor => {
+    console.info({ anchor, href: anchor.href })
+    fetch(anchor.href)
+})
+```
+
+3. webgl 代码  最短的字符数 实现的效果
+
+``` html
+<canvas style=width:99% id=c onclick=setInterval('for(c.width=w=99,++t,i=6e3;i--;c.getContext`2d`.fillRect(i%w,i/w|0,1-d*Z/w+s,1))for(a=i%w/50-1,s=b=1-i/4e3,X=t,Y=Z=d=1;++Z<w&(Y<6-(32<Z&27<X%w&&X/9^Z/8)*8%46||d|(s=(X&Y&Z)%3/Z,a=b=1,d=Z/w));Y-=b)X+=a',t=9)>
+```
+
+
+4. 使用esbuild 为webpack / rollup 提高构建速度 <https://blog.1password.com/new-extension-build-system/>
+5. JAEGER 开源分布式追踪平台
+6. js技巧与创造力 <https://aem1k.com/>
+7. node js 运行时的东西 主要是一些测试能力 settimeout promise能力 <https://snyk.io/blog/10-modern-node-js-runtime-features/>
+8. webgl 效果 <https://codepen.io/ksenia-k/pen/vYwgrWv>
+
+## 06.06 
+
+1. 前端错误相关 类型 / 处理 sentry <https://juejin.cn/post/7352661916387475494>
+2. 动态多环境测试 <https://mp.weixin.qq.com/s/ct5pqDhsAZetr8LKagsW-Q?> 偏后端 运维
