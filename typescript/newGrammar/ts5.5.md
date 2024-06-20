@@ -100,3 +100,4 @@ function f1(obj: Record<string, unknown>, key: string) {
 ## 其他内容
 
 <https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/>
+<https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-rc/>

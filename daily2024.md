@@ -1541,3 +1541,232 @@ $$('[href]:not([href=""])').forEach(anchor => {
 
 1. 前端错误相关 类型 / 处理 sentry <https://juejin.cn/post/7352661916387475494>
 2. 动态多环境测试 <https://mp.weixin.qq.com/s/ct5pqDhsAZetr8LKagsW-Q?> 偏后端 运维
+
+## 06.13
+
+1.  Web Platform Status 可以看一些新属性的支持性 https://webstatus.dev/ 
+2.  设计思路网站 https://www.designspells.com/
+3.  数学公式的库 https://katex.org/
+4.  IOS 18 更新的内容
+
+### 06.20
+
+1. 为什么原子化css
+
+有些人可能也称之为函数式 CSS 或 CSS 实用程序。基本上，你可以说原子 CSS 框架是以下 CSS 的集合：
+
+```css
+.m-0{
+  margin:0;
+}
+
+.text-red{
+  color:red;
+}
+```
+
+
+
+制作Atomic css的传统方式 是提供所需要的所有css 应用实例
+
+```scss
+// style.scss
+
+@for $i from 1 through 10 {
+  .m-#{$i} {
+    margin: $i / 4 rem;
+  }
+}
+
+// style.css
+.m-1 { margin: 0.25 rem; }
+.m-2 { margin: 0.5 rem; }
+/* ... */
+.m-10 { margin: 2.5 rem; }
+```
+
+即使您只使用了一个 CSS 规则，也需要支付 10 个 CSS 规则的成本。
+
+那时，添加一个实用程序通常意味着您将引入几千字节的额外空间。
+
+使用PurgeCSS扫描 dist 包并删除不需要的规则。现在，生产环境中的 CSS 只剩下几 KB。但是，请注意，清除操作仅在生产版本中有效，这意味着您仍在处理开发环境中的大量 CSS。
+
+
+所以有按需引入的思维方式
+
+通过颠倒“生成”和“使用扫描”的顺序，“按需”方法可以节省浪费的计算和传输成本，同时灵活地满足预生成无法满足的动态需求。同时，这种方法可以用于开发和生产，为一致性提供更多信心，并使 HMR 更加高效。
+
+
+``` js
+import { promises as fs } from 'node:fs'
+import glob from 'fast-glob'
+
+// this usually comes from user config
+const include = ['src/**/*.{jsx,tsx,vue,html}']
+
+async function scan() {
+  const files = await glob(include)
+
+  for (const file of files) {
+    const content = await fs.readFile(file, 'utf8')
+    // pass the content to the generator and match for class usages
+  }
+}
+
+await scan()
+// scanning is done before the build / dev process
+await buildOrStartDevServer()
+```
+为了在开发过程中提供 HMR，通常需要一个文件观察器：
+
+``` js
+import chokidar from 'chokidar'
+
+chokidar.watch(include).on('change', (event, path) => {
+  // read the file again
+  const content = await fs.readFile(file, 'utf8')
+  // pass the content to the generator again
+  // invalidate the css module and send HMR event
+})
+```
+
+
+因此，通过按需方法，Windi CSS 能够提供比传统 Tailwind CSS快 100 倍的性能。
+
+Windi 存在的问题 
+
+最理想的原子 CSS 应该是不可见的。一旦学会了，它应该是直观的，并且类似于了解其他的。当它按预期工作时，它是不可见的，当它不工作时，可能会令人沮丧。
+
+当我们设置 `border-2` 的时候 得到的是`2px`,`4 -> 4px`,`8 -> 8px` 但是你写`border-10` 却发现他没有执行
+``` css
+.border-10 {
+  border-width: 10px;
+}
+```
+
+我们当然可以在全局这么加一下，熟悉的会知道怎么配置
+
+
+``` js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    borderWidth: {
+      DEFAULT: '1px',
+      0: '0',
+      2: '2px',
+      3: '3px',
+      4: '4px',
+      6: '6px',
+      8: '8px',
+      10: '10px' // <-- here
+    }
+  }
+}
+```
+
+
+🤔🤔 现在我们可以把它们全部列出来，然后回去工作了……等等，我刚才说到哪儿了？你正在处理的原始任务丢失了，需要花一些时间才能重新回到上下文中。稍后，如果我们想设置边框颜色，我们需要再次查阅文档，看看如何配置它等等。也许有人会喜欢这种工作流程，但它不适合我。我不喜欢被一些应该直观地工作的东西打断
+
+
+UnoCSS 是一个引擎而不是一个框架，因为它没有核心实用程序——所有功能都是通过预设或内联配置提供的。
+
+静态规则: 
+``` js
+rules: [
+  ['m-1', { margin: '0.25rem' }]
+]
+```
+无论何时m-1在用户的代码库中检测到，都会生成以下 CSS：
+``` css
+.m-1 { margin: 0.25rem; }
+```
+
+
+动态规则: 
+
+``` js
+rules: [
+  [/^m-(\d+)$/, ([, d]) => ({ margin: `${d / 4}rem` })],
+  [/^p-(\d+)$/, match => ({ padding: `${match[1] / 4}rem` })],
+]
+```
+
+这样我们就能转化出
+```html 
+<div class="m-100">
+  <button class="m-3">
+    <icon class="p-5" />
+    My Button
+  </button>
+</div>
+
+.m-100 { margin: 25rem; }
+.m-3 { margin: 0.75rem; }
+.p-5 { padding: 1.25rem; }
+```
+
+变体:(Variants)
+
+``` js
+variants: [
+  // support `hover:` for all rules
+  {
+    match: s => s.startsWith('hover:') ? s.slice(6) : null,
+    selector: s => `${s}:hover`,
+  },
+  // support `!` prefix to make the rule important
+  {
+    match: s => s.startsWith('!') ? s.slice(1) : null,
+    rewrite: (entries) => {
+      // append ` !important` to all css values
+      entries.forEach(e => e[1] += ' !important')
+      return entries
+    },
+  }
+]
+```
+
+
+预设
+
+提供了一些预设，以便快速使用`@unocss/preset-uno`
+
+
+ml-3(Tailwind)、ms-2(Bootstrap)、ma4(Tachyons)、mt-10px(Windi CSS)
+```css
+.ma4 { margin: 1rem; }
+.ml-3 { margin-left: 0.75rem; }
+.ms-2 { margin-inline-start: 0.5rem; }
+.mt-10px { margin-top: 10px; }
+```
+
+
+
+
+Attributify 模式
+
+它将你的 Tailwind 代码从以下内容变成：
+``` html
+<button class="bg-blue-400 hover:bg-blue-500 text-sm text-white font-mono font-light py-2 px-4 rounded border-2 border-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600">
+  Button
+</button>
+
+
+<button
+  bg="blue-400 hover:blue-500 dark:blue-500 dark:hover:blue-600"
+  text="sm white"
+  font="mono light"
+  p="y-2 x-4"
+  border="2 rounded blue-200"
+>
+  Button
+</button>
+```
+
+
+仅仅用了一个[变体](https://github.com/unocss/unocss/blob/main/packages/preset-attributify/src/variant.ts) 和 一个[提取器](https://github.com/antfu/unocss/blob/main/packages/preset-attributify/src/extractor.ts)
+
+
+
+后续省略<https://antfu.me/posts/reimagine-atomic-css>
