@@ -1770,3 +1770,18 @@ Attributify 模式
 
 
 后续省略<https://antfu.me/posts/reimagine-atomic-css>
+
+
+
+### 06.21
+
+1. 领域驱动数据: <https://tech.meituan.com/2017/12/22/ddd-in-practice.html>
+
+
+
+### 06.24
+
+1. 值的去学习源码的库 <https://www.zhihu.com/question/29380608/answer/2972536238>
+2. 碰撞库，效果和moego官网效果一致。 <https://codepen.io/dissimulate/pen/DpyGzy> <https://www.moego.pet/>
+3. txw题库: 容器内随机摆放单词的游戏板块设计。核心在网格和四分法碰撞检测,网格划分用于快速确认位置，四叉树优化碰撞检测，减少算法的复杂度。
+4. 设计 + 效果 + 特别厉害 https://www.yuque.com/hhhhuazi/gwyv4u/olh1d06glzf7p4c4
