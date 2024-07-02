@@ -1785,3 +1785,161 @@ Attributify 模式
 2. 碰撞库，效果和moego官网效果一致。 <https://codepen.io/dissimulate/pen/DpyGzy> <https://www.moego.pet/>
 3. txw题库: 容器内随机摆放单词的游戏板块设计。核心在网格和四分法碰撞检测,网格划分用于快速确认位置，四叉树优化碰撞检测，减少算法的复杂度。
 4. 设计 + 效果 + 特别厉害 https://www.yuque.com/hhhhuazi/gwyv4u/olh1d06glzf7p4c4
+
+
+#### 06.25
+ 
+1. 如何修改行内样式 
+
+``` js
+const style = document.createElement('style');
+style.innerHTML = `
+  #director > :last-child {
+    // 你要加的样式 !important
+  }
+`;
+document.head.insertAdjacentElement('beforeend', style);
+```
+
+
+
+#### 06.26
+
+
+1. 问题： 
+
+css变量是hex色的，怎么在css里转成rgba带透明去用，不用js的话
+
+color-mix(in srgb, var(--变量) 80%, transparent);
+
+这个80%就是你想要的透明度
+
+2. vue 多根节点
+
+``` vue
+<script setup>
+import { ref } from 'vue'
+
+const contracts = ref([])
+</script>
+
+<template>
+  <div v-if="contracts.length" class="contract-list">
+    <div
+      v-for="item in contracts"
+      :key="item.id"
+      class="item"
+      @click="viewContract(item.contractNo, item.title)"
+    >
+      <div class="name">{{ item.title }}</div>
+      <div class="icon"></div>
+    </div>
+  </div>
+  <div v-else class="no-list">
+    <img
+      class="empty-img"
+      src="https://xcfs-public.xystatic.com/100051/loans/empty-bg.png"
+      alt=""
+    />
+    未查询到合同，如有疑问请联系在线客服
+  </div>
+</template>
+``` 
+
+
+加 div 和 加 div注释 和 不加 render的效果都不一样。
+
+
+### 06.27
+
+1.  一个gride 布局  姓名 卡号 复制 对齐的
+
+![](https://pic.imgdb.cn/item/667e6d3ad9c307b7e95ccd17.png)
+![](https://pic.imgdb.cn/item/667e6d3ad9c307b7e95ccd60.jpg)
+
+
+2. Set 新版本用法
+
+求交 并 补集
+
+``` js
+const a = new Set([1,2,3,4,5])
+
+const b = new Set([1,2,3,6,7,8])
+
+// 返回一个包含此集合和给定集合中的元素的新集合。
+a.intersection(b); //  1,2,3
+// 返回包含此集合和给定集合中所有元素的新集合。
+a.union(b); //  1,2,3,4,5,6,7,8
+// 返回一个新集合，其中包含此集合中的元素但不包含在给定集合中的元素。
+a.difference(b); //  4,5
+// 返回一个新集合，其中包含任一集合中的元素，但不同时包含两者中的元素。
+a.symmetricDifference(b); //  4,5,6,7,8
+// 返回一个布尔值，指示集合的所有元素是否都在特定集合中。
+a.isSubsetOf(b); //  false
+// 返回一个布尔值，指示集合的所有元素是否都在特定集合中。 类似完全相等
+a.isSupersetOf(b); // false
+// 返回一个布尔值，指示该集合是否与特定集合没有共同的元素。
+a.isDisjointFrom(b); //  false
+```
+
+
+3. groupby作用
+
+promise.allSettled()返回以下数据，
+
+```js
+const settled = [
+  { status: 'rejected', reason: 'Jhon' },
+  { status: 'fulfilled', value: 'Jane' },
+  { status: 'fulfilled', value: 'John' },
+  { status: 'rejected', reason: 'Jaen' },
+  { status: 'rejected', reason: 'Jnoh' },
+];
+
+
+const {fulfilled, rejected} = Object.groupBy(settled, x => x.status);
+// 这样我们就能获取到不同状态的内容
+```
+
+
+或者我们想按过肩对人员进行分组
+
+``` js
+const persons = [
+  { name: 'Louise', country: 'France' },
+  { name: 'Felix', country: 'Germany' },
+  { name: 'Ava', country: 'USA' },
+  { name: 'Léo', country: 'France' },
+  { name: 'Oliver', country: 'USA' },
+  { name: 'Leni', country: 'Germany' },
+];
+
+
+Map.groupBy(persons, (person) => person.country)
+
+// 对于这种用例，Map.groupBy()是一个更好的选择，因为我们可以在 Maps 中使用任意键，而在对象中，键仅限于字符串和符号。
+
+```
+
+
+4. 音频波形播放器 <https://wavesurfer.xyz/>
+
+## 07.02
+
+鲨鱼的笔试题
+   
+1. 实现一个 flat 函数
+输入：
+const obj = {
+  a: 1,
+  b: [1, 2, { c: true }, [3]],
+  d: { e: 2, f: 3 },
+  g: null,
+};
+输出：
+"{a: 1, b[0]: 1, b[1]: 2, b[2].c: true, b[3]: 3, d.e: 2, d.f: 3, g: null}"
+
+2. 实现 Cash class，用来计算人命币，有 add, sub 方法，需要将输入的 value 格式化，最后返回 "x 元 x 角 x 分"
+
+3. 实现 obj[1][2][3] + 10 = 16
