@@ -1961,3 +1961,10 @@ const dy = [-2, 2, -2, 2, -1, 1, -1, 1];
 
 
 比如给你个象棋棋盘，在 startX、startY 处有个马，其余各处有若干棋子；问这个马不断走日，最终能吃掉哪些棋子（不考虑蹩马腿的情况
+
+## 07.05
+
+1. learn-git-the-super-hard-way : https://github.com/b1f6c1c4/learn-git-the-super-hard-way?tab=readme-ov-file
+2. git 小游戏  https://learngitbranching.js.org/?locale=zh_CN
+3. CSS和网页界面最新动态 : <https://developer.chrome.com/blog/new-in-web-ui-io-2024?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-588-july-3-2024&hl=zh-cn#live-demo_1>
+4. 克服事件循环node 深入研究<https://trigger.dev/blog/event-loop-lag>
