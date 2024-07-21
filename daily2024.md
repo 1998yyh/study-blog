@@ -1968,3 +1968,96 @@ const dy = [-2, 2, -2, 2, -1, 1, -1, 1];
 2. git 小游戏  https://learngitbranching.js.org/?locale=zh_CN
 3. CSS和网页界面最新动态 : <https://developer.chrome.com/blog/new-in-web-ui-io-2024?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-588-july-3-2024&hl=zh-cn#live-demo_1>
 4. 克服事件循环node 深入研究<https://trigger.dev/blog/event-loop-lag>
+
+
+## 07.11 
+
+1. 这篇文章的目的是“激发你的灵感，并向你展示跳出固有的思维模式可以创造出一些很棒的动画”——所有这些都是通过非常强大的clip-pathCSS 属性的魔力来实现的。 https://emilkowal.ski/ui/the-magic-of-clip-path
+
+
+## 07.18
+
+1. canvas 放到webworker 中绘制
+
+比如我们正常绘制一个canvas
+``` js
+const drawSunshine = () => {
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d')
+
+  const lines = 500;
+
+  const fontSize = 20;
+
+  ctx.font = fontSize + 'px Arial';
+  ctx.fillStyle = 'orange';
+
+  const text = 'sunshine';
+  const wordsPerLine = 10000;
+
+  const lineHeight = fontSize * 12;
+
+  for(let i = 0; i< lines;i++){
+    let line = '';
+    for(let j = 0; j<wordsPerLine;j++){
+       line += `${text} - ${i+1} - ${j}`
+    }
+
+    requestAnimationFrame(()=>{
+      ctx.fillText(line,0,(i+1)*lineHeight)
+    })
+  }
+}
+
+const computedTotal = ()=>{
+  const total = new Array(100).fill(0).reduce((pre,_,index)=>{
+    return pre + index + 1;
+  },0)
+}
+
+drawSunshine();
+
+computedTotal();
+```
+
+这样会阻塞主进程的代码，导致后续流程被阻塞
+
+
+我们平时在遇到这类情况的时候，十有八九第一时间都会想到 Web Worker
+
+但是问题来了：正常来说，Web Worker 中可获取不了 DOM，做不了画布绘制呀
+
+估计会有人想：那我们可以把 Canvas 的 DOM 节点传入 Web Worker 中吗？
+
+发现会报错，因为 postMessage 传数据的时候会进行深拷贝，而 DOM 节点无法被深拷贝
+
+不得不说 JavaScript 是真的强大，早就为我们准备好了一个 API ，那就是 transferControlToOffscreen
+
+有了这个 API ，我们就可以把 Canvas 的 DOM 节点以另一种方式传入 Web Worker 了！！！我们也能在 Web Worker 中去进行 Canvas 的绘制，进而优化主线程的代码执行效率！！
+
+首先改造一下 drawSunshine，现在只需要传入 Canvas DOM，不需要在主线程去做绘制
+
+
+``` js
+const drawSunshine = ()=>{
+  const canvas = document.getelementById('myCanvas').transferControlToOffscreen();
+  const worker = new Worker('./worker.js')
+  worker.postMessage({
+    canvas
+  },[canvas])
+
+  worker.onmessage = res=>{
+    console.log('end')
+  }
+}
+```
+
+
+2. flex justify-content 一些属性
+
+![](https://pic.imgdb.cn/item/6698db9cd9c307b7e98d976a.png)
+
+
+## 07.19
+
+1. https://js1024.fun/ 限制使用1k的代码量 看能写出什么花 特别强
