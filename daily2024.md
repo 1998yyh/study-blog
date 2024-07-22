@@ -2061,3 +2061,15 @@ const drawSunshine = ()=>{
 ## 07.19
 
 1. https://js1024.fun/ 限制使用1k的代码量 看能写出什么花 特别强
+
+
+## 07.21
+
+1. https://huggingface.co/spaces/xichenhku/MimicBrush 图片替换部分的AIGC
+2. 激活 windows office https://github.com/massgravel/Microsoft-Activation-Scripts
+3. 微软开源的 一些学习资料 https://github.com/microsoft/xr-development-for-beginners
+4. 免费API https://github.com/public-apis/public-apis
+5. 编程书籍 https://github.com/EbookFoundation/free-programming-books/blob/main/books/free-programming-books-zh.md
+6. freecode https://github.com/freeCodeCamp/freeCodeCamp?tab=readme-ov-file
+7. 微信机器人 https://github.com/AutumnWhj/ChatGPT-wechat-bot?tab=readme-ov-file
+8. cosyVoice  https://github.com/FunAudioLLM/CosyVoice.git
