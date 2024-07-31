@@ -2073,3 +2073,8 @@ const drawSunshine = ()=>{
 6. freecode https://github.com/freeCodeCamp/freeCodeCamp?tab=readme-ov-file
 7. 微信机器人 https://github.com/AutumnWhj/ChatGPT-wechat-bot?tab=readme-ov-file
 8. cosyVoice  https://github.com/FunAudioLLM/CosyVoice.git
+
+
+## 07.30
+
+1. sharedArrayBuffer问题 https://zhuanlan.zhihu.com/p/556051833?utm_id=0
