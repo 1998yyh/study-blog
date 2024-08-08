@@ -2078,3 +2078,93 @@ const drawSunshine = ()=>{
 ## 07.30
 
 1. sharedArrayBuffer问题 https://zhuanlan.zhihu.com/p/556051833?utm_id=0
+
+## 08.01
+
+   
+1. 浏览器GC
+
+Q: 不明白浏览器的gc策略为什么这么激进 我也不差这点内存啊 一共就回收了几m的内存 GC时间占了50%  导致页面进入了长任务  他为啥就不能等代码执行完了 空闲的时候GC吗
+
+A: 能触发 v8 的 minor gc，说明新生代已经占了 80% 了
+A: minor gc 只是普通的 scanvage，处理新生代；major gc 则是要处理老生代了
+A: 如果我发现新生代突然被占了 80%，那我也回收。。不然没法创建新对象了
+A: 除非把阈值再调高一点，然后被人喷说 chrome 内存占用怎么又变多了
+A: 频繁触发 gc 的原因很简单：你一次性创建的新对象太多了
+A: 回收的少不意味着它在做无用功，而是它回收的时候你的大部分对象都还没办法删掉
+
+
+2. 函数垃圾回收
+
+``` js
+function demo() {
+  const bigArrayBuffer = new ArrayBuffer(100_000_000);
+  const id = setTimeout(() => {
+    console.log(bigArrayBuffer.byteLength);
+  }, 1000);
+
+  return () => clearTimeout(id);
+}
+
+globalThis.cancelDemo = demo();
+```
+
+引擎看到bigArrayBuffer被内部函数引用，因此它被保留下来。它与demo()被调用时创建的范围相关联。
+一秒钟后，引用的函数bigArrayBuffer不再可调用。
+但是，范围仍然存在，因为“取消”函数仍然可以调用。
+bigArrayBuffer与范围相关，因此它保留在内存中。
+
+
+``` js
+function demo() {
+  const bigArrayBuffer = new ArrayBuffer(100_000_000);
+
+  globalThis.innerFunc1 = () => {
+    console.log(bigArrayBuffer.byteLength);
+  };
+
+  globalThis.innerFunc2 = () => {
+    console.log('hello');
+  };
+}
+
+demo();
+// bigArrayBuffer is retained, as expected.
+
+globalThis.innerFunc1 = undefined;
+// bigArrayBuffer is still retained, as unexpected.
+
+globalThis.innerFunc2 = undefined;
+// bigArrayBuffer can now be collected.
+```
+
+
+## 08.02
+
+1. 一个实验性的预编译 JavaScript 编译器/运行时，可编译为 WASM 或本机。
+
+https://porffor.dev/
+
+
+2. 在最新版本的node中 我们可以通过 增加`--experimental-strip-types` 来直接运行ts
+
+
+## 08.05
+
+1. 怎么用 calc(), 在 变量 0的时候等于 0, 变量大于 0 的时候==4
+
+``` css
+width: calc(var(--n) / (var(--n) + 1e-10) * 4)
+```
+
+
+## 08.07
+
+1. 圆角不规则图形的通解
+![](https://pic.imgdb.cn/item/66b2ef24d9c307b7e94d2ce2.png)
+
+https://codepen.io/Chokcoco/pen/vYqZQmO
+
+
+2. https://www.youtube.com/watch?v=kj7WGnUDaI4 一个css视频 听说这个人蛮厉害的 可以看看
+

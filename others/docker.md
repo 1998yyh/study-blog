@@ -84,3 +84,22 @@ Docker 的镜像与虚拟机中的镜像还是有一定区别的。首先，之�
 
 在 Docker 中，通过这几种方式进行数据共享或持久化的文件或目录，我们都称为数据卷 ( Volume )。
 
+
+
+
+## 随便记
+
+1. docker run -d --restart=always --name=restart-test-container2 restart-test:first
+可以通过增加 --restart 来重启
+
+
+2. docker run -d --restart=on-failure:2 --name=restart-test-container4 restart-test:first
+
+
+失败超过两次就不重启了
+
+
+3. docker run -d --restart=unless-stopped --name=restart-test-container5 restart-test:first
+
+
+除非是手动停止 不然就会停止。
