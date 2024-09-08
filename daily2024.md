@@ -442,7 +442,7 @@ function formatNumber(num) {
 
 ## 2.2
 
-1. 水文发现的一个 Array.map 比 Array.foreach 在 gzip 压缩的场景下 会笑 3kb
+1. 水文发现的一个 Array.map 比 Array.foreach 在 gzip 压缩的场景下 会小 3kb
 
 ```js
 
@@ -2168,3 +2168,102 @@ https://codepen.io/Chokcoco/pen/vYqZQmO
 
 2. https://www.youtube.com/watch?v=kj7WGnUDaI4 一个css视频 听说这个人蛮厉害的 可以看看
 
+
+## 08.13
+
+1. css效果 ， 通过定位 + 混合模式 + mask 实现的光影效果 https://codepen.io/rodzyk/pen/WNPgPOd
+2. gird 教程 https://ishadeed.com/article/css-grid-area/
+3. github diff 算法`myers-diff` https://blog.jcoglan.com/2017/02/12/the-myers-diff-algorithm-part-1/
+4. AI模型工具 https://github.com/lobehub/lobe-chat
+
+5. NP 问题 
+
+通俗地说，它问的是，每个可以快速验证其解决方案的问题是否也可以快速解决。
+
+举个例子： 比如求大整数99400891的两个质因子是很难的，但是若告知9967,9973，验证他们是 99400891 的两个质因子是可以在多项式时间内实现的。
+
+4. 多项式时间：指的是一个问题的计算时间 `m(n) 时间复杂度` 不大于问题大小 n 的多项式倍数 `O(n的k次方)`
+5. LCS： 最长公共子序列
+
+
+
+## 08.22
+
+
+1. 64匹马 8个赛道 计算出前8的马 需要计算几场？
+2. sass 在vite版本 5.4 后可以使用 `sass-embedded` 同时开启
+
+速度会提高
+
+``` json
+css: {
+  preprocessorOptions: {
+    scss: {
+      api: 'modern-compiler',
+    }
+  }
+},
+```
+
+
+3. 功能检测@property支持 + 样式查询
+
+``` css
+@property --support-sentinel {
+	syntax: "<number>";
+	initial-value: 1;
+	inherits: false;
+}
+
+:root {
+	--supported: var(--support-sentinel, 0);
+}
+
+/* No support */
+body {
+	background: red;
+}
+
+/* Has support */
+@container style(--supported: 1) {
+	body {
+		background: green;
+	}
+}
+```
+
+
+同理我们可以试出 @starting-style 的支持性
+
+
+``` css
+@property --supported {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+:root {
+  transition: --supported 0s calc(infinity * 1s);
+}
+@starting-style {
+  :root {
+    --supported: 1;
+  }
+}
+
+body {
+  background: red;
+}
+
+@container style(--supported: 1) {
+  body {
+    background: green;
+  }
+}
+```
+
+
+
+## 09.08
+
+1. https://upscayl.org/ 图片高清化处理功能
