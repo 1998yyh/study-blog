@@ -2267,3 +2267,69 @@ body {
 ## 09.08
 
 1. https://upscayl.org/ 图片高清化处理功能
+
+
+
+## 09.18
+
+1. 一份TSconfig
+
+``` json
+{
+  "compilerOptions": {
+    /* Base Options: */
+    // 帮助修复 CommonJS 和 ES 模块之间的一些缺陷。
+    "esModuleInterop": true,
+    // 跳过检查文件类型.d.ts。这对于性能很重要，因为否则node_modules将检查所有内容。
+    "skipLibCheck": true,
+    // 您目标的 JavaScript 版本。为了稳定，我建议es2022使用以上版本。esnext
+    "target": "es2022",
+    // 允许您导入.js和.json文件。总是有用的。
+    "allowJs": true,
+    "resolveJsonModule": true,
+    // 此选项强制 TypeScript 将所有文件视为模块。这有助于避免“无法重新声明块范围变量”错误。
+    "moduleDetection": "force",
+    // 此选项可防止一些将模块视为独立文件时不安全的 TS 功能。
+    "isolatedModules": true,
+    // 此选项强制您使用import type和export type，从而实现更可预测的行为和更少的不必要的导入。使用module: NodeNext，它还会强制您使用正确的 ESM 或 CJS 导入语法。
+    "verbatimModuleSyntax": true,
+
+    /* Strictness */
+    // 启用所有严格类型检查选项。不可或缺。
+    "strict": true,
+    // 阻止您访问数组或对象，除非先检查其是否已定义。这是防止运行时错误的好方法，应该包含在内strict。
+    "noUncheckedIndexedAccess": true,
+    // 使override关键字在课堂上真正有用。
+    "noImplicitOverride": true,
+
+    /* If transpiling with TypeScript: */
+    // 告诉 TypeScript 使用什么模块语法。NodeNext是 Node 的最佳选项。
+    "module": "NodeNext",
+    // NodeNext是从此选项隐含的。
+    "outDir": "dist",
+    // 告诉 TypeScript 将编译后的 JavaScript 文件放在哪里。dist是我喜欢的惯例，但这取决于你。
+    "sourceMap": true,
+
+    /* AND if you're building for a library: */
+    "declaration": true,
+
+    /* AND if you're building for a library in a monorepo: */
+    "composite": true,
+    "declarationMap": true,
+
+    /* If NOT transpiling with TypeScript: */
+    "module": "preserve",
+    "noEmit": true,
+
+    /* If your code runs in the DOM: */
+    "lib": ["es2022", "dom", "dom.iterable"],
+
+    /* If your code doesn't run in the DOM: */
+    "lib": ["es2022"]
+  }
+}
+```
+
+
+2. 日常工作中可能用到的pen `https://codepen.io/collection/nMgKxJ`
+3. 剪切板功能 细节东西 不重要 `https://alexharri.com/blog/clipboard`
