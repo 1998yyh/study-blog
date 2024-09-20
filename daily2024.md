@@ -2333,3 +2333,8 @@ body {
 
 2. 日常工作中可能用到的pen `https://codepen.io/collection/nMgKxJ`
 3. 剪切板功能 细节东西 不重要 `https://alexharri.com/blog/clipboard`
+
+
+## 09.19
+
+1. https://briantree.se/css-grid-can-do-that/ grid 常见用法
