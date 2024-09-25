@@ -2338,3 +2338,8 @@ body {
 ## 09.19
 
 1. https://briantree.se/css-grid-can-do-that/ grid 常见用法
+
+
+## 09.25
+
+1. sql 获取时间戳的时候 基本是s 单位 因为存进去的就是s 如果用ms比较会有问题。
