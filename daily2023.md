@@ -1417,7 +1417,7 @@ quic 作为一个新协议，并且不容易被阻断，那直接一刀切
 
 1. 发现一个图片服务
 
-https://fastly.picsum.photos/1920/1080
+https://picsum.photos/200/300
 
 1. 如果一个元素行内设置了`color：red !important`
 

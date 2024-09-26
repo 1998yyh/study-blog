@@ -2343,3 +2343,97 @@ body {
 ## 09.25
 
 1. sql 获取时间戳的时候 基本是s 单位 因为存进去的就是s 如果用ms比较会有问题。
+
+
+## 09.26
+
+1. 我们使用TypeOrm 的 createQueryBuilder 来查询时 ， 结尾使用 getMany 或者 geyRawMany 两者的区别是
+
+getRawMany()因为你想选择你的实体的某些指定字段
+
+getMany()它会返回关注的实体数组
+
+
+2. position:sticky 不能脱离父元素的边界 
+
+https://www.smashingmagazine.com/2024/09/sticky-headers-full-height-elements-tricky-combination/?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-594-september-24-2024&_bhlid=36fa82e3edcf94db5388fda5f8b1e7c8147fe527
+
+
+3. 重定向检查器
+
+https://www.redirectchecker.org/?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-594-september-24-2024&_bhlid=8842b3864a5ba7100314e725294127cb3d4cdcdd
+
+
+4. css 新值 与 新函数
+
+https://alvaromontoro.com/blog/68062/new-values-and-functions-in-CSS?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-594-september-24-2024&_bhlid=c3564a85d7e5e6a8e9f43852f577224dd158af04
+
+
+5. chrome Devtools 新增了 lcp cls inp 等性能数据 
+6. https://css-tricks.com/almanac/ csstricks 提供的年鉴 统计了大部分数据 和 使用规则
+7. 子组件支持 uniapp 的生命周期 https://github.com/dcloudio/uni-app/issues/2702
+8. 登录相关的内容 https://mp.weixin.qq.com/s/TsqnsvYP0nnJvN-BCdC_Og
+9. 枚举存在的问题
+
+强制使用枚举值
+``` ts
+enum PackStatus {
+  Draft = "Draft",
+  Approved = "Approved",
+  Shipped = "Shipped",
+}
+
+const logStatus = (status: PackStatus) => {
+  console.log(status);
+};
+
+// 只能使用枚举值
+logStatus(PackStatus.Draft);
+
+// 虽然值一样 但是会报错
+logStatus("Draft");
+
+
+enum PackStatus2 {
+  Draft = PackStatus.Draft,
+}
+
+
+// 即便是引用 也会报错
+logStatus(PackStatus2.Draft);
+```
+
+10. 类型化 `process.env` 
+
+全局增加类型
+
+``` ts
+// globals.d.ts
+namespace NodeJS {
+  interface ProcessEnv {
+    MY_ENV_VARIABLE: string;
+  }
+}
+```
+
+使用库 `t3-env`
+
+``` ts
+import { createEnv } from "@t3-oss/env-core";
+import { z } from "zod";
+
+export const env = createEnv({
+  server: {
+    DATABASE_URL: z.string().url(),
+    OPEN_AI_API_KEY: z.string().min(1),
+  },
+  clientPrefix: "PUBLIC_",
+  client: {
+    PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+  },
+  runtimeEnv: process.env,
+});
+```
+
+
+
