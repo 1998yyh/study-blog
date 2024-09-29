@@ -2437,3 +2437,37 @@ export const env = createEnv({
 
 
 
+
+
+## 09.27
+
+1. 改了dockerFile 或者 docker-compose.yml 重新跑的话 需要调用
+
+``` 
+docker-compose down --rmi all
+```
+
+
+2. 阿里云服务器 访问github 比较慢 需要手动去设置hosts 在`/etc/hosts` 
+3. 拉取docker镜像 网络问题  
+
+修改docker 设置  vi /etc/docker/daemon.json
+
+``` json
+// 阿里云
+{
+ "registry-mirrors":["https://6kx4zyno.mirror.aliyuncs.com"]
+}
+// 中科院
+{
+ "registry-mirrors":["https://docker.mirrors.ustc.edu.cn"]
+}
+
+```
+
+然后重启docker服务   
+``` 
+systemctl daemon-reload
+systemctl restart docker
+```
+
