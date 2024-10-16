@@ -2471,3 +2471,33 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
+
+## 09.29 
+
+1. 使用阿里云镜像仓库的时候 如果本地登录过  会报错
+
+
+``` 
+Error response from daemon: Get "https://crpi-0822sqe9pdavunw3.cn-hangzhou.personal.cr.aliyuncs.com/v2/": unauthorized: authentication
+```
+
+首先使用`sudo` 登录看下 如果还有问题
+
+删除 `~/.docker/config.json` 重新登录 就可以了
+
+
+
+2. m1 构建出 镜像 在linux 上跑不了 
+
+需要制定plantform 
+
+```
+docker build -t fe-container:first --platform linux/amd64 .
+```
+
+
+## 10.12
+
+overscroll-behavior: contain 
+
+可以阻止mac侧滑 

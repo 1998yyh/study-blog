@@ -336,7 +336,5 @@ Object.defineProperty(store, "$state", {
   },
 });
 
-
-
 ```
 
