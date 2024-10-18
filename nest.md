@@ -71,4 +71,22 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
 
 ### 维护
 
-我们维护 
+我们维护  monorepo + Library
+
+通过命令 再添加一个nest项目
+
+``` 
+nest g app app2
+
+```
+
+
+项目多了 公共代码如何复用
+
+``` 
+nest g lib lib1
+
+```
+
+
+### 配置中心 注册中心

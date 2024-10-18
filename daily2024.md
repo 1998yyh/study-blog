@@ -2501,3 +2501,65 @@ docker build -t fe-container:first --platform linux/amd64 .
 overscroll-behavior: contain 
 
 可以阻止mac侧滑 
+
+
+## 10.17
+
+1. uniapp 使用pinia 循环引用问题
+
+![](https://pic.imgdb.cn/item/6710e4e0d29ded1a8c23fa0e.png)
+
+
+2. pinia store 导出函数还是实例？ 
+
+
+``` js
+
+
+``` 
+
+
+3. Generator 的代码
+
+``` js
+
+const range = (...rest) => {
+  if(rest.length === 0){
+    throw new Error('range need two paramters, but get 0!')
+  }
+
+  let [start,end] = rest;
+
+  if(rest.length === 1){
+    [start,end] = [0,start]
+  }
+
+  function* _(){
+    while(true){
+      console.log(start)
+      yield start++;
+    }
+  }
+
+  return [..._().take(end-start)]
+}
+
+```
+
+
+4. 斐波那契数列
+
+```js
+function* fibonacci(){
+  let [prev,curr] = [0,1];
+  for(;;){
+    yield curr;
+    [prev,curr] = [curr,prev+curr];
+  }
+}
+
+for(let n of fibonacci().take(10)){
+  console.log(n)
+}
+
+```
