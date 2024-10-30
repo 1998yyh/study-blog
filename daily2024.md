@@ -2563,3 +2563,62 @@ for(let n of fibonacci().take(10)){
 }
 
 ```
+
+
+## 10.30
+
+1. 选择第一次出现的`<span>`但忽略其层次结构。
+
+``` html
+<div>
+  <h1>Select the first occurrence of span</h1>
+  <p>
+    <span>HIT ME</span>
+    <div>
+      <span>MISS ME 1</span>
+      <span>MISS ME 2</span>
+      <span>MISS ME 3</span>
+    </div>
+    <span>MISS ME 4</span>
+    <span>MISS ME 5</span>
+  </p>
+  <p>
+    <span>MISS ME 6</span>
+    <span>MISS ME 7</span>
+  </p>
+</div>
+<div>
+  <p>
+    <span>MISS ME 7</span>
+    <span>MISS ME 8</span>
+  </p>
+  <p>
+    <span>MISS ME 9</span>
+    <span>MISS ME 10</span>
+    <span>MISS ME 11</span>
+  </p>
+  <p>
+    <span>MISS ME 12</span>
+    <span>MISS ME 13</span>
+    <span>MISS ME 14</span>
+    <div>
+      <span>MISS ME 15</span>
+      <span>MISS ME 16</span>
+      <span>MISS ME 17</span>
+    </div>
+  </p>
+</div>
+```
+
+前面没有同级 span 元素
+前面没有包含 span 元素的兄弟元素
+没有其祖先元素之前有同级 span 元素
+没有包含 span 元素的兄弟元素作为其祖先
+
+
+``` css
+span:not(span ~ span):not(:has(span) ~ span):not(span ~ * span):not(:has(span) ~ * span) {
+  color: red;
+  font-weight: bold;
+}
+```
