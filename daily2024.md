@@ -2622,3 +2622,12 @@ span:not(span ~ span):not(:has(span) ~ span):not(span ~ * span):not(:has(span) ~
   font-weight: bold;
 }
 ```
+
+
+## 10.31
+
+1. 软链接方式
+
+``` js
+ln -s a.js b.js
+```
