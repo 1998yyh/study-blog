@@ -2631,3 +2631,36 @@ span:not(span ~ span):not(:has(span) ~ span):not(span ~ * span):not(:has(span) ~
 ``` js
 ln -s a.js b.js
 ```
+
+
+
+## 11.1 
+
+
+1. nth-child 选择器问题
+
+``` css
+li:nth-child(-n+3).noted{
+  color:red;
+}
+
+li.noted:nth-child(-n + 3){
+  color:red;
+}
+
+li:nth-child(-n + 3 of .noted){
+    color:red;
+}
+```
+
+-n + x 表示前几个元素
+
+
+
+## 11.6
+
+1. 递归删除 node_modules
+
+``` js
+pnpm -r exec rm -rf node_modules
+```
