@@ -14,7 +14,7 @@
 
 ## 1.5
 
-一个效果
+一个效果 主要是lh 这个单位
 
 <https://codepen.io/wheatup/pen/PoLZLXZ/a340269f2d6ebcfc371994574e396ea1?editors=1100>
 
@@ -2664,3 +2664,52 @@ li:nth-child(-n + 3 of .noted){
 ``` js
 pnpm -r exec rm -rf node_modules
 ```
+
+
+## 11.12
+
+1. vue-router BeforeRouterEnter 钩子函数 中 next 执行顺序问题
+
+
+``` vue
+
+<script>
+export default {
+  props:['query'],
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log('beforeRouteEnter')
+    })
+  },
+  actived(){
+    console.log('activated')
+  },
+  computed(){
+    myId(){
+      console.log('myId')
+      return this.query.id
+    },
+    myName(){
+      console.log('myName')
+      return this.query.name
+    }
+  }
+}
+</script>
+
+```
+
+按照上述的顺序执行，
+
+第一次进入 会先执行  myId -> myName -> activated -> beforeRouteEnter
+第二次进入 会先执行  beforeRouteEnter ->  myId -> activated -> myName
+
+
+
+2. vue-router sentry 报错
+
+`Navigation cancelled from "/customer/login" to "/customer/dashboard" with a new navigation` 
+
+这个从根本上来说 是官网看的不够仔细  <https://router.vuejs.org/guide/advanced/navigation-failures.html>
+
+我们从一个路由跳转到另一个路由的过程是一个异步的 如果在此过程中 再跳转一次 会取消前一次跳转 。 这个时候就会报这个错
