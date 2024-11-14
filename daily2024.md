@@ -2670,9 +2670,7 @@ pnpm -r exec rm -rf node_modules
 
 1. vue-router BeforeRouterEnter 钩子函数 中 next 执行顺序问题
 
-
-``` vue
-
+``` html
 <script>
 export default {
   props:['query'],
