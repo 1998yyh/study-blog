@@ -2711,3 +2711,36 @@ export default {
 这个从根本上来说 是官网看的不够仔细  <https://router.vuejs.org/guide/advanced/navigation-failures.html>
 
 我们从一个路由跳转到另一个路由的过程是一个异步的 如果在此过程中 再跳转一次 会取消前一次跳转 。 这个时候就会报这个错
+
+
+
+## 11.14
+
+1. 简单面试题
+
+找出数组中没有配对的唯一数字
+
+例如 输入`[1,2,3,4,5,1,2,3,4]` 输出 5
+``` js
+function solution(cards) {
+    let result = 0;
+    const len = cards.length;
+
+    for (let i = 0; i < len; i++) {
+        result ^= cards[i];
+        console.log(result)
+    }
+
+    return result;
+}
+```
+
+
+我们利用异或的特性 相同的数字异或为 0  0 异或任何数字 都为 数字本身
+
+
+## 11.15
+
+1. https://thomasorus.com/new-css-that-can-actually-be-used-in-2024.html css 2024年可以用的特性
+2. https://juejin.cn/post/7417656786565513228 Svelte 导出 web-component
+3. https://component-party.dev/#reactivity.computed-state 直观的对比几个现代框架的不同
