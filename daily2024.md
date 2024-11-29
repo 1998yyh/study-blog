@@ -2744,3 +2744,79 @@ function solution(cards) {
 1. https://thomasorus.com/new-css-that-can-actually-be-used-in-2024.html css 2024年可以用的特性
 2. https://juejin.cn/post/7417656786565513228 Svelte 导出 web-component
 3. https://component-party.dev/#reactivity.computed-state 直观的对比几个现代框架的不同
+
+
+## 11.21
+
+
+1. array.fromAsync 方法
+
+``` js
+const asyncIterable = (async function* (){
+  for(let i = 0;i<5;i++){
+    await new Promise(resolve => setTimeout(resolve,10*i))
+    yield i
+  }
+})()
+
+const result = await Array.fromAsync(asyncIterable).then(console.log)
+
+```
+
+
+2. Object.groupBy
+3. Set 方法
+
+## 11.29
+
+
+1. background-clip:border-area; 创意边框  
+
+`https://webkit.org/blog/16214/background-clip-border-area/`
+
+2. text-wrap: pretty 避免孤行
+
+``` 
+Lorem ipsum dolor sit amet consectetur 
+adipisicing elit. Deserunt excepturi 
+distinctio aliquam at consequatur 
+porro obcaecati nihil adipisci numquam 
+sed, nemo quo alias asperiores animi ut 
+necessitatibus corporis. Quaeaaaaaaaa. 
+😄
+
+
+Lorem ipsum dolor sit amet consectetur 
+adipisicing elit. Deserunt excepturi 
+distinctio aliquam at consequatur porro 
+obcaecati nihil adipisci numquam sed, 
+nemo quo alias asperiores animi ut 
+necessitatibus corporis. 
+Quaeaaaaaaaa. 😄
+
+
+```
+
+3. 又是view-transiton 并且配合 mutation-observer 自动触发
+
+https://www.bram.us/2024/11/25/experiment-automatically-triggered-view-transitions-with-mutationobserver/?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-600-november-27-2024&_bhlid=1cf41f12d44b003b690aeb7851c26c905d34cd46
+
+
+
+4. @scope() 限制作用域 避免继承
+
+``` css
+@scope (.parent) {
+ /* Styles written here will only affect .parent */
+}
+
+@scope (.parent) to (.content) {
+  /* Styles written here will only affect .parent but skip .content*/
+}
+
+```
+
+
+5. vite6.0 发布
+6. puppeteer 的一个增强库 https://github.com/berstend/puppeteer-extra/tree/master/packages/puppeteer-extra
+7. ts 5.7 https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/
