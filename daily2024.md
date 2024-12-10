@@ -2820,3 +2820,8 @@ https://www.bram.us/2024/11/25/experiment-automatically-triggered-view-transitio
 5. vite6.0 发布
 6. puppeteer 的一个增强库 https://github.com/berstend/puppeteer-extra/tree/master/packages/puppeteer-extra
 7. ts 5.7 https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/
+
+
+## 12.09 
+
+1. regex lastIndex 属性 作用是 指定下次匹配的起始位置
