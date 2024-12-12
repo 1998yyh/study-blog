@@ -2825,3 +2825,17 @@ https://www.bram.us/2024/11/25/experiment-automatically-triggered-view-transitio
 ## 12.09 
 
 1. regex lastIndex 属性 作用是 指定下次匹配的起始位置
+
+
+
+## 12.12 
+
+1. css 2024 
+
+https://chrome.dev/css-wrapped-2024/?utm_source=CSS-Weekly&utm_medium=newsletter&utm_campaign=issue-601-december-11-2024&_bhlid=545defd033f191cc7b0c0d9e9541096ec6a5cc91/
+
+
+2. hanging-punctuation : 指定标点符号是否应悬挂在文本行的开头或结尾。
+3. 手写SVG弧线
+
+https://www.smashingmagazine.com/2024/12/mastering-svg-arcs/
