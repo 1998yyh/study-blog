@@ -427,3 +427,57 @@ function getSequence (arr) {
 
 
 
+
+
+## 举例
+
+
+例如  
+
+新节点  a b c d e f g h 
+老节点  a b e c d i g h 
+
+初始值 i = 0; e1 = 7; ei = 7;
+
+1. 从头比较后 
+
+a 相同 b 相同 所以 i = 2
+
+2. 从尾比较后 
+
+h 相同 g 相同 e1 = 5 , e2 = 5;
+
+
+3. 然后 判断 无新增 无删除
+
+我们先构建一个新节点对应 新索引的对象 
+
+keyToNewIndexMap = {e: 2, c: 3, d: 4, i: 5}
+
+我们初始化一个 新节点在旧节点的位置数组 默认值是 0 
+
+newIndexToOldIndexMap = [0,0,0,0];
+
+遍历旧的节点数组，如果旧节点不存在于新节点中，则表示旧的节点其实是多余的节点，需要被移除。 根据keyToNewIndexMap 判断
+
+如果旧节点存在于新节点数组中，则将它在旧子序列中的位置信息记录到 newIndexToOldIndexMap 中，同时根据 newIndex 是否大于 maxNewIndexSoFar 来判断是否有节点移动。
+
+第一个 c 在新节点位置 是 3 index = 2 newIndexToOldIndexMap = [0,3,0,0] maxNewIndexSoFar = 3;
+第二个 d 在新节点位置 是 4 index = 3 newIndexToOldIndexMap = [0,3,4,0] maxNewIndexSoFar = 4;
+第三个 e 在新节点位置 是 2 index = 4 newIndexToOldIndexMap = [5,3,4,0] maxNewIndexSoFar = 4; 此时发生了移动
+第四个 f 在新节点位置 是 6 index = 5 newIndexToOldIndexMap = [5,3,4,0] maxNewIndexSoFar = 4; 
+
+
+4. 进行求取最长递增子序列的索引操作
+
+最长递增子序列的索引为 [1, 2]
+
+新的子序列为 e,c,d,i。
+
+最长递增子序列的索引为 [1, 2]。
+
+开始遍历到 i 节点时，因为 newIndexToOldIndexMap[i] = 0 所以新增，然后遍历到 c,d 节点，因为存在于最长子序列中，所以最后 j = -1。
+
+当遍历到 e 节点时，此时 j = -1 并且 e 节点不存在于最长递增子序列索引中，索引最后一步就是把节点 e 进行一次移动：
+
+其中 anchor 是参照物，记录着上一次更新的节点信息，也就是节点 c 的信息，所以这里的意思就是将节点 e 移动到节点 c 前面。

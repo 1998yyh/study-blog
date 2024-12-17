@@ -2839,3 +2839,33 @@ https://chrome.dev/css-wrapped-2024/?utm_source=CSS-Weekly&utm_medium=newsletter
 3. 手写SVG弧线
 
 https://www.smashingmagazine.com/2024/12/mastering-svg-arcs/
+
+
+
+## 12.16
+
+
+1. pnpm 发 npm 包 使用changeset 顺序
+
+
+``` csharp
+// 初始化
+npx changeset init
+
+// 生成变更信息
+npx changeset add
+
+// 生成更新版本信息
+npx changeset version
+
+
+git add .
+// 创建 commit 是因为 changeset 会给最新的 commit 打 tag。
+git commit -m '项目模版 1.1.0'
+
+npx changeset publish
+```
+
+
+
+2. DNS
