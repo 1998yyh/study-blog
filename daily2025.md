@@ -362,3 +362,15 @@ function b 加和不加 async 的效果是不一样的
 
 1. 5 个改变游戏规则的 GitHub 代码库，助你轻松应对编程面试
 https://javascript.plainenglish.io/top-5-github-repos-to-ace-your-coding-interviews-230b1d8506f4
+
+
+## 4.21
+
+1. Promise.finally 返回成功的promise 无效 返回失败的promise会拦截 
+
+``` js
+Promise.resolve(1).finally(()=>{
+  return 2
+})
+
+```
