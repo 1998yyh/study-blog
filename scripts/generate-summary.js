@@ -64,10 +64,15 @@ async function callQianwenAPI(prompt) {
 // 获取暂存区的文件列表
 const getStagedFiles = () => {
   const output = execSync("git diff --cached --name-only").toString();
-  return output
-    .split("\n")
-    .filter(Boolean)
-    .filter((file) => file.startsWith("others/"));
+  console.log("所有暂存的文件:", output);
+
+  const allFiles = output.split("\n").filter(Boolean);
+  console.log("处理后的文件列表:", allFiles);
+
+  const othersFiles = allFiles.filter((file) => file.startsWith("others/"));
+  console.log("others/ 目录下的文件:", othersFiles);
+
+  return othersFiles;
 };
 
 // 获取文件的修改内容
