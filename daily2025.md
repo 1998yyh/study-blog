@@ -6,18 +6,15 @@
 原因是 .gitignore 只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。
 那么解决方法就是先把本地缓存删除（改变成未track状态），然后再提交。
 
-
 git rm -r --cached .
 
 git add .
 
 git commit -m 'update .gitignore'
 
-
-# 3.14 
+# 3.14
 
 🤔 突然才发现 已经好久没有记录过学习知识了。 业务事可真多。
-
 
 ## 3.21
 
@@ -31,90 +28,89 @@ git commit -m 'update .gitignore'
 
 1. 关于资源请求失败，如何重新发起请求
 
-
-``` html
-<script src='www.aa.com/a.js'></script>
-<script src='www.aa.com/b.js'></script>
-<script src='www.aa.com/c.js'></script>
+```html
+<script src="www.aa.com/a.js"></script>
+<script src="www.aa.com/b.js"></script>
+<script src="www.aa.com/c.js"></script>
 ```
 
-当a.js请求出错的时候，我们页面就会白屏 
+当a.js请求出错的时候，我们页面就会白屏
 
 我们通过service-worker增加重试逻辑
 
-
-``` html
+```html
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(() => {
-    console.log('Service Worker registered');
-  });
-}
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").then(() => {
+      console.log("Service Worker registered");
+    });
+  }
 </script>
 ```
 
-``` js
-const PRIMARY_HOST = 'primary.example.com';
-const FALLBACK_HOST = 'fallback.example.com';
+```js
+const PRIMARY_HOST = "primary.example.com";
+const FALLBACK_HOST = "fallback.example.com";
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const requestUrl = new URL(event.request.url);
 
   // 仅处理目标脚本的请求
-  if (requestUrl.pathname === '/path/to/script.js') {
+  if (requestUrl.pathname === "/path/to/script.js") {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
           // 检查HTTP状态码
-          if (!response.ok) throw new Error('Response not OK');
+          if (!response.ok) throw new Error("Response not OK");
           return response;
         })
         .catch(() => {
           // 替换Host为备用地址
           requestUrl.host = FALLBACK_HOST;
-          const fallbackRequest = new Request(requestUrl.toString(), event.request);
+          const fallbackRequest = new Request(
+            requestUrl.toString(),
+            event.request,
+          );
           return fetch(fallbackRequest);
-        })
+        }),
     );
   }
 });
 ```
 
-
 通过onerror事件动态重试
 
-
-``` html
+```html
 <script>
-function loadFallback(element) {
-  const fallbackSrc = element.src.replace('primary.example.com', 'fallback.example.com');
-  const newScript = document.createElement('script');
-  newScript.src = fallbackSrc;
-  document.body.appendChild(newScript);
-}
+  function loadFallback(element) {
+    const fallbackSrc = element.src.replace(
+      "primary.example.com",
+      "fallback.example.com",
+    );
+    const newScript = document.createElement("script");
+    newScript.src = fallbackSrc;
+    document.body.appendChild(newScript);
+  }
 </script>
 
-<script 
+<script
   src="https://primary.example.com/script.js"
-  onerror="loadFallback(this)">
-</script>
-
-
+  onerror="loadFallback(this)"
+></script>
 ```
 
-
-但是这样会有问题，如果后面的依赖前面的js，会报错，某个变量是undefined 
+但是这样会有问题，如果后面的依赖前面的js，会报错，某个变量是undefined
 
 service-worker 通用版
 
-``` js
+```js
 const FALLBACK_MAP = {
-  'primary-host.com': 'fallback-host.com',
+  "primary-host.com": "fallback-host.com",
 };
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  if (url.pathname.endsWith('.js')) {
+  if (url.pathname.endsWith(".js")) {
     event.respondWith(
       fetch(event.request).catch(() => {
         const fallbackHost = FALLBACK_MAP[url.host];
@@ -122,14 +118,11 @@ self.addEventListener('fetch', (event) => {
         const fallbackUrl = new URL(url);
         fallbackUrl.host = fallbackHost;
         return fetch(fallbackUrl);
-      })
+      }),
     );
   }
 });
 ```
-
-
-
 
 2. WeakRef
 
@@ -141,78 +134,76 @@ WeakRef 的特点：
 2. 引用的对象可能随时被回收
 3. 需要通过 deref() 方法获取原始对象
 4. 适合处理可能被垃圾回收的对象
-使用建议：
+   使用建议：
 
-1. 优先使用普通引用
-2. 只在确实需要弱引用时使用 WeakRef
-3. 总是检查 deref() 的返回值
-4. 配合 FinalizationRegistry 使用更完整
-注意事项：
+5. 优先使用普通引用
+6. 只在确实需要弱引用时使用 WeakRef
+7. 总是检查 deref() 的返回值
+8. 配合 FinalizationRegistry 使用更完整
+   注意事项：
 
-1. WeakRef 不保证引用的对象一定存在
-2. 不适合用于核心业务逻辑
-3. 主要用于性能优化和资源管理
-4. 需要妥善处理引用对象不存在的情况
+9. WeakRef 不保证引用的对象一定存在
+10. 不适合用于核心业务逻辑
+11. 主要用于性能优化和资源管理
+12. 需要妥善处理引用对象不存在的情况
 
-``` js
-const target = { name: 'example' }
-const weakRef = new WeakRef(target)
+```js
+const target = { name: "example" };
+const weakRef = new WeakRef(target);
 
 // 获取引用的对象
-const obj = weakRef.deref()
+const obj = weakRef.deref();
 if (obj) {
-  console.log(obj.name) // 'example'
+  console.log(obj.name); // 'example'
 }
 ```
-
 
 主要的使用场景
 
 缓存系统：
-``` ts
+
+```ts
 class Cache {
-  private cache = new Map<string, WeakRef<object>>()
-  
+  private cache = new Map<string, WeakRef<object>>();
+
   set(key: string, value: object) {
-    this.cache.set(key, new WeakRef(value))
+    this.cache.set(key, new WeakRef(value));
   }
-  
+
   get(key: string) {
-    const ref = this.cache.get(key)
-    return ref?.deref()
+    const ref = this.cache.get(key);
+    return ref?.deref();
   }
 }
 ```
 
 监听器管理
-``` ts
+
+```ts
 class EventManager {
-  private listeners = new Set<WeakRef<Function>>()
-  
+  private listeners = new Set<WeakRef<Function>>();
+
   addListener(callback: Function) {
-    this.listeners.add(new WeakRef(callback))
+    this.listeners.add(new WeakRef(callback));
   }
-  
+
   emit(event: any) {
     for (const listenerRef of this.listeners) {
-      const listener = listenerRef.deref()
+      const listener = listenerRef.deref();
       if (listener) {
-        listener(event)
+        listener(event);
       }
     }
   }
 }
 ```
 
+配合 FinalizationRegistry
 
-配合 FinalizationRegistry 
-
-
-``` ts
-
+```ts
 // 创建清理注册表
 const registry = new FinalizationRegistry((heldValue) => {
-  console.log('对象被回收，清理数据：', heldValue);
+  console.log("对象被回收，清理数据：", heldValue);
 });
 
 // 使用 WeakRef 和 FinalizationRegistry 的示例
@@ -237,43 +228,40 @@ class ResourceManager {
 }
 ```
 
-
 使用场景
 
 大型组件的缓存
 
-``` ts
-import { WeakRef, FinalizationRegistry } from 'js-runtime'
+```ts
+import { WeakRef, FinalizationRegistry } from "js-runtime";
 
 export function useComponentCache() {
-  const cache = new Map<string, WeakRef<any>>()
+  const cache = new Map<string, WeakRef<any>>();
   const cleanup = new FinalizationRegistry((key: string) => {
-    cache.delete(key)
-    console.log(`组件缓存 ${key} 已清理`)
-  })
+    cache.delete(key);
+    console.log(`组件缓存 ${key} 已清理`);
+  });
 
   function cacheComponent(key: string, component: any) {
-    const ref = new WeakRef(component)
-    cache.set(key, ref)
-    cleanup.register(component, key)
+    const ref = new WeakRef(component);
+    cache.set(key, ref);
+    cleanup.register(component, key);
   }
 
   function getCachedComponent(key: string) {
-    return cache.get(key)?.deref()
+    return cache.get(key)?.deref();
   }
 
   return {
     cacheComponent,
-    getCachedComponent
-  }
+    getCachedComponent,
+  };
 }
 ```
 
-
 长期运行的webworker管理
 
-
-``` js
+```js
 export class WorkerPool {
   private workers = new Map<string, WeakRef<Worker>>()
   private cleanup = new FinalizationRegistry((workerId: string) => {
@@ -295,8 +283,7 @@ export class WorkerPool {
 
 大文件上传的临时缓存
 
-
-``` js
+```js
 export function useFileUpload() {
   const fileRefs = new Map<string, WeakRef<File>>()
   const cleanup = new FinalizationRegistry((fileId: string) => {
@@ -316,9 +303,7 @@ export function useFileUpload() {
 }
 ```
 
-
 ## 4.9
-
 
 1. promise 一直处于 pedding 状态 不resolve 会造成内存泄漏吗？
 
@@ -328,49 +313,94 @@ export function useFileUpload() {
 
 不止promise，在大量并发ajax请求，网速特别卡的情况下，会占用大量内存造成卡顿，血与泪的教训，其实promise 就是个闭包 ajax的回调函数也是闭包，都会引用作用域上下文，不及时清除完成引用都会占内存
 
-
 2. promise 收集 / 释放
 
-``` js
-const a = new Promise((resolve)=>{
-  resolve(1)
-})
+```js
+const a = new Promise((resolve) => {
+  resolve(1);
+});
 
-async function b(){
-  return Promise.resolve(2)
+async function b() {
+  return Promise.resolve(2);
 }
 
-b().then((res)=>{
+b().then((res) => {
   console.log(res);
-})
+});
 
-
-a.then((res)=>{
-  console.log(res)
-}).then(()=>{
-  console.log(3)
-})
-
+a.then((res) => {
+  console.log(res);
+}).then(() => {
+  console.log(3);
+});
 ```
-
 
 function b 加和不加 async 的效果是不一样的
 
-
-## 4.11 
-
+## 4.11
 
 1. 5 个改变游戏规则的 GitHub 代码库，助你轻松应对编程面试
-https://javascript.plainenglish.io/top-5-github-repos-to-ace-your-coding-interviews-230b1d8506f4
-
+   https://javascript.plainenglish.io/top-5-github-repos-to-ace-your-coding-interviews-230b1d8506f4
 
 ## 4.21
 
-1. Promise.finally 返回成功的promise 无效 返回失败的promise会拦截 
+1. Promise.finally 返回成功的promise 无效 返回失败的promise会拦截
 
-``` js
-Promise.resolve(1).finally(()=>{
-  return 2
-})
-
+```js
+Promise.resolve(1).finally(() => {
+  return 2;
+});
 ```
+
+## 5.7
+
+终于又可以学习点东西了
+
+1. 字符串的转化
+
+```js
+String(v)
+'' + v
+`${v}`
+v.toString()
+{}.toString.call(v)
+
+// 上面是五种转化字符串的方法
+
+undefined
+null
+Symbol()
+{__proto__: null}
+
+// 我们用它来处理一下一些棘手的值
+```
+
+|                     | undefined |   null    | Symbol()  | {**proto**:null} |
+| ------------------- | :-------: | :-------: | :-------: | :--------------: |
+| String(v)           |    ✔     |    ✔     |    ✔     |    TypeError     |
+| '' + v              |    ✔     |    ✔     | TypeError |    TypeError     |
+| `${v}`              |    ✔     |    ✔     | TypeError |    TypeError     |
+| v.toString()        | TypeError | TypeError |    ✔     |    TypeError     |
+| {}.toString.call(v) |    ✔     |    ✔     |    ✔     |        ✔        |
+
+{}.toString.call(v)
+Object.prototype.toString.call(v) 两者是等价的
+
+```js
+> String({__proto__: null}) // no method available
+TypeError: Cannot convert object to primitive value
+> String({__proto__: null, [Symbol.toPrimitive]() {return 'YES'}})
+'YES'
+> String({__proto__: null, toString() {return 'YES'}})
+'YES'
+> String({__proto__: null, valueOf() {return 'YES'}})
+'YES'
+> String({__proto__: null, toString() { return undefined }})
+'undefined'
+> String({__proto__: null, toString() { return null }})
+'null'
+> String({__proto__: null, toString() { return {} }})
+TypeError: Cannot convert object to primitive value
+```
+
+字符串的转化 https://2ality.com/2025/04/stringification-javascript.html

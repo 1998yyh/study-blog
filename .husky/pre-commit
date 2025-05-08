@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 运行 lint-staged
+npx lint-staged
+
+# 生成文件修改汇总
+node scripts/generate-summary.js 
