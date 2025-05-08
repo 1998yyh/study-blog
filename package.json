@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/1998yyh/study-blog#readme",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "typescript": "^5.0.2"
   },
   "devDependencies": {

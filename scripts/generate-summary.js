@@ -1,10 +1,68 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const https = require("https");
 
-// 初始化 Gemini API
-const genAI = new GoogleGenerativeAI("AIzaSyDQvS3NJYlGO5hAXq_ESwQcvFun8-8fkDE");
+// 通义千问 API 配置
+const API_KEY = "sk-8ab444a60290450dbabe9fa5191a8a79	"; // 请替换为你的 API 密钥
+const API_URL =
+  "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
+
+// 调用通义千问 API
+async function callQianwenAPI(prompt) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify({
+      model: "qwen-max",
+      input: {
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      },
+    });
+
+    const options = {
+      hostname: "dashscope.aliyuncs.com",
+      path: "/api/v1/services/aigc/text-generation/generation",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Length": data.length,
+      },
+    };
+
+    const req = https.request(options, (res) => {
+      let responseData = "";
+
+      res.on("data", (chunk) => {
+        responseData += chunk;
+      });
+
+      res.on("end", () => {
+        try {
+          const result = JSON.parse(responseData);
+          if (result.output && result.output.text) {
+            resolve(result.output.text);
+          } else {
+            reject(new Error("API 响应格式不正确"));
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(data);
+    req.end();
+  });
+}
 
 // 获取暂存区的文件列表
 const getStagedFiles = () => {
@@ -21,28 +79,6 @@ const getFileDiff = (filePath) => {
   }
 };
 
-// 使用 Gemini 生成修改总结
-async function generateAISummary(diffContent) {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    const prompt = `请帮我分析以下代码修改，并给出简洁的总结。格式如下：
-1. 主要修改内容
-2. 修改原因（如果可以从代码中推断）
-3. 潜在影响
-
-代码修改内容：
-${diffContent}`;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
-  } catch (error) {
-    console.error("Gemini API 调用失败:", error);
-    return "无法生成 AI 总结";
-  }
-}
-
 // 生成汇总信息
 const generateSummary = async () => {
   const stagedFiles = getStagedFiles();
@@ -55,17 +91,35 @@ const generateSummary = async () => {
   let summary = "# 文件修改汇总\n\n";
 
   for (const file of stagedFiles) {
+    console.log(`处理文件: ${file}`);
     const diffContent = getFileDiff(file);
+
     summary += `## ${file}\n\n`;
     summary += "### 修改内容\n\n";
     summary += "```diff\n";
     summary += diffContent;
     summary += "\n```\n\n";
 
-    // 添加 AI 生成的总结
-    summary += "### AI 分析\n\n";
-    const aiSummary = await generateAISummary(diffContent);
-    summary += aiSummary + "\n\n";
+    try {
+      // 生成 AI 分析
+      const prompt = `请帮我分析以下代码修改，并给出简洁的总结。格式如下：
+1. 主要修改内容
+2. 修改原因（如果可以从代码中推断）
+3. 潜在影响
+
+代码修改内容：
+${diffContent}`;
+
+      console.log("正在调用通义千问 API...");
+      const aiAnalysis = await callQianwenAPI(prompt);
+
+      summary += "### AI 分析\n\n";
+      summary += aiAnalysis + "\n\n";
+    } catch (error) {
+      console.error(`处理文件 ${file} 时出错:`, error);
+      summary += "### AI 分析\n\n";
+      summary += "无法生成 AI 分析，请检查 API 配置和网络连接\n\n";
+    }
   }
 
   // 将汇总信息写入文件
@@ -77,13 +131,19 @@ const generateSummary = async () => {
 };
 
 // 执行生成汇总
-if (!process.env.GEMINI_API_KEY) {
-  console.error("错误: 未设置 GEMINI_API_KEY 环境变量");
+if (!API_KEY || API_KEY === "你的通义千问API密钥") {
+  console.error("错误: 请设置有效的通义千问 API 密钥");
   process.exit(1);
 }
 
-generateSummary().then((summaryPath) => {
-  if (summaryPath) {
-    console.log("请查看 commit-summary.md 文件获取详细的修改信息");
-  }
-});
+console.log("开始生成汇总...");
+generateSummary()
+  .then((summaryPath) => {
+    if (summaryPath) {
+      console.log("请查看 commit-summary.md 文件获取详细的修改信息");
+    }
+  })
+  .catch((error) => {
+    console.error("生成汇总时发生错误:", error);
+    process.exit(1);
+  });
