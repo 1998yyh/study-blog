@@ -1,67 +1,64 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const https = require("https");
+const fetch = require("node-fetch");
 
 // 通义千问 API 配置
-const API_KEY = "sk-8ab444a60290450dbabe9fa5191a8a79	"; // 请替换为你的 API 密钥
-const API_URL =
-  "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
+const API_KEY = "sk-8ab444a60290450dbabe9fa5191a8a79";
 
 // 调用通义千问 API
 async function callQianwenAPI(prompt) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify({
-      model: "qwen-max",
-      input: {
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
+  const data = {
+    model: "qwen-plus",
+    input: {
+      messages: [
+        {
+          role: "system",
+          content: "你是一个代码分析助手，请帮我分析代码变更并给出简洁的总结。",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    },
+    parameters: {
+      result_format: "message",
+    },
+  };
+
+  try {
+    console.log("正在调用通义千问 API...");
+    console.log("发送的数据:", JSON.stringify(data, null, 2));
+
+    const response = await fetch(
+      "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       },
-    });
+    );
 
-    const options = {
-      hostname: "dashscope.aliyuncs.com",
-      path: "/api/v1/services/aigc/text-generation/generation",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
-        "Content-Length": data.length,
-      },
-    };
+    const responseData = await response.json();
+    console.log("API 响应:", JSON.stringify(responseData, null, 2));
 
-    const req = https.request(options, (res) => {
-      let responseData = "";
+    if (!response.ok) {
+      throw new Error(`API 错误: ${responseData.message || "未知错误"}`);
+    }
 
-      res.on("data", (chunk) => {
-        responseData += chunk;
-      });
-
-      res.on("end", () => {
-        try {
-          const result = JSON.parse(responseData);
-          if (result.output && result.output.text) {
-            resolve(result.output.text);
-          } else {
-            reject(new Error("API 响应格式不正确"));
-          }
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-
-    req.on("error", (error) => {
-      reject(error);
-    });
-
-    req.write(data);
-    req.end();
-  });
+    if (responseData.output?.choices?.[0]?.message?.content) {
+      return responseData.output.choices[0].message.content;
+    } else {
+      throw new Error("API 响应格式不正确");
+    }
+  } catch (error) {
+    console.error("API 调用失败:", error);
+    throw error;
+  }
 }
 
 // 获取暂存区的文件列表
@@ -79,38 +76,55 @@ const getFileDiff = (filePath) => {
   }
 };
 
+// 获取提交信息
+const getCommitInfo = () => {
+  try {
+    const author = execSync("git config user.name").toString().trim();
+    const email = execSync("git config user.email").toString().trim();
+    const date = new Date().toLocaleString("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    return { author, email, date };
+  } catch (error) {
+    console.error("获取提交信息失败:", error);
+    return { author: "未知", email: "未知", date: new Date().toLocaleString() };
+  }
+};
+
 // 生成汇总信息
 const generateSummary = async () => {
   const stagedFiles = getStagedFiles();
+  const commitInfo = getCommitInfo();
 
   if (stagedFiles.length === 0) {
     console.log("没有暂存的文件");
     return;
   }
 
-  let summary = "# 文件修改汇总\n\n";
+  let summary = `# 文件修改汇总\n\n`;
+  summary += `## 提交信息\n\n`;
+  summary += `- 提交时间：${commitInfo.date}\n`;
+  summary += `- 提交人：${commitInfo.author} <${commitInfo.email}>\n\n`;
 
   for (const file of stagedFiles) {
     console.log(`处理文件: ${file}`);
     const diffContent = getFileDiff(file);
 
     summary += `## ${file}\n\n`;
-    summary += "### 修改内容\n\n";
-    summary += "```diff\n";
-    summary += diffContent;
     summary += "\n```\n\n";
 
     try {
       // 生成 AI 分析
-      const prompt = `请帮我分析以下代码修改，并给出简洁的总结。格式如下：
-1. 主要修改内容
-2. 修改原因（如果可以从代码中推断）
-3. 潜在影响
+      const prompt = `请分析以下代码修改，并给出简洁的总结
+      代码修改内容：
+      ${diffContent}`;
 
-代码修改内容：
-${diffContent}`;
-
-      console.log("正在调用通义千问 API...");
       const aiAnalysis = await callQianwenAPI(prompt);
 
       summary += "### AI 分析\n\n";
@@ -118,21 +132,36 @@ ${diffContent}`;
     } catch (error) {
       console.error(`处理文件 ${file} 时出错:`, error);
       summary += "### AI 分析\n\n";
-      summary += "无法生成 AI 分析，请检查 API 配置和网络连接\n\n";
+      summary += `无法生成 AI 分析: ${error.message}\n\n`;
     }
   }
 
   // 将汇总信息写入文件
   const summaryPath = path.join(process.cwd(), "commit-summary.md");
-  fs.writeFileSync(summaryPath, summary);
 
-  console.log(`汇总信息已生成到: ${summaryPath}`);
+  // 检查文件是否存在
+  const fileExists = fs.existsSync(summaryPath);
+
+  // 如果文件存在，读取现有内容
+  let existingContent = "";
+  if (fileExists) {
+    existingContent = fs.readFileSync(summaryPath, "utf8");
+    // 如果文件不为空，添加分隔符
+    if (existingContent.trim()) {
+      summary += "\n\n---\n\n";
+    }
+  }
+
+  // 写入新内容（添加到文件开头）
+  fs.writeFileSync(summaryPath, summary + existingContent);
+
+  console.log(`汇总信息已${fileExists ? "添加到" : "生成到"}: ${summaryPath}`);
   return summaryPath;
 };
 
 // 执行生成汇总
-if (!API_KEY || API_KEY === "你的通义千问API密钥") {
-  console.error("错误: 请设置有效的通义千问 API 密钥");
+if (!API_KEY) {
+  console.error("错误: 请设置 DASHSCOPE_API_KEY 环境变量");
   process.exit(1);
 }
 
