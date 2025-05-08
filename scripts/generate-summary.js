@@ -64,7 +64,10 @@ async function callQianwenAPI(prompt) {
 // 获取暂存区的文件列表
 const getStagedFiles = () => {
   const output = execSync("git diff --cached --name-only").toString();
-  return output.split("\n").filter(Boolean);
+  return output
+    .split("\n")
+    .filter(Boolean)
+    .filter((file) => file.startsWith("others/"));
 };
 
 // 获取文件的修改内容
@@ -103,11 +106,11 @@ const generateSummary = async () => {
   const commitInfo = getCommitInfo();
 
   if (stagedFiles.length === 0) {
-    console.log("没有暂存的文件");
+    console.log("没有暂存的 others/ 目录下的文件");
     return;
   }
 
-  let summary = `# 文件修改汇总\n\n`;
+  let summary = `# others/ 目录文件修改汇总\n\n`;
   summary += `## 提交信息\n\n`;
   summary += `- 提交时间：${commitInfo.date}\n`;
   summary += `- 提交人：${commitInfo.author} <${commitInfo.email}>\n\n`;
@@ -154,6 +157,14 @@ const generateSummary = async () => {
 
   // 写入新内容（添加到文件开头）
   fs.writeFileSync(summaryPath, summary + existingContent);
+
+  // 将生成的文件添加到暂存区
+  try {
+    execSync(`git add ${summaryPath}`);
+    console.log(`已将 ${summaryPath} 添加到暂存区`);
+  } catch (error) {
+    console.error(`添加文件到暂存区失败:`, error);
+  }
 
   console.log(`汇总信息已${fileExists ? "添加到" : "生成到"}: ${summaryPath}`);
   return summaryPath;
