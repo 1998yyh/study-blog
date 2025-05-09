@@ -64,15 +64,10 @@ async function callQianwenAPI(prompt) {
 // 获取暂存区的文件列表
 const getStagedFiles = () => {
   const output = execSync("git diff --cached --name-only").toString();
-  console.log("所有暂存的文件:", output);
-
-  const allFiles = output.split("\n").filter(Boolean);
-  console.log("处理后的文件列表:", allFiles);
-
-  const othersFiles = allFiles.filter((file) => file.startsWith("others/"));
-  console.log("others/ 目录下的文件:", othersFiles);
-
-  return othersFiles;
+  return output
+    .split("\n")
+    .filter(Boolean)
+    .filter((file) => file.startsWith("others/"));
 };
 
 // 获取文件的修改内容
@@ -85,25 +80,7 @@ const getFileDiff = (filePath) => {
 };
 
 // 获取提交信息
-const getCommitInfo = () => {
-  try {
-    const author = execSync("git config user.name").toString().trim();
-    const email = execSync("git config user.email").toString().trim();
-    const date = new Date().toLocaleString("zh-CN", {
-      timeZone: "Asia/Shanghai",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-    return { author, email, date };
-  } catch (error) {
-    console.error("获取提交信息失败:", error);
-    return { author: "未知", email: "未知", date: new Date().toLocaleString() };
-  }
-};
+const getCommitInfo = () => {};
 
 // 生成汇总信息
 const generateSummary = async () => {

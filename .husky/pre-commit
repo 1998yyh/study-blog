@@ -5,4 +5,4 @@
 npx lint-staged
 
 # 生成文件修改汇总
-node scripts/generate-summary.js || exit 1 
+# node scripts/generate-summary.js || exit 1 
