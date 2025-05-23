@@ -404,3 +404,77 @@ TypeError: Cannot convert object to primitive value
 ```
 
 字符串的转化 https://2ality.com/2025/04/stringification-javascript.html
+
+## 5.23
+
+1. vue3 配置eslint 和 prettier : https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/?utm_source=drip&utm_medium=email&utm_campaign=Smarter+Dev+with+LLM+Agents+%2B+Top+Reads+%26+Courses
+
+2. vue 路由课程 : https://vueschool.io/lessons/introduction-to-vue-router-4
+
+3. 迭代器
+
+可迭代协议
+
+```js
+const gospelIterable = {
+  [Symbol.iterator]() {
+    return {
+      index: -1,
+      next() {
+        // this.index++
+        const gospels = ["Matthew", "Mark", "Luke", "John"];
+        this.index++;
+
+        return {
+          value: gospels[this.index],
+          done: this.index >= gospels.length,
+        };
+      },
+    };
+  },
+};
+
+for (const author of gospelIteratable) {
+  console.log(author); // Matthew, Mark, Luke, John
+}
+
+console.log([...gospelIteratable]);
+// ['Matthew', 'Mark', 'Luke', 'John']
+```
+
+下面是一个遍历 1900 年之后每个闰年的例子
+
+```js
+function isLeapYear(year) {
+  return year % 100 === 0 ? year % 400 === 0 : year % 4 === 0;
+}
+
+const leapYears = {
+  [Symbol.iterator]() {
+    return {
+      startYear: 1900,
+      currentYear: new Date().getFullYear(),
+      next() {
+        this.startYear++;
+
+        while (!isLeapYear(this.startYear)) {
+          this.startYear++;
+        }
+
+        return {
+          value: this.startYear,
+          done: this.startYear > this.currentYear,
+        };
+      },
+    };
+  },
+};
+
+for (const leapYear of leapYears) {
+  console.log(leapYear);
+}
+```
+
+惰性求值是可迭代对象最受推崇的优点之一。我们不需要从一开始就获取序列中的每个元素。在某些情况下，这可以很好地避免性能问题。
+
+文章地址: https://macarthur.me/posts/generators/
