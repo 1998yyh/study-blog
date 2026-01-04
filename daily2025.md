@@ -517,3 +517,13 @@ AI程序则不同，它只经过几层计算，复杂的大模型也就100来层
 项目说明：一个深度自动清理 Mac 无用内容，释放存储空间的脚本。
 
 2. PostgreSQL 使用全面指南：从入门到企业级应用 https://blog.17lai.site/posts/16bffe88/
+
+## 12.05
+
+1. corner-shape 一个border-radius增强属性
+
+## 12.31
+
+1. https://tanstack.com/form/latest/docs/overview
+
+TanStack 是一组「无头（Headless）+ 类型安全 + 跨框架」的微型库集合。
